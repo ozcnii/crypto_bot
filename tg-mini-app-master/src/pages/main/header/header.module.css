@@ -1,0 +1,235 @@
+.wrapper {
+  width: 100%;
+  height: 62.5px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8.75px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 5.5px;
+}
+
+.avatar {
+  width: 62.5px;
+  height: 62.5px;
+  border-radius: 50%;
+}
+
+.statistics {
+  height: 43.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  > p {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 14px;
+  }
+}
+
+.divider {
+  display: flex;
+  flex-direction: column;
+  gap: 4.58px;
+  > p {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 9px;
+  }
+}
+
+.league {
+  display: flex;
+  gap: 3px;
+  > span {
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 9px;
+  }
+}
+
+.pnl {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.green {
+  color: #39CD83;
+}
+
+.red {
+  color: #EA3E3E;
+}
+
+.clan {
+  cursor: pointer;
+  min-width: 150px;
+  height: calc(100% - 5px);
+  display: flex;
+  align-items: center;
+  padding: 7.5px 9.5px 7.5px 9.5px;
+  gap: 5.34px;
+  background: #101010;
+  border-radius: 10px;
+  position: relative; /* Make sure the element can contain the pseudo-element */
+  z-index: 0; /* Ensure the main element's content is above the pseudo-element */
+}
+
+.clan::before {
+  content: "";
+  position: absolute;
+  top: -0.5px; /* Adjust as needed to match the border width */
+  right: -0.5px;
+  bottom: -0.5px;
+  left: -0.5px;
+  z-index: -1; /* Ensure the pseudo-element is behind the main element's content */
+  background: linear-gradient(-69deg, rgb(238, 238, 238, 0.6) 0%, rgb(238, 238, 238, 0.2) 100%);
+  border-radius: 10px; /* Match the border radius of the main element */
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+.noClan {
+  justify-content: center;
+  min-width: 137.25px;
+  height: 53.5px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  position: relative; /* Make sure the element can contain the pseudo-element */
+  z-index: 0; /* Ensure the main element's content is above the pseudo-element */
+  background: #101010;
+  > p {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 7px;
+  }
+}
+
+.noClan::before {
+  content: "";
+  position: absolute;
+  top: -0.5px; /* Adjust as needed to match the border width */
+  right: -0.5px;
+  bottom: -0.5px;
+  left: -0.5px;
+  z-index: -1; /* Ensure the pseudo-element is behind the main element's content */
+  background: linear-gradient(-69deg, rgb(238, 238, 238, 0.6) 0%, rgb(238, 238, 238, 0.2) 100%);
+  border-radius: 10px; /* Match the border radius of the main element */
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+.leagueLogo {
+  width: 10.92px;
+  height: 11.92px;
+}
+
+.clanLogo {
+  width: 45.25px;
+  height: 45.25px;
+}
+
+.clanInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3.25px;
+  > p {
+    font-size: 11.5px;
+    font-weight: bold;
+    line-height: 7px;
+  }
+}
+
+.clanStatistics {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  > p {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 7px;
+  }
+}
+
+.clanBalance {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.clanBalanceLogo {
+  width: 9.5px;
+  height: 9.5px;
+}
+
+.clanLeague {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.clanBalanceIcon {
+  position: relative;
+  width: 8.47px;
+  height: 8.5px;
+}
+
+.clanBalanceLogo {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.clanBalanceVector {
+  position: absolute;
+  top: 25%;
+  left: 15%;
+  width: 5.6px;
+  height: 5.6px;
+}
+
+.clanLeagueLogo {
+  width: 8.47px;
+  height: 8.5px;
+}
+
+.noClanLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(217, 217, 217, 0.1);
+  border-radius: 4.5px;
+  width: 39.25px;
+  height: 39.25px;
+  > img {
+    width: 25.25px;
+    height: 25.25px;
+  }
+}
+
+.noClanBalance {
+  background-color: rgb(217, 217, 217, 0.1);
+  border-radius: 3.5px;
+  height: 9px;
+  width: 43px;
+}
+
+.noClanLeague {
+  background-color: rgb(217, 217, 217, 0.1);
+  border-radius: 3.5px;
+  height: 9px;
+  width: 35px;
+}

@@ -1,0 +1,59 @@
+.boosterCard {
+	margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgb(238, 238, 238, 0.04); 
+  padding: 10px 21px 10px 16px;
+	-webkit-backdrop-filter: blur(16px);
+	backdrop-filter: blur(16px);
+  border-radius: 7.5px;
+  color: #EEEEEE;
+	width: 100%;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1f1f1f;
+  border-radius: 5px;
+  width: 35px;
+  height: 35px;
+}
+
+.arrow {
+  color: #948AFF;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  flex-grow: 1;
+}
+
+.name {
+  font-size: 18px;
+  margin: 0;
+}
+
+.levels {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.cost {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  gap: 2.5px;
+  color: #A29BFE; /* Purple color */
+}
+
+.cost img {
+  margin-left: 5px;
+  width: 20px;
+  height: 20px;
+}

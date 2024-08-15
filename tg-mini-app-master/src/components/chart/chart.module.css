@@ -1,0 +1,50 @@
+.cryptoChart {
+	margin-top: 14px;
+  flex: 2;
+  position: relative;
+  width: 100%;
+	height: 100%;
+  border-bottom: 0.05px solid rgb(217, 217, 217, 0.5);
+  border-left: 0.05px solid rgb(217, 217, 217, 0.5);
+  > img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+}
+
+.scaleLeft, .scaleBottom {
+  background-color: #EEEEEE;
+}
+
+.scaleLeft {
+  width: 2.88px;
+  height: 0.5px;
+  opacity: 0.5;
+}
+
+.scaleBottom {
+  height: 2.88px;
+  width: 0.5px;
+  opacity: 0.5;
+}
+
+.scalesLeftContainer {
+  position: absolute;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24.75px;
+  top: 0;
+}
+
+.scalesBottomContainer {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  bottom: 0;
+  gap: 24.75px;
+}

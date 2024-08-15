@@ -1,0 +1,66 @@
+/* Определение обычного шрифта */
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('avantgardectt/avantgardectt.woff') format('woff'), url("avantgardectt/avantgardectt.woff2") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Определение курсивного обычного шрифта */
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('avantgardectt/avantgardectt-italic.woff') format('woff'), url('avantgardectt/avantgardectt-italic.woff2') format('woff2');
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* Определение жирного шрифта */
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('avantgardectt/avantgardectt-bold.woff') format('woff'), url('avantgardectt/avantgardectt-bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Определение курсивного жирного шрифта */
+@font-face {
+  font-family: 'AvantGarde';
+  src: url('avantgardectt/avantgardectt-bolditalic.woff') format('woff'), url('avantgardectt/avantgardectt-bolditalic.woff2') format('woff2');
+  font-weight: bold;
+  font-style: italic;
+}
+
+
+@font-face {
+  font-family: 'Cygre';
+  src: url('./cygre/Cygre-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Cygre';
+  src: url('./cygre/Cygre-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Cygre';
+  src: url('./cygre/Cygre-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* @font-face {
+  font-family: "Cygre";
+  src: url("https://db.onlinewebfonts.com/t/3ed1693da2d7d3c28d28b79a8a1a6b0e.eot");
+  src: url("https://db.onlinewebfonts.com/t/3ed1693da2d7d3c28d28b79a8a1a6b0e.eot?#iefix")format("embedded-opentype"),
+  url("https://db.onlinewebfonts.com/t/3ed1693da2d7d3c28d28b79a8a1a6b0e.woff2")format("woff2"),
+  url("https://db.onlinewebfonts.com/t/3ed1693da2d7d3c28d28b79a8a1a6b0e.woff")format("woff"),
+  url("https://db.onlinewebfonts.com/t/3ed1693da2d7d3c28d28b79a8a1a6b0e.ttf")format("truetype"),
+  url("https://db.onlinewebfonts.com/t/3ed1693da2d7d3c28d28b79a8a1a6b0e.svg#Cygre")format("svg");
+} */
+

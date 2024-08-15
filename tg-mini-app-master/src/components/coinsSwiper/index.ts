@@ -1,0 +1,1 @@
+export { CoinsSwiper } from './coinsSwiper'

@@ -1,0 +1,162 @@
+.main {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	/* align-items: center; */
+	background-image: url('img/backgrounds/fellowsBackground.svg');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	padding-block-start: 44px;
+	padding-inline: 24px;
+}
+
+.noClanLogo {
+	display: flex;
+	justify-content: center;
+	> img {
+		width: 35px;
+		height: 35px;
+	}
+}
+
+.title {
+	display: flex;
+	align-items: center;
+	margin-top: 5px;
+	flex-direction: column;
+	> h1 {
+		font-weight: bold;
+		font-size: 33px;
+		color: #EEEEEE;
+	}
+	> p {
+		margin-top: 9px;
+		text-align: center;
+		font-weight: 500;
+		font-size: 11px;
+		color: #EEEEEE;
+	}
+}
+
+.inputWrapper {
+	margin-top: 11px;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	width: 280px;
+	background: rgb(238, 238, 238, 0.08);
+	border-radius: 10px;
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	padding: 5px 10px 6px 7px;
+	height: 50px;
+}
+
+input {
+	background: rgb(238, 238, 238, 0.08);
+	border-radius: 10px;
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	height: 100%;
+	outline: none;
+	border: none;
+	padding-inline: 10px;
+	font-family: 'Cygre', sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	color: #AAAAAA;
+}
+
+input[type="text"] {
+	width: 100%;
+	flex-grow: 1;
+	max-width: 190px;
+	/* padding: 8px; Adjust padding as needed */
+	box-sizing: border-box; /* Ensure padding and border are included in element's width and height */
+}
+
+.arrowRight {
+  cursor: pointer;
+  border: none;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2.5px;
+  background: transparent;
+}
+
+.inputLogo {
+	background: rgb(238, 238, 238, 0.08);
+	border-radius: 10px;
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	width: 38px;
+	height: 38px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	> img {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+.clansList {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	height: 100%;
+	flex-grow: 1;
+	> h1 {
+		font-weight: bold;
+		font-size: 22.5px;
+		color: #EEEEEE;
+	}
+}
+
+.floatingButton {
+	font-family: 'Cygre', sans-serif;
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+	width: calc(100% - 79px);
+  padding: 16px 82.25px 14.5px 79.75px;
+  background-color: #948AFF; /* Фоновый цвет кнопки */
+  color: #101010; /* Цвет текста кнопки */
+  border: none; /* Удалить границу кнопки */
+  border-radius: 5px; /* Закругленные углы */
+  font-size: 18px; /* Размер шрифта */
+	font-weight: bold; /* Жирный шрифт */
+  cursor: pointer; /* Курсор в виде руки при наведении */
+  z-index: 1000; /* Поверх всего контента */
+	transition: background-color 0.3s ease;
+}
+
+.floatingButton:active {
+	background-color: rgba(48, 48, 48, 0.001); /* Цвет кнопки при нажатии */
+}
+
+.noClans {
+  display: flex;
+  flex-direction: column;
+	align-items: center;
+	padding-block: 100px;
+  gap: 10px;
+	height: 100%;
+	flex-grow: 1;
+  > img {
+    width: 60px;
+    height: 60px;
+  }
+  > p {
+    font-size: 14px;
+    color: #808088;
+    font-weight: 500;
+  }
+}

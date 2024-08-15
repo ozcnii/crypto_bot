@@ -1,0 +1,326 @@
+.main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 25px 25px 0px 25px;
+  min-height: 100vh;
+}
+
+.title {
+  color: #EEEEEE;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.playersCount {
+	display: flex;
+  align-items: center;
+	justify-content: center;
+	gap: 5.5px;
+	border-radius: 10px;
+	background: #EEEEEE;
+	padding: 7.5px 13px 7.5px 13.5px;
+	> span {
+		color: #101010;
+		font-weight: bold;
+		font-size: 13.5px;
+	}
+	> img {
+		padding: 0;
+		margin: 0;
+		width: 38px;
+		height: 15px;
+	}
+}
+
+.leagueLogo {
+	margin-top: 35px;
+	width: 140px;
+	height: 151.25px;
+	> img {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.floatingContainer {
+	font-family: 'Cygre', sans-serif;
+  position: fixed;
+  bottom: 33.5px;
+  left: 50%;
+  transform: translateX(-50%);
+	width: calc(100% - 50px);
+  padding: 6.75px 10px 6.5px 10px;
+  background: rgb(16, 16, 16, 0.3); /* Фоновый цвет кнопки */
+  color: #101010; /* Цвет текста кнопки */
+  border: none; /* Удалить границу кнопки */
+  border-radius: 5px; /* Закругленные углы */
+  font-size: 18px; /* Размер шрифта */
+	font-weight: bold; /* Жирный шрифт */
+  cursor: pointer; /* Курсор в виде руки при наведении */
+  z-index: 1000; /* Поверх всего контента */
+	transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.avatar {
+  border-radius: 5px;
+  width: 32.5px;
+  height: 31.75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  > img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.avatars {
+  display: flex;
+  align-items: center;
+}
+
+.avatars img {
+  padding: 0;
+  margin: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  margin-left: -3.5px;
+}
+
+.avatars img:first-child {
+  margin-left: 0;
+}
+
+.floating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.floatingContainer:active {
+	background-color: rgba(48, 48, 48, 0.001); /* Цвет кнопки при нажатии */
+}
+
+.aboutInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 7.25px;
+  > h1 {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #EEEEEE;
+    > span {
+      color: #AAAAAA;
+    }
+  }
+  > p {
+    color: #AAAAAA;
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+}
+
+.vector1 {
+  margin-top: 5px;
+  width: 9.5px;
+  height: 9.5px;
+}
+
+.balance {
+  display: flex;
+  gap: 2.5px;
+  align-items: center;
+  > p {
+    color: #EEEEEE;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+}
+
+.buttons {
+  margin-top: 35px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  padding-inline: 10px;
+  padding-block: 6px;
+  border-radius: 7.5px;
+  background-color: rgb(222, 219, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.buttons button {
+  border-radius: 5px;
+  width: 100%;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.logo-enter-left {
+  animation: slide-in-left 0.3s forwards;
+}
+
+.logo-enter-right {
+  animation: slide-in-right 0.3s forwards;
+}
+
+.logo-exit-left {
+  animation: slide-out-left 0.3s forwards;
+}
+
+.logo-exit-right {
+  animation: slide-out-right 0.3s forwards;
+}
+
+.active {
+  color: #101010;
+  background-color: #DEDBFF;
+}
+
+.inactive {
+  color: #EEEEEE;
+  background-color: transparent;
+}
+
+.leagueInfo {
+  margin-top: 18.37px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10.5px;
+  width: 100%;
+}
+
+.countPlayers {
+  color: #AAAAAA;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.progressContainer {
+  width: 100%;
+  height: 12px; /* высота полоски, можно изменить */
+  background: rgb(238, 238, 238, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 10px; /* закругленные края */
+  overflow: hidden; /* чтобы прогресс не выходил за пределы контейнера */
+  border: none;
+}
+
+.progressBar {
+  height: 12.5px;
+  background: linear-gradient(to right, #3B357B 2%, #948AFF 100%);
+  border-radius: 10px; /* закругленные края только слева */
+  transition: width 0.3s ease-in-out; /* плавная анимация изменения ширины */
+}
+
+.arrowLeft {
+  position: absolute;
+  top: 25%;
+  left: 25px;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2.5px;
+  background: rgb(16, 16, 16, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.arrowRight {
+  position: absolute;
+  top: 25%;
+  right: 25px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  border: none;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2.5px;
+  background: rgb(16, 16, 16, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.disabled {
+  user-select: none;
+  pointer-events: none;
+  background: transparent;
+  border: none;
+  cursor: default;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}

@@ -1,0 +1,123 @@
+.cryptoCard {
+  background: rgb(238, 238, 238, 0.01);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+  color: #EEEEEE;
+  border-radius: 10px;
+  border: .4px solid #3f3f3f;
+  padding-inline-start: 10.5px;
+  padding-inline-end: 10.5px;
+  padding-block-start: 14px;
+  padding-block-end: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.cryptoStart {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px; 
+}
+
+.cryptoEnd {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5.5px;
+}
+
+.cryptoInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4.5px;
+  max-width: 72px;
+}
+
+.cryptoImg {
+  width: 35px;
+  height: 35px;
+}
+
+.cryptoInfo h2 {
+  margin: 0;
+  font-weight: bold;
+  font-size: 19.5px;
+  color: #EEEEEE;
+  line-height: 14px;
+}
+
+.cryptoInfo p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 7px;
+  font-weight: 500;
+  color: #EEEEEE;
+}
+
+.cryptoChart {
+  flex: 2;
+  position: relative;
+  width: 125px;
+  height: 45px;
+  max-width: 150px;
+  background-color: #232229;
+  border-radius: 6px;
+  > img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: .2;
+  }
+}
+
+.chart {
+  position: absolute;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
+.cryptoPrice {
+  flex: 1;
+  text-align: right;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5.5px;
+}
+
+.cryptoChange {
+  display: flex;
+  /* align-items: center; */
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.cryptoPrice h3 {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.cryptoPrice p {
+  margin: 0;
+  font-size: 9.5px;
+  font-weight: 500;
+}
+
+.positive {
+  color: #0f0;
+}
+
+.negative {
+  color: #f00;
+}

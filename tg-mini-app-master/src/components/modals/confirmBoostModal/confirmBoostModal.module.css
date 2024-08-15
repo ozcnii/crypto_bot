@@ -1,0 +1,70 @@
+.modal {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 20px 25px 45px 25px;
+}
+
+.modalImgContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.modalImg {
+	width: 60px;
+}
+
+.headerTitle {
+	margin-top: 35px;
+	display: flex;
+	flex-direction: column;
+	gap: 7.25px;
+	> h1 {
+		font-size: 19.5px;
+		font-weight: 900;
+	}
+	> p {
+		font-size: 13.5px;
+		color: #AAAAAA;
+		font-weight: 500;
+	}
+}
+
+.confirmed {
+  margin-top: 34.75px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5.5px;
+  > img {
+    width: 35px;
+    height: 35px;
+  }
+  > h1 {
+    color: #39CD83;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+}
+
+.failed {
+	margin-top: 34.75px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5.5px;
+  > img {
+    width: 35px;
+    height: 35px;
+  }
+  > h1 {
+    color: #EA3E3E;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+}

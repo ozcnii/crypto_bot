@@ -1,0 +1,404 @@
+.squadWrapper {
+  background-image: url("img/backgrounds/squadBackground.svg");
+	background-size: cover;
+	background-repeat: no-repeat;
+  color: white;
+  padding-inline: 25px;
+	padding-block-start: 25px;
+	font-family: 'Cygre', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.playersCount {
+  display: flex;
+  align-items: center;
+	justify-content: center;
+	gap: 5.5px;
+	border-radius: 10px;
+	background: #EEEEEE;
+	padding: 7.5px 13px 7.5px 13.5px;
+	> span {
+		color: #101010;
+		font-weight: bold;
+		font-size: 13.5px;
+	}
+}
+
+.avatars img {
+		padding: 0;
+		margin: 0;
+		width: 15px;
+		height: 15px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    margin-left: -1.5px;
+}
+
+.avatars img:first-child {
+  margin-left: 0;
+}
+
+
+.clanLogoWrapper {
+  margin-top: 20.25px;
+}
+
+.clanLogo {
+  width: 113px;
+  height: 113.75px;
+}
+
+.clanName {
+	font-weight: bold;
+  font-size: 32px;
+	color: #EEEEEE;
+}
+
+.clanNameContainer {
+	margin-top: 14.25px;
+	display: grid;
+  grid-template-columns: 1fr auto;
+	align-items: center;
+	gap: 4.5px;
+  > .link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #DEDBFF;
+    font-size: 14.5px;
+    font-weight: 500;
+    > img {
+      width: 17px;
+      height: 17px;
+      object-fit: contain;
+      object-position: center;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+  } 
+}
+
+.totalScore {
+  display: flex;
+  flex-direction: column;
+  > p {
+    font-weight: normal;
+    font-size: 13.5px;
+  }
+}
+
+.leagueName {
+  font-size: 14px;
+  color: #ffd700;
+}
+
+.joinButton {
+  background: #ff7f00;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.joinButton:hover {
+  background: #e66b00;
+}
+
+.timeToggle {
+  margin-top: 35px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: 100%;
+  padding-inline: 10px;
+  padding-block: 6px;
+  border-radius: 7.5px;
+  background-color: rgb(222, 219, 255, 0.04);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.timeToggle button {
+  border-radius: 5px;
+  width: 100%;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.active {
+  color: #101010;
+  background-color: #DEDBFF;
+}
+
+.inactive {
+  color: #EEEEEE;
+  background-color: transparent;
+}
+
+.playerAvatar {
+  width: 32.5px;
+  height: 32.5px;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
+/* .playerName {
+  flex-grow: 1;
+} */
+
+/* .playerScore {
+  margin-left: auto;
+} */
+
+.blockContainer {
+	margin-top: 16.75px;
+	width: 100%;
+	height: 85px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+	border-radius: 10px;
+  position: relative;
+}
+
+.firstBlock {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  /* gap: 28.5px; */
+  height: 100%;
+}
+
+.firstBlockLower {
+  margin-left: 10px;
+  border-radius: 10px;
+  height: 25px;
+}
+
+.scoreBlock {
+  display: flex;
+  align-items: start;
+  gap: 5.5px;
+}
+
+.firstBlockUpper {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+  background: rgb(238, 238, 238, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  padding-inline-start: 13px;
+}
+
+.secondBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  background: rgb(238, 238, 238, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  padding: 5.25px 6px 5.25px 6px;
+}
+
+.delete {
+	border-radius: 5px;
+	background: rgb(16, 16, 16, 0.2);
+	padding-block: 10px;
+	padding-inline: 48.5px;
+	color: #EEEEEE;
+	font-weight: bold;
+	font-size: 18px;
+	font-family: 'Cygre', sans-serif;
+  cursor: pointer;
+}
+
+.leave {
+  border-radius: 5px;
+	background: rgb(16, 16, 16, 0.2);
+	padding-block: 10px;
+	padding-inline: 51.5px;
+	color: #EEEEEE;
+	font-weight: bold;
+	font-size: 18px;
+	font-family: 'Cygre', sans-serif;
+  cursor: pointer;
+}
+
+.join {
+  border-radius: 5px;
+	background: #DEDBFF;
+	padding-block: 10px;
+	padding-inline: 57.5px;
+	color: #101010;
+	font-weight: bold;
+	font-size: 18px;
+	font-family: 'Cygre', sans-serif;
+  cursor: pointer;
+}
+
+.upperBlock {
+  width: 100%;
+  height: 28px;
+  position: absolute;
+  top: 12.5px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: start;
+  gap: 4px;
+  padding-inline: 18px;
+  z-index: 2;
+}
+
+.infoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 275px;
+  margin-bottom: 8px;
+}
+
+.infoContainer:last-child {
+  align-items: flex-start;
+}
+
+.league {
+  display: flex;
+  align-items: center;
+  gap: 1.58px;
+  > img {
+    width: 11.42px;
+    height: 12.7px;
+  }
+  > p {
+    font-weight: 500;
+    font-size: 16.25px;
+  }
+}
+
+.logo {
+  width: 15.5px;
+  height: 15.5px;
+}
+
+.vector {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.score {
+  font-weight: bold;
+  font-size: 19.5px;
+}
+
+.floatingContainer {
+	font-family: 'Cygre', sans-serif;
+  position: fixed;
+  bottom: 13.5px;
+  left: 50%;
+  transform: translateX(-50%);
+	width: calc(100% - 50px);
+  padding: 6.75px 10px 6.5px 10px;
+  background: rgb(16, 16, 16, 0.3); /* Фоновый цвет кнопки */
+  color: #101010; /* Цвет текста кнопки */
+  border: none; /* Удалить границу кнопки */
+  border-radius: 5px; /* Закругленные углы */
+  font-size: 18px; /* Размер шрифта */
+	font-weight: bold; /* Жирный шрифт */
+  cursor: pointer; /* Курсор в виде руки при наведении */
+  z-index: 1000; /* Поверх всего контента */
+	transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.floating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.floatingContainer:active {
+	background-color: rgba(48, 48, 48, 0.001); /* Цвет кнопки при нажатии */
+}
+
+.aboutInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 7.25px;
+  > h1 {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #EEEEEE;
+    > span {
+      color: #AAAAAA;
+    }
+  }
+  > p {
+    color: #AAAAAA;
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+}
+
+.vector1 {
+  margin-top: 5px;
+  width: 9.5px;
+  height: 9.5px;
+}
+
+.balance {
+  display: flex;
+  gap: 2.5px;
+  align-items: center;
+  > p {
+    color: #EEEEEE;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+}
+
+.noClanLogo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  > img {
+    width: 60px;
+    height: 60px;
+  }
+  > p {
+    font-size: 14px;
+    color: #808088;
+    font-weight: 500;
+  }
+}

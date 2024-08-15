@@ -1,0 +1,10 @@
+.wrapper {
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #948aff 0%, #040033 100%);
+  border-radius: 50%;
+  outline: 1px solid var(--gray-border);
+}

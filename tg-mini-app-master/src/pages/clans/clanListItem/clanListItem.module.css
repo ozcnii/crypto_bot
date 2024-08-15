@@ -1,0 +1,68 @@
+.clanListItem {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	width: 100%;
+	align-items: center;
+	gap: 10px;
+	height: 55px;
+	background: rgb(238, 238, 238, 0.08);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border-radius: 10px;
+	padding: 6px 12px 6px 9px;
+}
+
+.logoContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: rgb(238, 238, 238, 0.08);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border-radius: 10px;
+	width: 42.5px;
+	height: 42.5px;
+}
+
+.clanInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.clanName {
+	font-weight: 500;
+	font-size: 15px;
+}
+
+.league {
+	display: flex;
+	gap: 3px;
+	> p {
+		color: #AAAAAA;
+		font-weight: 500;
+		font-size: 11px;
+	}
+	> img {
+		width: 11px;
+		height: 11px;
+	}
+}
+
+.arrowRight {
+  cursor: pointer;
+  border: none;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2.5px;
+  background: transparent;
+}
+
+.logo {
+	width: 25px;
+	height: 25px;
+}

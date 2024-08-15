@@ -1,0 +1,1 @@
+export const SERVER_URL = "https://collar-swedish-any-discuss.trycloudflare.com/api/v.1.0";

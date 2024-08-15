@@ -1,0 +1,47 @@
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	background-color: #000000;
+	overflow: hidden;
+	touch-action: none;
+}
+
+.spinner {
+	width: 64px;
+	height: 64px;
+	opacity: 0;
+	animation: appear 0.2s linear forwards;
+	animation-delay: 1s;
+}
+
+.spinner .track {
+	fill: #1c1c1e;
+}
+
+.spinner .rotate {
+	transform-origin: 50% 50%;
+	animation: rotation 3s linear infinite;
+	fill: #dddddd;
+}
+
+@keyframes rotation {
+	0% {
+		transform: rotate(0turn);
+	}
+
+	100% {
+		transform: rotate(1turn);
+	}
+}
+
+@keyframes appear {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}

@@ -1,0 +1,1 @@
+export { BoosterSwiperCard } from './boosterSwiperCard'
