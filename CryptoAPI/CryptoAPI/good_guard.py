@@ -11,7 +11,7 @@ max_time_request_seconds = 60
 
 # SECRETS Keys
 SECRET_KEY = 'HDA-32'
-API_KEY = "7210647842:AAHFh8Thc771JXYvS-kv-SYbypMWgYHeqWs"
+API_KEY = ""
 BOT_ID = "7210647842"
 BOT_LINK = "https://t.me/aenolabsbot"
 
