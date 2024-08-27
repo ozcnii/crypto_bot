@@ -8,7 +8,7 @@ import string
 from os import getenv
 
 TOKEN_TELEGRAM_BOT = getenv("TELEGRAM_API_TOKEN")
-API_ENDPOINT_URL = f'http://127.0.0.1:8080'
+API_ENDPOINT_URL = f'http://backend:8080'
 bot = TeleBot(TOKEN_TELEGRAM_BOT)
 
 @bot.message_handler(commands=['start'])
