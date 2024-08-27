@@ -6,11 +6,12 @@ from good_guard import endpoint_url_bucket, region_bucket, access_key_bucket, se
 from botocore.client import Config
 
 s3 = boto3.client(
-    's3',
-    endpoint_url=endpoint_url_bucket,
-    region_name=region_bucket,
-    aws_access_key_id=access_key_bucket,
-    aws_secret_access_key=secret_access_key_bucket,
+  's3',
+  endpoint_url=endpoint_url_bucket,
+  region_name=region_bucket,
+  aws_access_key_id=access_key_bucket,
+  aws_secret_access_key=secret_access_key_bucket,
+  config=Config(signature_version='s3v4')
 )
 
 async def upload_avatar(file_content: bytes, original_filename: str) -> str:
