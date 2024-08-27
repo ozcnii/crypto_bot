@@ -25,16 +25,6 @@ jobs:
             fi
           "
 
-      - name: Create .env file
-        run: |
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-          echo "TELEGRAM_API_TOKEN=${{ secrets.TELEGRAM_API_TOKEN }}" >> .env
-          echo "COINMARKETCAP_API_KEY=${{ secrets.COINMARKETCAP_API_KEY }}" >> .env       # Исправлено: удален лишний пробел
-          echo "MINIO_ROOT_USER=${{ secrets.MINIO_ROOT_USER }}" >> .env
-          echo "MINIO_ROOT_PASSWORD=${{ secrets.MINIO_ROOT_PASSWORD }}" >> .env
-
       - name: Connect and Pull
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout main && git pull && sudo docker compose -f docker-compose.yaml -p crypto down && sudo docker compose -f docker-compose.yaml -p crypto up -d --build"
