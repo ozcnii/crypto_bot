@@ -6,12 +6,9 @@ from telebot import types
 import random
 import string
 from os import getenv
-from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(find_dotenv())
-
-TOKEN_TELEGRAM_BOT = getenv("TOKEN_TELEGRAM_BOT")
-API_ENDPOINT_URL = getenv("API_ENDPOINT_URL")
+TOKEN_TELEGRAM_BOT = getenv("TELEGRAM_API_TOKEN")
+API_ENDPOINT_URL = f'http://127.0.0.1:8080'
 bot = TeleBot(TOKEN_TELEGRAM_BOT)
 
 @bot.message_handler(commands=['start'])
@@ -51,23 +48,13 @@ def handle_start_command(message):
     api_key = data.get('token', '')
 
     keyboard = types.InlineKeyboardMarkup()
-    webAppInfo = types.WebAppInfo(f"https://sure-marmot-unduly.ngrok-free.app?api_key={api_key}")  # заменить на адрес
+    webAppInfo = types.WebAppInfo(f"https://aenolabs?api_key={api_key}")  # заменить на адрес
     button_play = types.InlineKeyboardButton("💵 Начать играть", web_app=webAppInfo)
     button_open_group = types.InlineKeyboardButton("👀 Подписаться на канал", url="https://google.com")  # заменить на адрес
     keyboard.row(button_play)
     keyboard.row(button_open_group)
 
     bot.send_message(user_id, "Добро пожаловать в крипто бота. Это техническое сообщение, его надо будет заменить. Аккаунт был добавлен в базу данных", reply_markup=keyboard)
-    
-@bot.message_handler(commands=['stop'])
-def handle_stop_command(message):
-    user_id = message.from_user.id
-    keyboard = types.InlineKeyboardMarkup()
-    webAppInfo = types.WebAppInfo(f"https://6862-188-186-12-41.ngrok-free.app")  # заменить на адрес
-    button_play = types.InlineKeyboardButton("💵 Начать играть", web_app=webAppInfo)
-    keyboard.row(button_play)
-    bot.send_message(user_id, "Добро пожаловать в крипто бота. Это техническое сообщение, его надо будет заменить. Аккаунт был добавлен в базу данных", reply_markup=keyboard)
-
 
 if __name__ == '__main__':
     try:

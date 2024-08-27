@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Enum as SQLAEnum
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Enum as SQLAEnum, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from enum import Enum
@@ -49,6 +49,25 @@ class Users(DataBase):
     league = relationship("League", back_populates="users", foreign_keys=[league_id])
     referrer = relationship("Users", remote_side=[id])  # Связь с пользователем, который пригласил этого пользователя
     user_tasks = relationship("UserTask", back_populates="user")
+    open_orders = relationship("Order", back_populates="user")
+    
+class Order(DataBase):
+    __tablename__ = "orders"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    contract_pair = Column(String)  # Trading pair like TON/USD
+    entry_rate = Column(Float)  # Entry rate at the time of order creation
+    exit_rate = Column(Float, nullable=True)  # Exit rate when order is closed
+    amount = Column(Float)  # Amount in MainCoin
+    direction = Column(String)  # "long" or "short"
+    leverage = Column(Integer, default=1)  # Leverage (default is 1x, meaning no leverage)
+    status = Column(String, default="open")  # "open", "closed", "pending"
+    created_at = Column(TIMESTAMP(timezone=True), default=datetime.now(pytz.timezone('Europe/Moscow')))
+    closed_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    
+    # RELATIONSHIPS
+    user = relationship("Users", back_populates="open_orders", foreign_keys=[user_id])
 
 class Clans(DataBase):
     __tablename__ = "clans"

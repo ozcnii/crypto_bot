@@ -24,6 +24,7 @@
   animation: slideUp 0.3s ease-out;
   -webkit-transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
+  overflow-y: auto;
 }
 
 .background {

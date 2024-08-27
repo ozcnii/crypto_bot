@@ -11,7 +11,7 @@ def parse_telegram_link(link: str) -> str | None:
 	return None
 
 async def check_bot_in_chat_or_group(link: str) -> bool:
-  url = f"https://api.telegram.org/bot{GoodGuard.API_KEY}/getChatMember"
+  url = f"https://api.telegram.org/bot{GoodGuard.TELEGRAM_API_TOKEN}/getChatMember"
   chat_id = parse_telegram_link(link)
   params = {
 		"chat_id": chat_id,
@@ -22,6 +22,6 @@ async def check_bot_in_chat_or_group(link: str) -> bool:
   return data.get("ok") and data.get("result", {}).get("status") in ["member", "creator", "administrator"]
 
 async def download_file(file_path: str) -> bytes:
-	url = f"https://api.telegram.org/file/bot{GoodGuard.API_KEY}/{file_path}"
+	url = f"https://api.telegram.org/file/bot{GoodGuard.TELEGRAM_API_TOKEN}/{file_path}"
 	response = requests.get(url)
 	return response.content

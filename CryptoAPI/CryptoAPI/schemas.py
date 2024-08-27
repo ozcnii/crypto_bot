@@ -65,3 +65,9 @@ class UserModel(BaseModel):
 
 class UserTokenModel(BaseModel):
     token: str
+    
+class OrderCreateModel(BaseModel):
+    contract_pair: str
+    direction: str
+    amount: float
+    leverage: int = 1

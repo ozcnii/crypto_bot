@@ -1,15 +1,22 @@
-# Dockerfile for Vite Frontend
-FROM node:20.16.0-alpine3.20
+FROM node as vite-app
 
 WORKDIR /app
-
-# Удаление node_modules и package-lock.json перед установкой зависимостей
-RUN rm -rf node_modules package-lock.json
-
-COPY package*.json ./
-
-RUN npm install --legacy-peer-deps
-
 COPY . .
 
-CMD ["npm", "run", "dev"]
+RUN ["npm", "i", "--legacy-peer-deps"]
+RUN ["npm", "run", "build"]
+
+FROM nginx:alpine
+
+WORKDIR /usr/share/nginx/
+
+RUN rm -rf html
+RUN mkdir html
+
+WORKDIR /
+
+COPY --chmod=765 --from=vite-app ./app/dist /usr/share/nginx/html
+
+EXPOSE 3000
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

@@ -6,7 +6,7 @@ from starlette.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update, event
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 
 # GOODGUARD
 import Database
@@ -19,8 +19,11 @@ from GoodGuard.tokensFabric import *
 
 # TOOLS
 from Tools.ContentUtils import serialize_json_user_token
-from schemas import UserModel, UserTokenModel
+from Tools.dex import get_current_rate, calculate_pnl
+from schemas import UserModel, OrderCreateModel
 import asyncio
+from datetime import datetime
+import pytz
 
 router = APIRouter()
 
@@ -30,6 +33,7 @@ League = Database.League
 TaskType = Database.TaskType
 Task = Database.Task
 UserTask = Database.UserTask
+Orders = Database.Order
 
 async def update_task_progress(user_id: int, task_type: TaskType, increment_value: int, db: AsyncSession):
     # Найти активное задание для пользователя по типу задания
@@ -61,7 +65,7 @@ async def update_tasks_and_invite_friends(
     # Обновление задания "invite_friends"
     if referrer:
         task_result = await session.execute(
-            select(UserTask).filter(UserTask.user_id == referrer.id, UserTask.is_completed == False)
+            select(UserTask).filter(UserTask.user_id == referrer.id, UserTask.completed == False)
         )
         user_tasks = task_result.scalars().all()
 
@@ -88,22 +92,24 @@ async def update_avatar_and_league(
     result = await session.execute(select(Users).filter(Users.id == user_id))
     user = result.scalars().first()
     
-    existing_avatar_url = user.avatar_url
-    file_content = await download_file(file_path)
-    if existing_avatar_url:
-        existing_avatar_hash = get_s3_file_etag(existing_avatar_url)
-        new_avatar_hash = hashlib.md5(file_content).hexdigest()
+    existing_avatar_hash = user.avatar_hash
+    if existing_avatar_hash:
+        file_content = await download_file(file_path)
+        new_avatar_hash = hashlib.sha256(file_path.encode('utf-8')).hexdigest()
         if existing_avatar_hash != new_avatar_hash:
-            await delete_avatar(existing_avatar_url)
-            avatar_url = await upload_avatar(file_content, f"user_avatars/{user_id}_{file_path.split('/')[-1]}")
+            await delete_avatar(existing_avatar_hash)  # Удалить старый аватар из S3
+            avatar_hash = await upload_avatar(file_content, file_path)
             await session.execute(
-                update(Users).filter(Users.id == user_id).values({Users.avatar_url: avatar_url})
+                update(Users).filter(Users.id == user_id).values({Users.    avatar_hash: avatar_hash})
             )
             await session.commit()
+        else:
+            avatar_hash = existing_avatar_hash
     else:
-        avatar_url = await upload_avatar(file_content, f"user_avatars/{user_id}_{file_path.split('/')[-1]}")
+        file_content = await download_file(file_path)
+        avatar_hash = await upload_avatar(file_content, file_path)
         await session.execute(
-            update(Users).filter(Users.id == user_id).values({Users.avatar_url: avatar_url})
+            update(Users).filter(Users.id == user_id).values({Users.avatar_hash:    avatar_hash})
         )
         await session.commit()
 
@@ -199,7 +205,11 @@ async def get_user_tasks_v2(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
 
     async with db as session:
         result = await session.execute(
@@ -240,7 +250,10 @@ async def complete_user_task_v2(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
 
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user).options(selectinload(Users.user_tasks).selectinload(UserTask.task)))
@@ -290,7 +303,10 @@ async def get_v2_current_user_fellows(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
 
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -323,8 +339,11 @@ async def get_v2_current_user(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
-    
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
         person = result.scalars().first()
@@ -347,7 +366,11 @@ async def get_v2_current_user_clan(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -378,7 +401,12 @@ async def create_v2_clan(
     Authorization: str = Header(...),
     db: AsyncSession = Depends(Database.get_session)
 ):
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
@@ -451,7 +479,12 @@ async def delete_v2_clan(
     Authorization: str = Header(...),
     db: AsyncSession = Depends(Database.get_session)
 ):
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
@@ -495,7 +528,12 @@ async def clan_leave(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
     
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
         person = result.scalars().first()
@@ -536,7 +574,12 @@ async def clan_join(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user_token = Authorization.split(" ")[1]
+    try:
+        user_token = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user_token))
         person = result.scalars().first()
@@ -591,7 +634,11 @@ async def get_v2_current_user_clan_list(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -632,7 +679,11 @@ async def get_v2_clan_list(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -669,7 +720,11 @@ async def get_v2_clan_info(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
     
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
 
     async with db.begin():  # Используйте контекстное управление транзакциями
         result = await db.execute(select(Users).filter(Users.token == user))
@@ -717,7 +772,11 @@ async def get_v2_current_user_league(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -747,7 +806,11 @@ async def get_v2_league_info(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -777,7 +840,11 @@ async def get_v2_league_info_by_name(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -807,7 +874,11 @@ async def get_v2_league_info_by_name_users(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -850,7 +921,11 @@ async def get_v2_league_info_by_name_clans(
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-    user = Authorization.split(" ")[1]
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
     
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == user))
@@ -881,3 +956,196 @@ async def get_v2_league_info_by_name_clans(
             })
             
         return clans_list
+    
+@router.post("/api/v.1.0/orders/create", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def post_v2_orders_create(
+    client_id: int,
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session),
+    order: OrderCreateModel = Body(...)
+):
+    # Проверка client_id
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    # Извлечение и проверка токена авторизации
+    try:
+        token = Authorization.split(" ")[1]
+    except IndexError:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    # Поиск пользователя по токену
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == token))
+        person = result.scalars().first()
+        
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+        
+        if person.balance < order.amount:
+            return JSONResponse(status_code=409, content={"message": "Недостаточно средств"})
+        
+        result = await session.execute(select(Orders).filter(Orders.user_id == person.id, Orders.status == "open"))
+        orders = result.scalars().all()
+        
+        if len(orders) > 0:
+            return JSONResponse(status_code=409, content={"message": "У пользователя уже есть открытый ордер"})
+        
+        entry_rate = get_current_rate(order.contract_pair)
+        
+        # Создание нового ордера
+        new_order = Orders(
+            user_id=person.id,
+            contract_pair=order.contract_pair,
+            direction=order.direction,
+            amount=order.amount,
+            entry_rate=entry_rate,
+            leverage=order.leverage,
+            status="open"
+        )
+
+        # Добавление и сохранение ордера в базу данных
+        db.add(new_order)
+        await db.commit()
+        return JSONResponse(status_code=201, content={"message": "Ордер создан", "order_id": new_order.id})
+    
+@router.get("/api/v.1.0/orders/list", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def get_v2_orders_list(
+    client_id: int,
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session)
+):
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+    
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+        result = await session.execute(select(Orders).filter(Orders.user_id == person.id))
+        orders = result.scalars().all()
+        
+        orders_list = []
+        
+        for order in orders:
+            orders_list.append({
+                "id": order.id,
+                "contract_pair": order.contract_pair,
+                "direction": order.direction,
+                "amount": order.amount,
+                "entry_rate": order.entry_rate,
+                "leverage": order.leverage,
+                "status": order.status
+            })
+            
+        return orders_list
+    
+@router.get("/api/v.1.0/orders/current/{contract_pair}", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def get_v2_orders_current(
+    client_id: int,
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session),
+    contract_pair: str = Path(...)
+):
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+    
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+        result = await session.execute(select(Orders).filter(Orders.user_id == person.id, Orders.status == "open", Orders.contract_pair == contract_pair))
+        orders = result.scalars().all()
+        
+        if len(orders) == 0:
+            return JSONResponse(status_code=404, content={"message": "Нет открытых ордеров"})
+        
+        order = orders[0]
+        
+        pairs = {
+            'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN': 'NOTUSDT',
+            'EQA-X_yo3fzzbDbJ_0bzFWKqtRuZFIRa1sJsveZJ1YpViO3r': 'TONUSDT',
+            '0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b': 'ETHUSDT',
+            '0xa43fe16908251ee70ef74718545e4fe6c5ccec9f': 'PEPEUSDT',
+            '0x6aa9c4eda3bf8ac038ad5c243133d6d25aa9cc73': 'BTCUSDT',
+            'DSUvc5qf5LJHHV5e2tD184ixotSnCnwj7i4jJa4Xsrmt': 'SOLUSDT'
+        }
+        print(order.id)
+        return {
+            "id": order.id,
+            "contract_pair": pairs.get(order.contract_pair),
+            "direction": order.direction,
+            "amount": order.amount,
+            "entry_rate": order.entry_rate,
+            "leverage": order.leverage,
+            "status": order.status
+        }
+    
+@router.post("/api/v.1.0/orders/close/{order_id}", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def post_v2_orders_close(
+    client_id: int,
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session),
+    order_id: int = Path(...)
+):
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+    
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+        result = await session.execute(select(Orders).filter(Orders.id == order_id, Orders.user_id == person.id))
+        order = result.scalars().first()
+
+        if order is None or order.status != "open":
+            return JSONResponse(status_code=404, content={"message": "Ордер не найден или уже закрыт"})
+        
+        exit_rate = get_current_rate(order.contract_pair)
+        
+        order.exit_rate = exit_rate
+        order.closed_at = datetime.now()
+        order.status = "closed"
+        
+        pnl = calculate_pnl(order, exit_rate)
+        person.balance += pnl
+        
+        await db.commit()
+        return JSONResponse(status_code=200, content={"message": "Ордер закрыт", "pnl": pnl})

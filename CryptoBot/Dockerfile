@@ -7,4 +7,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . /codebase  
 
-CMD [ "python", "main.py" ]
+CMD ["python", "main.py"]

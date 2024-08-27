@@ -47,7 +47,7 @@ async def upload_user_avatar(
         if not check_client_id(client_id):
             return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
 
-        avatar_url = await upload_avatar(file.file.read(), f"user_avatars/{person.id}_{file.filename}")
+        avatar_url = await upload_avatar(file.file.read(), file.filename)
         if avatar_url:
             person.avatar_url = avatar_url
             db.commit()
@@ -85,7 +85,7 @@ async def upload_clan_logo(
         if clan.owner_id != person.id:
             return JSONResponse(status_code=403, content={"message": "У вас нет прав на изменение аватарки этого клана"})
         
-        logo_url = await upload_avatar(file.file.read(), f"clan_logos/{clan.id}_{file.filename}")
+        logo_url = await upload_avatar(file.file.read(), file.filename)
         if logo_url:
             clan.logo_url = logo_url
             db.commit()

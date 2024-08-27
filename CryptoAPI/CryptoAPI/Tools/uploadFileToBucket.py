@@ -1,4 +1,6 @@
 from io import BytesIO
+import hashlib
+import os
 import boto3
 from good_guard import endpoint_url_bucket, region_bucket, access_key_bucket, secret_access_key_bucket, bucket_name
 from botocore.client import Config
@@ -12,13 +14,21 @@ s3 = boto3.client(
     config=Config(signature_version='s3v4')
 )
 
-async def upload_avatar(file_content: bytes, object_name: str) -> str:
-  try:
-    file = BytesIO(file_content)  # Преобразование байтового содержимого в объект файла
-    s3.upload_fileobj(file, bucket_name, object_name)
-    return f"{endpoint_url_bucket}/{bucket_name}/{object_name}"
-  except Exception as e:
-    print(e)
+async def upload_avatar(file_content: bytes, original_filename: str) -> str:
+    try:
+      # Генерация хэша от имени файла
+      file_hash = hashlib.sha256(original_filename.encode('utf-8')).hexdigest()
+      object_name = f"{file_hash}{os.path.splitext(original_filename)[1]}"  #Добавляем расширение файла
+      
+      # Загрузка файла на S3
+      file = BytesIO(file_content)
+      s3.upload_fileobj(file, bucket_name, object_name)
+      
+      # Возвращаем хэш для сохранения в базе данных
+      return file_hash
+    except Exception as e:
+      print(e)
+      raise
   
 async def delete_avatar(avatar_url: str) -> None:
   object_key = avatar_url.replace(f"{endpoint_url_bucket}/{bucket_name}/", "")

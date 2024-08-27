@@ -26,12 +26,6 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZ2UiOjAsImVtYWlsIjoic3RyaW5nQGdtYWlsLmN
 import requests
 import json
 
-# # Установите свой API ключ от CoinMarketCap
-# API_KEY = "36fe7774-2dc3-4a45-a63b-4d5ea8a4d2da"
-#
-# # Установите идентификатор интересующей вас криптовалюты
-# CRYPTO_ID = "bitcoin"
-#
 # # Формирование URL запроса
 # url = f"https://api.coinmarketcap.com/data-api/v3/cryptocurrency/detail/chart?id={CRYPTO_ID}&range=1d&chartType=prices"
 #

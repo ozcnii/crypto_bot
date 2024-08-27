@@ -12,6 +12,7 @@ from starlette.responses import JSONResponse
 
 import GoodGuard
 from database import Base, create_async_engine, AsyncSession, get_db, engine
+from good_guard import DATABASE_URL
 
 # GOODGUARD
 from GoodGuard import *
@@ -40,7 +41,7 @@ tags_metadata = [
 
 @contextlib.asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    Database.db_manager.init("postgresql+asyncpg://cryptouser:password@localhost:5432/cryptodatabase")
+    Database.db_manager.init(DATABASE_URL)
     yield
     await Database.db_manager.close()
 

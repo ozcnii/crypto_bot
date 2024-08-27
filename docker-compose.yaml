@@ -1,77 +1,106 @@
 services:
-  frontend:
-    build:
-      context: ./tg-mini-app-master
-      dockerfile: Dockerfile
-    restart: always
+  postgresql:
+    image: postgres
     environment:
-      - CHOKIDAR_USEPOLLING=true
-    ports: 
-      - 5173:5173
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - 5432:5432
     volumes:
-      - ./tg-mini-app-master:/app
-      - node_modules:/app/node_modules
+      - postgresql:/var/lib/postgresql/data
     networks:
       network:
-        ipv4_address: 244.178.44.101
+        ipv4_address: 67.16.1.77
 
   backend:
+    restart: always
     build:
       context: ./CryptoAPI
       dockerfile: Dockerfile
-    restart: always
-    ports: 
+    environment:
+      - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
+      - COINMARKETCAP_API_KEY=${COINMARKETCAP_API_KEY}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
       - 8080:8080
-    volumes:
-      - ./CryptoAPI/CryptoAPI/Database:/app/Database
+    depends_on:
+      - postgresql
     networks:
       network:
-        ipv4_address: 244.178.44.102
+        ipv4_address: 67.16.1.154
 
-  telegram_bot:
-    build:
-      context: ./CryptoBot
-      dockerfile: Dockerfile
+  frontend:
+    build: ./tg-mini-app-master
     restart: always
-    environment:
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    ports:
+      - 3000:3000
+    volumes:
+      - './tg-mini-app-master/nginx/nginx.conf:/etc/nginx/nginx.conf'
     depends_on:
       - backend
-    volumes:
-      - ./CryptoBot:/codebase
-      - "storage:/storage"
     networks:
       network:
-        ipv4_address: 244.178.44.111
-  
+        ipv4_address: 67.16.1.64
+
+  gateway:
+    build: ./gateway
+    ports:
+      - 9088:9088
+      - 443:443
+    restart: always
+    volumes:
+      - './gateway/nginx/nginx.conf:/etc/nginx/nginx.conf'
+      - '/etc/letsencrypt/live/aenolabs.com/cert.pem:/etc/nginx/certs/cert.pem'
+      - '/etc/letsencrypt/live/aenolabs.com/chain.pem:/etc/nginx/certs/chain.pem'
+      - '/etc/letsencrypt/live/aenolabs.com/fullchain.pem:/etc/nginx/certs/fullchain.pem'
+      - '/etc/letsencrypt/live/aenolabs.com/privkey.pem:/etc/nginx/certs/privkey.pem'
+    depends_on:
+      - backend
+      - minio
+      - frontend
+    networks:
+      network:
+        ipv4_address: 67.16.1.7
+
   minio:
     image: minio/minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
       - 9000:9000
       - 9001:9001
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
     volumes:
-      - ./minio-data:/data
-    command: server /data
+      - minio_data:/data
+      - minio_config:/root/.minio
+    command: server /data --console-address ":9001"
+    networks:
+      network:
+        ipv4_address: 67.16.0.1
 
-  ssh_tunnels:
-    build:
-      context: .
-      dockerfile: Dockerfile.ssh_tunnels
-    volumes:
-      - ~/.ssh/serveo_key:/root/.ssh/serveo_key
-    entrypoint: /bin/sh /serveo.sh
+  bot:
+    build: ./CryptoBot
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - TELEGRAM_API_TOKEN=${TELEGRAM_API_TOKEN}
+    networks:
+      network:
+        ipv4_address: 67.16.1.153
 
 volumes:
-  node_modules: {}
-  storage: {}
-  minio-data: {}
+  postgresql:
+  minio_data:
+  minio_config:
 
 networks:
   network:
     driver: bridge
     ipam:
       config:
-        - subnet: 244.178.0.0/16
+        - subnet: 67.16.0.0/16
+          gateway: 67.16.0.1
