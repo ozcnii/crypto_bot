@@ -10,6 +10,6 @@ COPY . .
 
 RUN chmod -R 777 /app
 
-CMD ["sh", "-c", "python CryptoAPI/settings.py && alembic upgrade head && python CryptoAPI/main.py"]
+CMD ["sh", "-c", "python CryptoAPI/settings.py && alembic -c CryptoAPI/alembic.ini upgrade head && python CryptoAPI/main.py"]
 
 EXPOSE 8080
