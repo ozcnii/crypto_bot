@@ -11,7 +11,6 @@ s3 = boto3.client(
     region_name=region_bucket,
     aws_access_key_id=access_key_bucket,
     aws_secret_access_key=secret_access_key_bucket,
-    config=Config(signature_version='s3v4')
 )
 
 async def upload_avatar(file_content: bytes, original_filename: str) -> str:
