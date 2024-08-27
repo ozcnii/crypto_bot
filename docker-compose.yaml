@@ -79,7 +79,7 @@ services:
     command: server /data --console-address ":9001"
     networks:
       network:
-        ipv4_address: 67.16.0.1
+        ipv4_address: 67.16.1.152
 
   bot:
     build: ./CryptoBot
