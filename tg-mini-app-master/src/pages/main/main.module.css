@@ -1,12 +1,12 @@
 .main {
   display: flex;
   flex-direction: column;
-  background-image: url("img/backgrounds/mainBackground.svg");
+  background-image: url('/img/backgrounds/mainBackground.svg');
   background-size: cover;
   padding-block-start: 50px;
   padding-block-end: 55px;
   padding-inline: 25px;
-  color: #EEEEEE;
+  color: #eeeeee;
   min-height: 100vh;
 }
 
@@ -36,7 +36,7 @@
   width: 19.25px;
   height: 19.25px;
   border-radius: 3px;
-  background: #EEEEEE;
+  background: #eeeeee;
   color: #101010;
   font-size: 15px;
   font-weight: bold;
@@ -52,7 +52,7 @@
   align-items: center;
   position: fixed;
   width: calc(100% - 50px);
-  bottom: 45px; 
+  bottom: 45px;
 }
 
 .footerEnergy {
@@ -115,7 +115,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
   height: 100%;
   padding-block: 10px;
   padding-inline: 10.75px;
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
   padding-block: 10px;
   padding-inline: 16.75px;
 }
@@ -158,7 +158,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
   padding-block: 10px;
   padding-inline: 16.25px;
   border-top-right-radius: 9px;
@@ -175,9 +175,9 @@
 }
 
 .active {
-  background: linear-gradient(to bottom right, #948AFF, #040033);
+  background: linear-gradient(to bottom right, #948aff, #040033);
   > p {
-    color: #FFFFFF;
+    color: #ffffff;
   }
 }
 

@@ -1,87 +1,87 @@
 .container {
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		/* align-items: center; */
-		background-image: url('img/backgrounds/fellowsBackground.svg');
-		background-repeat: no-repeat;
-		background-position: center;
-		background-size: cover;
-		padding-block-start: 55px;
-		padding-inline-start: 25px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  background-image: url('/img/backgrounds/fellowsBackground.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  padding-block-start: 55px;
+  padding-inline-start: 25px;
 }
 
 .content {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 5px;
-	padding-inline-end: 25px;
-	> h1 {
-		font-weight: bold;
-		font-size: 34px;
-	}
-	> p {
-		text-align: center;
-		font-weight: 500;
-		font-size: 12px;
-	}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding-inline-end: 25px;
+  > h1 {
+    font-weight: bold;
+    font-size: 34px;
+  }
+  > p {
+    text-align: center;
+    font-weight: 500;
+    font-size: 12px;
+  }
 }
 
 .inviter {
-	margin-top: 27.5px;
-	padding-inline-end: 25px;
+  margin-top: 27.5px;
+  padding-inline-end: 25px;
 }
 
 .clanListItem {
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	width: 100%;
-	align-items: center;
-	gap: 10px;
-	height: 55px;
-	background: rgb(238, 238, 238, 0.08);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
-	border-radius: 10px;
-	padding: 6px 12px 6px 9px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  height: 55px;
+  background: rgb(238, 238, 238, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 10px;
+  padding: 6px 12px 6px 9px;
 }
 
 .logoContainer {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background: rgb(238, 238, 238, 0.08);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
-	border-radius: 10px;
-	width: 42.5px;
-	height: 42.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(238, 238, 238, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 10px;
+  width: 42.5px;
+  height: 42.5px;
 }
 
 .clanInfo {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .clanName {
-	font-weight: 500;
-	font-size: 15px;
+  font-weight: 500;
+  font-size: 15px;
 }
 
 .league {
-	display: flex;
-	gap: 3px;
-	> p {
-		color: #AAAAAA;
-		font-weight: 500;
-		font-size: 11px;
-	}
-	> img {
-		width: 11px;
-		height: 11px;
-	}
+  display: flex;
+  gap: 3px;
+  > p {
+    color: #aaaaaa;
+    font-weight: 500;
+    font-size: 11px;
+  }
+  > img {
+    width: 11px;
+    height: 11px;
+  }
 }
 
 .arrowRight {
@@ -98,68 +98,68 @@
 }
 
 .logo {
-	width: 25px;
-	height: 25px;
+  width: 25px;
+  height: 25px;
 }
 
 .tasks {
-	margin-top: 25px;
-	display: flex;
-	flex-direction: column;
-	gap: 15px;
-	padding-inline-end: 25px;
-	> h1 {
-		font-weight: bold;
-		font-size: 20px;
-	}
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-inline-end: 25px;
+  > h1 {
+    font-weight: bold;
+    font-size: 20px;
+  }
 }
 
 .task {
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	width: 100%;
-	align-items: center;
-	gap: 10px;
-	height: 55px;
-	background: rgb(238, 238, 238, 0.08);
-	backdrop-filter: blur(16px);
-	-webkit-backdrop-filter: blur(16px);
-	border-radius: 10px;
-	padding: 6px 12px 6px 9px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  height: 55px;
+  background: rgb(238, 238, 238, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 10px;
+  padding: 6px 12px 6px 9px;
 }
 
 .taskCompleted {
-	background: rgb(238, 238, 238, 0.04);
-	> .logoContainer {
-		background: rgb(238, 238, 238, 0.04);
-	}
-	> .taskInfo span {
-		> p {
-			color: #948AFF;
-		}
-	}
+  background: rgb(238, 238, 238, 0.04);
+  > .logoContainer {
+    background: rgb(238, 238, 238, 0.04);
+  }
+  > .taskInfo span {
+    > p {
+      color: #948aff;
+    }
+  }
 }
 
 .taskInfo {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
-	> h2 {
-		color: #AAAAAA;
-		font-weight: 500;
-		font-size: 10px;
-	}
-	> span {
-		display: flex;
-		gap: 3px;
-		> p {
-			color: #EEEEEE;
-			font-weight: 500;
-			font-size: 14px;
-		}
-		> img {
-			width: 11px;
-			height: 11px;
-		}
-	}
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  > h2 {
+    color: #aaaaaa;
+    font-weight: 500;
+    font-size: 10px;
+  }
+  > span {
+    display: flex;
+    gap: 3px;
+    > p {
+      color: #eeeeee;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    > img {
+      width: 11px;
+      height: 11px;
+    }
+  }
 }

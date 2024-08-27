@@ -92,7 +92,7 @@ async def update_avatar_and_league(
     result = await session.execute(select(Users).filter(Users.id == user_id))
     user = result.scalars().first()
     
-    existing_avatar_hash = user.avatar_hash
+    existing_avatar_hash = user.avatar_url
     if existing_avatar_hash:
         file_content = await download_file(file_path)
         new_avatar_hash = hashlib.sha256(file_path.encode('utf-8')).hexdigest()

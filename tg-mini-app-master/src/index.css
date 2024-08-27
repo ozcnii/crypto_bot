@@ -1,9 +1,10 @@
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
   font-family: 'Cygre', sans-serif;
   font-weight: normal;
-  color: #EEEEEE;
+  color: #eeeeee;
   min-height: 100vh;
   overscroll-behavior-block: none;
 }
@@ -21,14 +22,14 @@ html, body {
 }
 
 :root {
-  --pirple: #948AFF;
-  --blue: #2929F9;
+  --pirple: #948aff;
+  --blue: #2929f9;
   --black: #101010;
   --white: #eeeeee;
-  --green: #39CD83;
-  --red: #EA3E3E;
+  --green: #39cd83;
+  --red: #ea3e3e;
 
-  --gray-border: rgba(238,	238, 238, 0.3);
+  --gray-border: rgba(238, 238, 238, 0.3);
 }
 
 .page {
