@@ -1,11 +1,11 @@
 import os
 
 # S3 Bucket
-endpoint_url_bucket = os.environ.get('endpoint_url_bucket')
-region_bucket = os.environ.get('region_bucket')
-access_key_bucket = os.environ.get('access_key_bucket')
-secret_access_key_bucket = os.environ.get('secret_access_key_bucket')
-bucket_name = os.environ.get('bucket_name')
+endpoint_url_bucket = 'https://aenolabs.com/bucket'
+region_bucket = 'eu-central-1'
+access_key_bucket = os.environ.get('MINIO_ROOT_USER')
+secret_access_key_bucket = os.environ.get('MINIO_ROOT_PASSWORD')
+bucket_name = 'aenolabsfiles'
 
 # SECRETS & VARS DATA
 max_requests = 600
