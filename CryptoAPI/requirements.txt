@@ -10,3 +10,4 @@ requests-cache
 httpx
 boto3
 python-multipart
+asyncpg
