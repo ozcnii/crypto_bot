@@ -1,7 +1,7 @@
 import os
 
 # S3 Bucket
-endpoint_url_bucket = 'https://aenolabs.com/bucket'
+endpoint_url_bucket = 'http://minio:9000'
 region_bucket = 'eu-central-1'
 access_key_bucket = os.environ.get('MINIO_ROOT_USER')
 secret_access_key_bucket = os.environ.get('MINIO_ROOT_PASSWORD')
