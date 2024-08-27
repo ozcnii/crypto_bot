@@ -100,7 +100,7 @@ async def update_avatar_and_league(
             await delete_avatar(existing_avatar_hash)  # Удалить старый аватар из S3
             avatar_hash = await upload_avatar(file_content, file_path)
             await session.execute(
-                update(Users).filter(Users.id == user_id).values({Users.    avatar_hash: avatar_hash})
+                update(Users).filter(Users.id == user_id).values({Users.    avatar_url: avatar_hash})
             )
             await session.commit()
         else:
@@ -109,7 +109,7 @@ async def update_avatar_and_league(
         file_content = await download_file(file_path)
         avatar_hash = await upload_avatar(file_content, file_path)
         await session.execute(
-            update(Users).filter(Users.id == user_id).values({Users.avatar_hash:    avatar_hash})
+            update(Users).filter(Users.id == user_id).values({Users.avatar_url: avatar_hash})
         )
         await session.commit()
 

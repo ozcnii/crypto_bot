@@ -48,7 +48,7 @@ def handle_start_command(message):
     api_key = data.get('token', '')
 
     keyboard = types.InlineKeyboardMarkup()
-    webAppInfo = types.WebAppInfo(f"https://aenolabs?api_key={api_key}")  # заменить на адрес
+    webAppInfo = types.WebAppInfo(f"https://aenolabs.com?api_key={api_key}")  # заменить на адрес
     button_play = types.InlineKeyboardButton("💵 Начать играть", web_app=webAppInfo)
     button_open_group = types.InlineKeyboardButton("👀 Подписаться на канал", url="https://google.com")  # заменить на адрес
     keyboard.row(button_play)
