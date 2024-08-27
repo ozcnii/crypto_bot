@@ -1,22 +1,23 @@
 import os
 
-# Путь к шаблону и конечному файлу
-template_path = "alembic.ini.template"
-output_path = "alembic.ini"
+template_path = "CryptoAPI/alembic.ini.template"
+output_path = "CryptoAPI/alembic.ini"
 
-# Чтение шаблона
-with open(template_path, "r") as template_file:
-    template_content = template_file.read()
+try:
+    with open(template_path, "r") as template_file:
+        template_content = template_file.read()
 
-# Подстановка переменных окружения
-output_content = template_content.format(
-    POSTGRES_USER=os.environ.get("POSTGRES_USER"),
-    POSTGRES_PASSWORD=os.environ.get("POSTGRES_PASSWORD"),
-    POSTGRES_DB=os.environ.get("POSTGRES_DB")
-)
+    output_content = template_content.format(
+        POSTGRES_USER=os.environ.get("POSTGRES_USER"),
+        POSTGRES_PASSWORD=os.environ.get("POSTGRES_PASSWORD"),
+        POSTGRES_DB=os.environ.get("POSTGRES_DB")
+    )
 
-# Запись сгенерированного файла
-with open(output_path, "w") as output_file:
-    output_file.write(output_content)
+    with open(output_path, "w") as output_file:
+        output_file.write(output_content)
 
-print(f"{output_path} generated successfully.")
+    print(f"{output_path} generated successfully.")
+except FileNotFoundError as e:
+    print(f"Error: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
