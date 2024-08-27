@@ -39,5 +39,8 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout main && git pull && sudo docker compose -f docker-compose.yaml -p crypto down && sudo docker compose -f docker-compose.yaml -p crypto up -d --build"
 
+      - name: Migrations
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && sudo docker compose -f docker-compose.yaml -p crypto exec backend alembic upgrade head"
+
       - name: Clean up
         run: rm -rf ~/.ssh
