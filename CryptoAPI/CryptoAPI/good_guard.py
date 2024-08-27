@@ -33,4 +33,4 @@ auth_email_password = "hda-32"
 
 # DATABASE
 
-DATABASE_URL = f'postgresql+asyncpg://{os.environ.get("POSTGRES_USER")}:{os.environ.get("POSTGRES_PASSWORD")}@0.0.0.0:5432/{os.environ.get("POSTGRES_DB")}'
+DATABASE_URL = f'postgresql+asyncpg://{os.environ.get("POSTGRES_USER")}:{os.environ.get("POSTGRES_PASSWORD")}@postgresql:5432/{os.environ.get("POSTGRES_DB")}'
