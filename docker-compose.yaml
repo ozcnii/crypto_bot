@@ -71,26 +71,18 @@ services:
     image: minio/minio
     ports:
       - 9000:9000
+      - 9001:9001
+    restart: always
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
       - minio_config:/root/.minio
-    command: server /data
+    command: server /data --console-address ":9001"
     networks:
       network:
-        ipv4_address: 67.16.1.150
-
-  minio-ui:
-    image: minio/mc
-    depends_on:
-      - minio
-    ports:
-      - 9001:9001
-    volumes:
-      - minio_config:/root/.minio
-    command: mc config host add http://localhost:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
-    networks:
-      network:
-        ipv4_address: 67.16.1.151
+        ipv4_address: 67.16.1.152
 
   bot:
     build: ./CryptoBot
