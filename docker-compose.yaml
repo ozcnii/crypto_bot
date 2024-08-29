@@ -84,7 +84,7 @@ services:
     depends_on:
       - minio
     ports:
-      - 9000:9000
+      - 9001:9001
     volumes:
       - minio_config:/root/.minio
     command: mc config host add http://localhost:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
