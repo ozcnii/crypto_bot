@@ -68,7 +68,7 @@ services:
         ipv4_address: 67.16.1.7
 
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2023-06-09T07-32-12Z
     ports:
       - 9000:9000
       - 9001:9001
