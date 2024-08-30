@@ -1,3 +1,5 @@
+import { BUCKET_URL } from './constants';
+
 export const getIconPath = (iconHash: string) => {
-  return `${import.meta.env.VITE_BUCKET_URL}/aenolabsfiles/${iconHash}`;
+  return `${BUCKET_URL}/aenolabsfiles/${iconHash}`;
 };
