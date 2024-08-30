@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update, event
 from sqlalchemy.orm import selectinload, joinedload
+import os
 
 # GOODGUARD
 import Database
@@ -93,26 +94,28 @@ async def update_avatar_and_league(
     user = result.scalars().first()
     
     existing_avatar_hash = user.avatar_url
+    
+    file_content = await download_file(file_path)
+    file_hash = hashlib.sha256(file_path.encode('utf-8')).hexdigest()
+    avatar_key = f"{file_hash}{os.path.splitext(file_path)[1]}"
+    
     if existing_avatar_hash:
-        file_content = await download_file(file_path)
-        new_avatar_hash = hashlib.sha256(file_path.encode('utf-8')).hexdigest()
-        if existing_avatar_hash != new_avatar_hash:
-            await delete_avatar(existing_avatar_hash)  # Удалить старый аватар из S3
-            avatar_hash = await upload_avatar(file_content, file_path)
+        if existing_avatar_hash != avatar_key:
+            await delete_avatar(existing_avatar_hash)
+            await upload_avatar(file_content=file_content, avatar_key=avatar_key)
             await session.execute(
-                update(Users).filter(Users.id == user_id).values({Users.    avatar_url: avatar_hash})
+                update(Users).filter(Users.id == user_id).values({Users.avatar_url: avatar_key})
             )
             await session.commit()
         else:
-            avatar_hash = existing_avatar_hash
+            avatar_key = existing_avatar_hash
     else:
-        file_content = await download_file(file_path)
-        avatar_hash = await upload_avatar(file_content, file_path)
+        await upload_avatar(file_content=file_content, avatar_key=avatar_key)
         await session.execute(
-            update(Users).filter(Users.id == user_id).values({Users.avatar_url: avatar_hash})
+            update(Users).filter(Users.id == user_id).values({Users.avatar_url: avatar_key})
         )
         await session.commit()
-
+    
     # Обновление данных лиги
     if not alreadyInLeague:
         result = await session.execute(select(League).filter(League.id == league_id))
