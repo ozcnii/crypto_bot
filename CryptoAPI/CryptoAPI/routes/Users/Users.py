@@ -74,7 +74,7 @@ async def update_tasks_and_invite_friends(
             if user_task.task.task_type == 'invite_friends':
                 user_task.progress += 1
                 if user_task.progress >= user_task.task.target_value:
-                    user_task.is_completed = True
+                    user_task.completed = True
                     referrer.balance += user_task.task.reward
                     session.add(referrer)
                 session.add(user_task)
@@ -609,13 +609,13 @@ async def clan_join(
 
         # Проверка и обновление задачи
         task_result = await session.execute(
-            select(UserTask).filter(UserTask.user_id == person.id, UserTask.is_completed == False)
+            select(UserTask).filter(UserTask.user_id == person.id, UserTask.completed == False)
         )
         user_tasks = task_result.scalars().all()
 
         for user_task in user_tasks:
             if user_task.task.task_type == 'join_clan':
-                user_task.is_completed = True
+                user_task.completed = True
                 session.add(user_task)
 
                 # Добавление награды
