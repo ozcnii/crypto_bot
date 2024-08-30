@@ -14,11 +14,11 @@ s3 = boto3.client(
   config=Config(signature_version='s3v4')
 )
 
-async def upload_avatar(file_content: bytes, file_key: str) -> str:
+async def upload_avatar(file_content: bytes, avatar_key: str) -> str:
     try:
       # Загрузка файла на S3
       file = BytesIO(file_content)
-      s3.upload_fileobj(file, bucket_name, file_key)
+      s3.upload_fileobj(file, bucket_name, avatar_key)
     except Exception as e:
       print(e)
       raise
