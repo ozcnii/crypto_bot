@@ -546,7 +546,7 @@ async def clan_leave(
         if person is False:
             return JSONResponse(status_code=401, content={"message": "Не авторизован"})
 
-        if person.clan_id == 0:
+        if person.clan_id == None:
             return JSONResponse(status_code=400, content={"message": "Вы не состоите в клане"})
 
         result = await session.execute(select(Clans).filter(Clans.id == person.clan_id))
@@ -555,7 +555,7 @@ async def clan_leave(
         if clan is None:
             return JSONResponse(status_code=404, content={"message": "Клан не найден"})
 
-        person.clan_id = 0
+        person.clan_id = None
         session.add(person)
         clan.users -= 1
         clan.balance -= person.balance
