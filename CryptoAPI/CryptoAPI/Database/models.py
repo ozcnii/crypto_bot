@@ -30,7 +30,7 @@ class Users(DataBase):
     user_id = Column(String)
     username = Column(String)
     league_id = Column(Integer, ForeignKey('leagues.id'), nullable=False, default=1)
-    clan_id = Column(Integer, ForeignKey('clans.id'))  # ID клана, к которому принадлежит пользователь
+    clan_id = Column(Integer, ForeignKey('clans.id'), nullable=True)  # ID клана, к которому принадлежит пользователь
     token = Column(String)
     role = Column(String, default="User")
     blocked = Column(Boolean, default=False)
