@@ -1,15 +1,9 @@
-import { Candles } from '@/utils/types/coin'
-import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js'
-import { FC } from 'react'
-import { Line } from 'react-chartjs-2'
-import { CandleStickChart } from './candleStickChart/candleStickChart'
-import css from './chart.module.css'
-
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
+import { FC, useEffect, useRef } from 'react';
+import styles from './chart.module.css';
 
 interface ChartProps {
-	mode: 'candleStick' | 'line',
-	candles: Candles[]
+  mode: 'candleStick' | 'line';
+  symbol: string;
 }
 
 const createScales = (count: number, className: string) => {
@@ -18,46 +12,58 @@ const createScales = (count: number, className: string) => {
   ));
 };
 
-export const Chart: FC<ChartProps> = ({ mode, candles }) => {
+export const Chart: FC<ChartProps> = ({ mode, symbol }) => {
+  const container = useRef<HTMLDivElement>(null);
 
-	const chartData = {
-    labels: candles.map((candle) => candle.timestamp),
-    datasets: [
+  useEffect(() => {
+    // Clean up the previous chart by removing the script and its content
+    if (container.current) {
+      container.current.innerHTML = ''; // Clear previous chart
+    }
+
+    // Create the new chart
+    const script = document.createElement('script');
+    script.src =
+      'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.type = 'text/javascript';
+    script.async = true;
+    script.innerHTML = `
       {
-        data: candles.map((candle) => candle.close),
-        fill: false,
-        backgroundColor: '#FF6384',
-        borderColor: '#2916FF',
-        pointRadius: 0,
-        pointBorderWidth: 0,
-        borderWidth: 1,
-      },
-    ],
-  };
+        "symbol": "${symbol}",
+        "interval": "1",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "${mode === 'candleStick' ? '1' : '2'}",
+        "locale": "en",
+        "hide_top_toolbar": true,
+        "hide_legend": true,
+        "allow_symbol_change": false,
+        "save_image": false,
+        "calendar": false,
+        "hide_volume": true,
+        "support_host": "https://www.tradingview.com"
+      }`;
 
-  const options = {
-    scales: {
-      x: { display: false, beginAtZero: true },
-      y: { display: false },
-    },
-    plugins: {
-      legend: { display: false },
-    },
-    responsive: true,
-    mountainAspectRatio: false,
-  };
+    container.current?.appendChild(script);
+  }, [mode, symbol]);
 
-	return (
-		<div className={css.cryptoChart}>
-      <img src="img/cryptoNet.svg" alt="net" className={css.net} />
-      <div className={css.scalesLeftContainer}>
-        {createScales(7, css.scaleLeft)}
-      </div>
-      <div className={css.scalesBottomContainer}>
-        {createScales(12, css.scaleBottom)}
-      </div>
-      {mode === 'candleStick' && <CandleStickChart data={candles} />}
-			{mode === 'line' && <Line data={chartData} options={options} />}
+  return (
+    // <div className={css.cryptoChart}>
+    //   {/* <img src="img/cryptoNet.svg" alt="net" className={css.net} />
+    //   <div className={css.scalesLeftContainer}>
+    //     {createScales(7, css.scaleLeft)}
+    //   </div>
+    //   <div className={css.scalesBottomContainer}>
+    //     {createScales(12, css.scaleBottom)}
+    //   </div>
+    //   {mode === 'candleStick' && <CandleStickChart data={candles} />}
+    // 	{mode === 'line' && <Line data={chartData} options={options} />} */}
+    // </div>
+    <div
+      className={`tradingview-widget-container ${styles.cryptoChart}`}
+      ref={container}
+    >
+      <div className="tradingview-widget-container__widget"></div>
     </div>
-	)
-}
+  );
+};
