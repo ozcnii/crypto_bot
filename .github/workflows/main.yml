@@ -27,7 +27,7 @@ jobs:
 
       - name: Connect and Pull
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout main && git pull && sudo docker compose -f docker-compose.yaml -p crypto down && sudo docker compose -f docker-compose.yaml -p crypto up -d --build"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout main && git pull && sudo docker compose -f docker-compose.prod.yaml -p crypto down && sudo docker compose -f docker-compose.prod.yaml -p crypto up -d --build"
 
       - name: Clean up
         run: rm -rf ~/.ssh

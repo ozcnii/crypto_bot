@@ -34,5 +34,25 @@ git push origin dev_nickname
 
 - wait for success job from workflow
 
+# ✨ Local developing
+
+- clone repo to local machine:
+
+```
+https://github.com/Andrets/crypto_bot.git
+```
+
+- enter that command to command line
+
+```
+docker compose -f docker-compose.dev.yaml -p crypto up -d --build
+```
+
+- urls
+
+api - http://localhost:9088/api/v.1.0
+client - http://localhost:9088
+swagger - http://localhost:9088/api/v.1.0/Q29Cryptonashka
+
 Made by dmitriyjunior<br/>
 telegram: @dmitriy_junior<br/>

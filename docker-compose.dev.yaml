@@ -1,0 +1,88 @@
+services:
+  postgresql:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    networks:
+      network:
+        ipv4_address: 67.16.1.77
+
+  backend:
+    build: ./CryptoAPI
+    restart: always
+    environment:
+      - TELEGRAM_API_TOKEN=${TELEGRAM_TOKEN}
+      - COINMARKETCAP_API_KEY=${COINMARKETCAP_API_KEY}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgresql
+    networks:
+      network:
+        ipv4_address: 67.16.1.5
+
+  frontend:
+    build:
+      context: ./tg-mini-app-master
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./tg-mini-app-master:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      network:
+        ipv4_address: 67.16.1.7
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - 9088:9088
+    restart: always
+    volumes:
+      - ./gateway/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      network:
+        ipv4_address: 67.16.1.6
+
+  bot:
+    build: ./CryptoBot
+    restart: always
+    environment:
+      - TELEGRAM_API_TOKEN=${TELEGRAM_TOKEN}
+      - WEBAPP_URL=${WEBAPP_URL}
+    depends_on:
+      - backend
+    networks:
+      network:
+        ipv4_address: 67.16.1.8
+
+volumes:
+  postgresql:
+
+networks:
+  network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 67.16.0.0/16
+          gateway: 67.16.0.1

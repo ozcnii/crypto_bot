@@ -48,11 +48,9 @@ def handle_start_command(message):
     api_key = data.get('token', '')
 
     keyboard = types.InlineKeyboardMarkup()
-    webAppInfo = types.WebAppInfo(f"https://aenolabs.com?api_key={api_key}")  # заменить на адрес
+    webAppInfo = types.WebAppInfo(f"{getenv('WEBAPP_URL')}?api_key={api_key}")
     button_play = types.InlineKeyboardButton("💵 Начать играть", web_app=webAppInfo)
-    button_open_group = types.InlineKeyboardButton("👀 Подписаться на канал", url="https://google.com")  # заменить на адрес
     keyboard.row(button_play)
-    keyboard.row(button_open_group)
 
     bot.send_message(user_id, "Добро пожаловать в крипто бота. Это техническое сообщение, его надо будет заменить. Аккаунт был добавлен в базу данных", reply_markup=keyboard)
 
