@@ -60,20 +60,20 @@
 }
 
 .green {
-  color: #39CD83;
+  color: #39cd83;
 }
 
 .red {
-  color: #EA3E3E;
+  color: #ea3e3e;
 }
 
 .clan {
   cursor: pointer;
   min-width: 150px;
-  height: calc(100% - 5px);
+  height: calc(100% - 10px);
   display: flex;
   align-items: center;
-  padding: 7.5px 9.5px 7.5px 9.5px;
+  padding: 5.5px 7.5px 5.5px 7.5px;
   gap: 5.34px;
   background: #101010;
   border-radius: 10px;
@@ -82,16 +82,20 @@
 }
 
 .clan::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -0.5px; /* Adjust as needed to match the border width */
   right: -0.5px;
   bottom: -0.5px;
   left: -0.5px;
   z-index: -1; /* Ensure the pseudo-element is behind the main element's content */
-  background: linear-gradient(-69deg, rgb(238, 238, 238, 0.6) 0%, rgb(238, 238, 238, 0.2) 100%);
+  background: linear-gradient(
+    -69deg,
+    rgb(238, 238, 238, 0.6) 0%,
+    rgb(238, 238, 238, 0.2) 100%
+  );
   border-radius: 10px; /* Match the border radius of the main element */
-  -webkit-mask: 
+  -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
@@ -116,16 +120,20 @@
 }
 
 .noClan::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -0.5px; /* Adjust as needed to match the border width */
   right: -0.5px;
   bottom: -0.5px;
   left: -0.5px;
   z-index: -1; /* Ensure the pseudo-element is behind the main element's content */
-  background: linear-gradient(-69deg, rgb(238, 238, 238, 0.6) 0%, rgb(238, 238, 238, 0.2) 100%);
+  background: linear-gradient(
+    -69deg,
+    rgb(238, 238, 238, 0.6) 0%,
+    rgb(238, 238, 238, 0.2) 100%
+  );
   border-radius: 10px; /* Match the border radius of the main element */
-  -webkit-mask: 
+  -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
@@ -145,7 +153,7 @@
 .clanInfo {
   display: flex;
   flex-direction: column;
-  gap: 3.25px;
+  gap: 6.25px;
   > p {
     font-size: 11.5px;
     font-weight: bold;
