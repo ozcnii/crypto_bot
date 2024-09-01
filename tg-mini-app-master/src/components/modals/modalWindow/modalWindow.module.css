@@ -21,7 +21,7 @@
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  animation: slideUp 0.3s ease-out;
+  animation: slideUp 0.25s ease-out;
   -webkit-transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
   overflow-y: auto;
@@ -50,8 +50,8 @@
 }
 
 /* Анимация исчезновения */
-.modalWindow.exit {
-  animation: slideDown 0.3s ease-out;
+.exit {
+  animation: slideDown 0.25s ease-out;
   -webkit-transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
 }

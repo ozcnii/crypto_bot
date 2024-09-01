@@ -166,14 +166,25 @@
   justify-content: center;
   border-radius: 2.5px;
   font-family: 'Cygre', sans-serif;
+  transition: 0.1s;
 }
 
 .longBtn {
   background-color: #39cd83;
 }
 
+.longBtn.activeDirection {
+  background-color: rgba(61, 92, 77, 1);
+  color: rgba(170, 168, 168, 1);
+}
+
 .shortBtn {
   background-color: #ea3e3e;
+}
+
+.shortBtn.activeDirection {
+  background-color: rgba(130, 55, 55, 1);
+  color: rgba(170, 168, 168, 1);
 }
 
 .amountContainer {
@@ -198,7 +209,7 @@
   }
 }
 
-.inputContainer {
+.amount input {
   width: 155px;
   height: 25px;
   display: flex;
@@ -209,15 +220,11 @@
   background-color: rgb(222, 219, 255, 0.1);
   padding-inline: 6px;
   padding-block: 3.75px;
-  > input {
-    height: 100%;
-    border: none;
-    background-color: transparent;
-    color: #aaaaaa;
-    font-size: 10.5px;
-    font-weight: 500;
-    outline: none;
-  }
+  transition: 0.1s;
+  color: #aaaaaa;
+  font-size: 10.5px;
+  font-weight: 500;
+  outline: none;
   > select {
     width: 42.5px;
     height: 17.5px;
@@ -228,6 +235,10 @@
     font-weight: 500;
     outline: none;
   }
+}
+
+.amount input:focus-within {
+  border: 0.1px solid #eeeeee;
 }
 
 .rangeWithScale {
@@ -300,6 +311,12 @@ input[type='range']::-webkit-slider-thumb {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   font-family: 'Cygre', sans-serif;
+  transition: 0.1s;
+}
+
+.orderBtn:active {
+  background-color: rgb(222, 219, 255, 0.1);
+  color: #eeeeee;
 }
 
 .orderBtnContainer {

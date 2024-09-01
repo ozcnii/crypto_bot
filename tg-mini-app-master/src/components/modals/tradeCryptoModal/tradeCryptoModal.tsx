@@ -36,7 +36,7 @@ export const TradeCryptoModal = () => {
   const [formData, setFormData] = useState({
     amount: 0,
     leverage: marks[0],
-    direction: 'long',
+    direction: '',
     contract_pair: crypto.contract_address,
   });
 
@@ -197,14 +197,18 @@ export const TradeCryptoModal = () => {
       <div className={css.buttons}>
         <button
           type="button"
-          className={css.longBtn}
+          className={`${css.longBtn} ${
+            formData.direction === 'long' ? css.activeDirection : ''
+          }`}
           onClick={() => handleChooseDirection('long')}
         >
           Long
         </button>
         <button
           type="button"
-          className={css.shortBtn}
+          className={`${css.shortBtn} ${
+            formData.direction === 'short' ? css.activeDirection : ''
+          }`}
           onClick={() => handleChooseDirection('short')}
         >
           Short
@@ -212,26 +216,24 @@ export const TradeCryptoModal = () => {
       </div>
       <div className={css.amountContainer}>
         <div className={css.amount}>
-          <div className={css.inputContainer}>
-            <input
-              type="number"
-              inputMode="decimal"
-              placeholder="0.00"
-              className={css.input}
-              min={0}
-              step={0.01}
-              max={user.balance}
-              value={formData.amount}
-              onChange={handleAmountChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              name="amount"
-              id="amount"
-              autoComplete="off"
-              required
-              ref={inputRef}
-            />
-          </div>
+          <input
+            type="number"
+            inputMode="decimal"
+            placeholder="0.00"
+            className={css.input}
+            min={0}
+            step={0.01}
+            max={user.balance}
+            value={formData.amount}
+            onChange={handleAmountChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            name="amount"
+            id="amount"
+            autoComplete="off"
+            required
+            ref={inputRef}
+          />
           <p>
             Balance: {user.balance} <MainCoin width={10} height={10} />
           </p>

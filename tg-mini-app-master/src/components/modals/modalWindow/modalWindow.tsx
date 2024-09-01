@@ -1,7 +1,7 @@
-import { RootState } from '@/store'
-import { ReactNode, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import css from './modalWindow.module.css'
+import { RootState } from '@/store';
+import { FC, ReactNode, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import css from './modalWindow.module.css';
 
 interface ModalWindowProps {
   isOpen: boolean;
@@ -9,9 +9,17 @@ interface ModalWindowProps {
   children: ReactNode;
 }
 
-export const ModalWindow = ({ isOpen, close, children }) => {
-  const { isConfirmed } = useSelector((state: RootState) => state.modals.confirmBoostModal);
-  const { isClosing } = useSelector((state: RootState) => state.modals.cryptoTradeModal);
+export const ModalWindow: FC<ModalWindowProps> = ({
+  isOpen,
+  close,
+  children,
+}) => {
+  const { isConfirmed } = useSelector(
+    (state: RootState) => state.modals.confirmBoostModal,
+  );
+  const { isClosing } = useSelector(
+    (state: RootState) => state.modals.cryptoTradeModal,
+  );
   const [exiting, setExiting] = useState(false);
   const [contentVisible, setContentVisible] = useState(false);
 
@@ -20,7 +28,7 @@ export const ModalWindow = ({ isOpen, close, children }) => {
     setTimeout(() => {
       setExiting(false);
       close();
-    }, 300);
+    }, 250);
   };
 
   useEffect(() => {
@@ -43,7 +51,7 @@ export const ModalWindow = ({ isOpen, close, children }) => {
       // Отложенный рендеринг содержимого после завершения анимации
       setTimeout(() => {
         setContentVisible(true);
-      }, 300); // Время должно совпадать с длительностью анимации
+      }, 250); // Время должно совпадать с длительностью анимации
     } else {
       setContentVisible(false);
       document.body.style.overflow = 'unset';
@@ -58,7 +66,9 @@ export const ModalWindow = ({ isOpen, close, children }) => {
   return (
     isOpen && (
       <div className={css.modalWindowWrapper}>
-        <div className={`${css.modalWindow} ${exiting ? css.exit : ''}`}>{children}</div>
+        <div className={`${css.modalWindow} ${exiting ? css.exit : ''}`}>
+          {children}
+        </div>
         <div className={css.background} onClick={handleClose}></div>
       </div>
     )
