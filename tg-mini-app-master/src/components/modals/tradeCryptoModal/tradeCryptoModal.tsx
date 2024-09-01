@@ -6,6 +6,7 @@ import { Loader } from '@/components/loader';
 import { RootState } from '@/store';
 import { showNotification } from '@/store/notificationSlice';
 import { createOrder } from '@/store/ordersSlice';
+import { useGetSymbolPair } from '@/utils/hooks';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { postEvent } from '@telegram-apps/sdk';
 import { Suspense, useRef, useState } from 'react';
@@ -30,6 +31,7 @@ export const TradeCryptoModal = () => {
   const [localSliderValue, setLocalSliderValue] = useState(marks[0]);
   const [amount, setAmount] = useState(0);
   const [currentButton, setCurrentButton] = useState('current');
+  const pair = useGetSymbolPair({ contract: crypto.contract_address });
 
   const [formData, setFormData] = useState({
     amount: 0,
@@ -190,7 +192,7 @@ export const TradeCryptoModal = () => {
         </div>
       </div>
       <Suspense fallback={<Loader />}>
-        <Chart mode={mode} candles={crypto.candles} />
+        <Chart mode={mode} symbol={pair} />
       </Suspense>
       <div className={css.buttons}>
         <button

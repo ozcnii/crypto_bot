@@ -331,6 +331,8 @@ async def get_v2_current_user_fellows(
                 "avatar_url": fellow.avatar_url,
                 "salary": fellow.is_premium and 1000 or 100
             })
+            
+        return fellows_list
 
 @router.get("/api/v.1.0/users/current_user", tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
@@ -609,12 +611,15 @@ async def clan_join(
 
         # Проверка и обновление задачи
         task_result = await session.execute(
-            select(UserTask).filter(UserTask.user_id == person.id, UserTask.completed == False)
+            select(UserTask).options(selectinload(UserTask.task)).filter(
+                UserTask.user_id == person.id,
+                UserTask.completed == False
+            )
         )
         user_tasks = task_result.scalars().all()
 
         for user_task in user_tasks:
-            if user_task.task.task_type == 'join_clan':
+            if user_task.task and user_task.task.task_type == 'join_clan':
                 user_task.completed = True
                 session.add(user_task)
 
