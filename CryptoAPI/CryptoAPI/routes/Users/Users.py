@@ -619,13 +619,9 @@ async def clan_join(
         user_tasks = task_result.scalars().all()
 
         for user_task in user_tasks:
-            if user_task.task and user_task.task.task_type == 'join_clan':
-                user_task.completed = True
+            if user_task.task and user_task.task.type == TaskType.JOIN_SQUAD:
+                user_task.progress += 1
                 session.add(user_task)
-
-                # Добавление награды
-                person.balance += user_task.task.reward
-                session.add(person)
 
         await session.commit()
 
