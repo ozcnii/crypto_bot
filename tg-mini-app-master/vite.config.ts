@@ -1,6 +1,6 @@
-import react from '@vitejs/plugin-react-swc'
-import { defineConfig } from 'vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import react from '@vitejs/plugin-react-swc';
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,9 +17,12 @@ export default defineConfig({
   ],
   publicDir: './public',
   server: {
-    host: '0.0.0.0'
+    host: '0.0.0.0',
     // Uncomment this line if you want to expose your dev server and access it from the devices
     // in the same network.
     // host: true,
+    watch: {
+      usePolling: true,
+    },
   },
 });
