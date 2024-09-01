@@ -80,6 +80,7 @@ export const App: FC = () => {
         setLoading(false);
       }
     };
+    console.log(lp.platform);
     fetchUser();
   }, [dispatch]);
 
@@ -103,8 +104,26 @@ export const App: FC = () => {
               unmountOnExit
             >
               <Routes location={location}>
-                {rejected ? (
-                  <Route path="*" element={<ErrorPage />} />
+                {lp.platform === 'tdesktop' ? (
+                  <Route
+                    path="*"
+                    element={
+                      <ErrorPage
+                        error="Please use your phone version of telegram"
+                        code={403}
+                      />
+                    }
+                  />
+                ) : rejected ? (
+                  <Route
+                    path="*"
+                    element={
+                      <ErrorPage
+                        error="User not found or service is not available"
+                        code={404}
+                      />
+                    }
+                  />
                 ) : (
                   routes.map((route) => <Route key={route.path} {...route} />)
                 )}
