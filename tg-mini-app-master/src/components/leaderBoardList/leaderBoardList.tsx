@@ -1,5 +1,4 @@
 import MainCoin from '@/assets/coins/coin';
-import NotFound from '@/assets/notFound';
 import { getIconPath } from '@/utils/getIcon';
 import { ClanListUsers } from '@/utils/types/clan';
 import { Clan, User } from '@/utils/types/league';
@@ -26,7 +25,7 @@ export const LeaderBoardList = ({ list }: LeaderBoardListProps) => {
               <span className={css.rank}>{top[index + 1] || index + 1}</span>
               <div className={css.avatar}>
                 <img
-                  src={getIconPath(player.avatar_url)}
+                  src={getIconPath(player.avatar_url || player.logo_url)}
                   alt="Avatar"
                   className={css.avatarImg}
                 />
@@ -43,7 +42,7 @@ export const LeaderBoardList = ({ list }: LeaderBoardListProps) => {
         ))
       ) : (
         <div className={css.noInfo}>
-          <NotFound />
+          <span>🐥</span>
           <p>No clans yet</p>
         </div>
       )}
