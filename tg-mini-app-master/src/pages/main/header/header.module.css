@@ -60,11 +60,11 @@
 }
 
 .green {
-  color: #39CD83;
+  color: #39cd83;
 }
 
 .red {
-  color: #EA3E3E;
+  color: #ea3e3e;
 }
 
 .clan {
@@ -82,16 +82,20 @@
 }
 
 .clan::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -0.5px; /* Adjust as needed to match the border width */
   right: -0.5px;
   bottom: -0.5px;
   left: -0.5px;
   z-index: -1; /* Ensure the pseudo-element is behind the main element's content */
-  background: linear-gradient(-69deg, rgb(238, 238, 238, 0.6) 0%, rgb(238, 238, 238, 0.2) 100%);
+  background: linear-gradient(
+    -69deg,
+    rgb(238, 238, 238, 0.6) 0%,
+    rgb(238, 238, 238, 0.2) 100%
+  );
   border-radius: 10px; /* Match the border radius of the main element */
-  -webkit-mask: 
+  -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
@@ -116,16 +120,20 @@
 }
 
 .noClan::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -0.5px; /* Adjust as needed to match the border width */
   right: -0.5px;
   bottom: -0.5px;
   left: -0.5px;
   z-index: -1; /* Ensure the pseudo-element is behind the main element's content */
-  background: linear-gradient(-69deg, rgb(238, 238, 238, 0.6) 0%, rgb(238, 238, 238, 0.2) 100%);
+  background: linear-gradient(
+    -69deg,
+    rgb(238, 238, 238, 0.6) 0%,
+    rgb(238, 238, 238, 0.2) 100%
+  );
   border-radius: 10px; /* Match the border radius of the main element */
-  -webkit-mask: 
+  -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: destination-out;
@@ -140,6 +148,7 @@
 .clanLogo {
   width: 45.25px;
   height: 45.25px;
+  border-radius: 17.5px;
 }
 
 .clanInfo {
