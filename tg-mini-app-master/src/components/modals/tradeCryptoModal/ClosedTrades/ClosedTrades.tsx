@@ -14,7 +14,7 @@ export const ClosedTrades = () => {
     };
 
     fetchOrders();
-  });
+  }, []);
 
   return (
     <div className={styles.container}>
