@@ -55,7 +55,10 @@ export const CurrentTrades = () => {
   return (
     <div className={css.currentOrder}>
       {currentOrder === null ? (
-        <p>No current order</p>
+        <div className={css.noCurrentOrder}>
+          <span>🧸</span>
+          <p>No current order yet</p>
+        </div>
       ) : loading ? (
         <p>Loading...</p>
       ) : (
