@@ -18,6 +18,9 @@ BOT_ID = '7210647842'
 BOT_LINK = "https://t.me/aenolabsbot"
 COINMARKETCAP_API_KEY = os.environ.get('COINMARKETCAP_API_KEY')
 
+# other
+default_avatar = '9d5340dd1a8dc12373cef4f4da140a202df4c2f9865a31b7de42c689d0f68c3d.jpg'
+
 # ID secrets
 client_id = ["1", "2"]
 
