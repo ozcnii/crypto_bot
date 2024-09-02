@@ -61,6 +61,18 @@ export const getCurrentOrder = createAsyncThunk(
   },
 );
 
+export const getClosedOrders = createAsyncThunk(
+  'orders/getClosedOrders',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('/orders/closed?client_id=1');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
 const initialState: OrdersState = {
   orders: [],
   currentOrder: null,
@@ -135,7 +147,9 @@ const ordersSlice = createSlice({
       getOrders.fulfilled,
       (state, action: PayloadAction<Order[]>) => {
         state.loading = false;
-        state.orders = action.payload;
+        state.orders = action.payload.filter(
+          (order) => order.status !== 'open',
+        );
       },
     );
     builder.addCase(getOrders.rejected, (state, action) => {
