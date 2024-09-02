@@ -1,6 +1,6 @@
 import requests
 from Database.models import Order
-from good_guard import COINMARKETCAP_API_KEY
+from good_guard import COINMARKETCAP_API_KEY, coin_to_usdt_rate
 
 addresses = {
   'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN': 'ton',
@@ -32,10 +32,12 @@ def get_current_rate(contract_address: str) -> float:
     
 	return price_by_quote_asset
 
-def calculate_pnl(order: Order, exit_rate: float) -> float:
-  if order.direction == "long":
-    pnl = (exit_rate - order.entry_rate) * order.amount * order.leverage
-  else:
-    pnl = (order.entry_rate - exit_rate) * order.amount * order.leverage
+def calculate_pnl(order: Order, exit_rate: float):
+  coin_in_usdt = order.amount * coin_to_usdt_rate
+  pnl_in_usdt = (exit_rate - order.entry_rate) if order.direction == "long" else (order.entry_rate - exit_rate) * coin_in_usdt * order.leverage / order.entry_rate
+  pnl_in_coin = pnl_in_usdt / coin_to_usdt_rate
   
-  return pnl
+  if pnl_in_coin < -order.amount:
+    pnl_in_coin = -order.amount
+  
+  return pnl_in_coin

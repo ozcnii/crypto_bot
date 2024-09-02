@@ -83,7 +83,11 @@ export const Header = () => {
       </div>
       <div className={css.clan} onClick={handleOnClick}>
         {clan.logo_url ? (
-          <img src={clan.logo_url} alt="лого клана" className={css.clanLogo} />
+          <img
+            src={getIconPath(clan.logo_url)}
+            alt="лого клана"
+            className={css.clanLogo}
+          />
         ) : (
           <div className={css.noClanLogo}>
             <img
