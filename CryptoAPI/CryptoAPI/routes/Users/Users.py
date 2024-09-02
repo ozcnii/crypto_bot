@@ -472,9 +472,9 @@ async def create_v2_clan(
             link=link,
             users=1,
             owner_id=person.id,
+            balance=person.balance
         )
 
-        new_clan.balance += person.balance
         session.add(new_clan)
         await session.commit()
 
@@ -1176,7 +1176,13 @@ async def post_v2_orders_close(
         order.status = "closed"
         
         pnl = calculate_pnl(order, exit_rate)
-        person.balance += pnl
         
-        await db.commit()
+        person.balance += pnl
+        session.add(person)
+        
+        order.pnl = pnl
+        
+        session.add(order)
+        
+        await session.commit()
         return JSONResponse(status_code=200, content={"message": "Ордер закрыт", "pnl": pnl})
