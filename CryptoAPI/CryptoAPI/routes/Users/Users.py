@@ -12,7 +12,7 @@ import os
 # GOODGUARD
 import Database
 from Tools.uploadFileToBucket import upload_avatar, get_s3_file_etag, delete_avatar
-from Tools.checkBotInChat import check_bot_in_chat_or_group, download_file
+from Tools.checkBotInChat import check_bot_in_chat_or_group, download_file, get_chat_file_path
 import good_guard as GoodGuard
 # import GoodGuard.utils
 from GoodGuard.requestsUtils import ManyRequestException
@@ -124,6 +124,30 @@ async def update_avatar_and_league(
             league.user_count += 1
             session.add(league)
             await session.commit()
+            
+async def update_clan_avatar(
+    name: str,
+    session: AsyncSession,
+    link: str
+):
+    file_path = await get_chat_file_path(name)
+    
+    if not file_path:
+        await session.execute(
+            update(Clans).filter(Clans.link == link).values({Clans.logo_url: GoodGuard.default_avatar})
+        )
+        await session.commit()
+        return
+    
+    file_content = await download_file(file_path)
+    file_hash = hashlib.sha256(file_path.encode('utf-8')).hexdigest()
+    avatar_key = f"{file_hash}{os.path.splitext(file_path)[1]}"
+    
+    await upload_avatar(file_content=file_content, avatar_key=avatar_key)
+    await session.execute(
+        update(Clans).filter(Clans.link == link).values({Clans.logo_url: avatar_key})
+    )
+    await session.commit()
 
 @router.post('/api/v.1.0/oauth/create_user', tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
@@ -404,6 +428,7 @@ async def create_v2_clan(
     link: str = Body(...),
     client_id: int = Query(...),
     Authorization: str = Header(...),
+    background_task: BackgroundTasks = BackgroundTasks(),
     db: AsyncSession = Depends(Database.get_session)
 ):
     try:
@@ -429,36 +454,38 @@ async def create_v2_clan(
             name = match.group(1)
         else:
             return JSONResponse(status_code=400, content={"message": "Некорректная ссылка"})
-    
-        bot_in_chat = await check_bot_in_chat_or_group(link)
-        if not bot_in_chat:
-            return JSONResponse(status_code=400, content={"message": "Бот не найден в указанном канале или группе"})
-    
+
         result = await session.execute(select(Clans).filter(Clans.name == name))
         clan = result.scalars().first()
         
         if clan is not None:
             return JSONResponse(status_code=400, content={"message": "Клан уже существует"})
-    
+        
+        # Проверка наличия бота в канале или группе
+        bot_in_chat = await check_bot_in_chat_or_group(link)
+        if not bot_in_chat:
+            return JSONResponse(status_code=400, content={"message": "Бот не найден в указанном канале или группе"})
+        
         # Создание нового клана
         new_clan = Clans(
             name=name,
             link=link,
             users=1,
-            owner_id=person.id
+            owner_id=person.id,
         )
 
+        new_clan.balance += person.balance
         session.add(new_clan)
         await session.commit()
 
-        new_clan.balance += person.balance
         # Обновление параметра clan_by в person
         person.clan_id = new_clan.id
         session.add(person)
         await session.commit()
         
-        # Обновление задания "join_clan"
-        await update_task_progress(person.id, TaskType.JOIN_SQUAD, 1, session)
+        # Запуск фоновых задач по обновлению аватарки клана
+        background_task.add_task(update_clan_avatar, f"@{name}", session, link)
+        background_task.add_task(update_task_progress, person.id, TaskType.JOIN_SQUAD, 1, session)
         
         return JSONResponse(status_code=200, content={
             "id": new_clan.id,
