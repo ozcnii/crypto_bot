@@ -1,3 +1,4 @@
+import MainCoin from '@/assets/coins/coin';
 import { RootState } from '@/store';
 import { getOrders } from '@/store/ordersSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
@@ -36,16 +37,27 @@ export const ClosedTrades = () => {
         orders.map((order) => (
           <div className={styles.order} key={order.id}>
             <div className={styles.orderDetails}>
-              <h1>{order.contract_pair}</h1>
-              <span>{order.status}</span>
+              <h1>{order?.contract_pair}</h1>
+              <div>
+                <span>{order?.direction}</span>
+                <p>{order?.leverage}x</p>
+              </div>
+              <span>TP&SL</span>
             </div>
-            <div className={styles.orderEntryRate}>
-              <p>Entry rate:</p>
-              <h1>{order.entry_rate}</h1>
+            <div className={styles.orderAmountDetails}>
+              <div className={styles.orderAmount}>
+                <p>Position amount</p>
+                <h1>
+                  {order?.amount} <MainCoin width={10} height={10} />
+                </h1>
+              </div>
+              <div className={styles.orderEntryRate}>
+                <p>Entry rate</p>
+                <h1>{order?.entry_rate.toFixed(2)}</h1>
+              </div>
             </div>
-            <div className={styles.orderExitRate}>
-              <p>Exit rate:</p>
-              <h1>{order.exit_rate}</h1>
+            <div className={styles.orderStatus}>
+              <span>P&L: 31%</span>
             </div>
           </div>
         ))
