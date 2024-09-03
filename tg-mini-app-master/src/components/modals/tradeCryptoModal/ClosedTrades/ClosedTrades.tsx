@@ -8,9 +8,16 @@ import styles from './styles.module.css';
 export const ClosedTrades = () => {
   const dispatch = useDispatch<ThunkDispatch<RootState, any, any>>();
   const { orders, loading } = useSelector((state: RootState) => state.orders);
+  const { crypto } = useSelector(
+    (state: RootState) => state.modals.cryptoTradeModal,
+  );
   useEffect(() => {
     const fetchOrders = async () => {
-      await dispatch(getOrders());
+      await dispatch(
+        getOrders({
+          contract_pair: crypto?.contract_address,
+        }),
+      );
     };
 
     fetchOrders();

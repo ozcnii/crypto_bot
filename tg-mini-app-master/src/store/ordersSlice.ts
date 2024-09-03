@@ -34,10 +34,13 @@ export const closeOrder = createAsyncThunk(
 
 export const getOrders = createAsyncThunk(
   'orders/getOrders',
-  async (_, { rejectWithValue }) => {
+  async ({ contract_pair }: { contract_pair: string }, { rejectWithValue }) => {
     try {
       const response = await axios.get('/orders/list?client_id=1');
-      return response.data;
+      return {
+        orders: response.data,
+        contract_pair,
+      };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -145,10 +148,15 @@ const ordersSlice = createSlice({
     });
     builder.addCase(
       getOrders.fulfilled,
-      (state, action: PayloadAction<Order[]>) => {
+      (
+        state,
+        action: PayloadAction<{ orders: Order[]; contract_pair: string }>,
+      ) => {
         state.loading = false;
-        state.orders = action.payload.filter(
-          (order) => order.status !== 'open',
+        state.orders = action.payload.orders.filter(
+          (order) =>
+            order.status !== 'open' &&
+            order.contract_pair === action.payload.contract_pair,
         );
       },
     );

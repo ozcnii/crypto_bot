@@ -54,6 +54,7 @@
 .clanLogo {
   width: 113px;
   height: 113.75px;
+  border-radius: 17.5px;
 }
 
 .clanName {
