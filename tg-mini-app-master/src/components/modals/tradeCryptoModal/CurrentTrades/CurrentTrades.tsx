@@ -3,11 +3,11 @@ import { RootState } from '@/store';
 import { showNotification } from '@/store/notificationSlice';
 import { closeOrder, getCurrentOrder } from '@/store/ordersSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import css from './styles.module.css';
 
-export const CurrentTrades = () => {
+export const CurrentTrades = memo(() => {
   const dispatch = useDispatch<ThunkDispatch<RootState, any, any>>();
   const { currentOrder, loading } = useSelector(
     (state: RootState) => state.orders,
@@ -97,4 +97,6 @@ export const CurrentTrades = () => {
       )}
     </div>
   );
-};
+});
+
+CurrentTrades.displayName = 'CurrentTrades';

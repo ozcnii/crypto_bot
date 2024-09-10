@@ -8,6 +8,7 @@ from .GoodGuard.GoodGuard import router as good_guard_routes
 
 # USERS ROUTES
 from .Users.Users import router as users_routes
+from .user.endpoints import router as users_routes_v1
 
 # BUCKET ROUTERS
 from .Buckets.Buckets import router as bucket_routes

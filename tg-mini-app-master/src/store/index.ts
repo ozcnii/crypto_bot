@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import boostersReducer from './boostersSlice';
 import clansReducer from './clanSlice';
 import coinReducer from './coinSlice';
 import leagueReducer from './leagueSlice';
@@ -20,6 +21,7 @@ export const store = configureStore({
     league: leagueReducer,
     referral: referralReducer,
     orders: ordersReducer,
+    boosters: boostersReducer,
   },
 });
 

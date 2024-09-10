@@ -3,11 +3,25 @@
   flex-direction: column;
   justify-content: center;
   flex-grow: 1;
-  padding: 15px 25px 34.75px 25px;
+  padding: 0px 25px 34.75px 25px;
   border-radius: 10px;
+  position: relative;
+}
+
+.headerContainer {
+  position: sticky;
+  width: 100%;
+  background-color: rgba(10, 10, 10, 0.9);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  padding-block: 14px;
 }
 
 .modalImgContainer {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,28 +184,29 @@
 }
 
 .longBtn {
-  background-color: #39cd83;
-}
-
-.longBtn.activeDirection {
   background-color: rgba(61, 92, 77, 1);
   color: rgba(170, 168, 168, 1);
 }
 
+.longBtn.activeDirection {
+  background-color: #39cd83;
+}
+
 .shortBtn {
-  background-color: #ea3e3e;
+  color: rgba(170, 168, 168, 1);
+  background-color: rgba(130, 55, 55, 1);
 }
 
 .shortBtn.activeDirection {
-  background-color: rgba(130, 55, 55, 1);
-  color: rgba(170, 168, 168, 1);
+  background-color: #ea3e3e;
 }
 
 .amountContainer {
   margin-top: 18.75px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  justify-content: space-between;
+  gap: 15px;
 }
 
 .amountContainer:last-child {
@@ -210,7 +225,7 @@
 }
 
 .amount input {
-  width: 155px;
+  width: 100%;
   height: 25px;
   display: flex;
   align-items: center;
@@ -242,12 +257,24 @@
 }
 
 .rangeWithScale {
+  position: relative;
   display: flex;
   align-items: center;
-  padding-inline-start: 25px;
+}
+
+.rangeLabel {
+  /* position: absolute;
+  top: 10.25px;
+  left: 0; */
+  color: #2916ff;
+  font-size: 10.5px;
+  font-weight: 500;
 }
 
 .scaleValues {
+  position: absolute;
+  top: -1px;
+  left: -5px;
   display: flex;
   flex-direction: column-reverse;
   align-items: flex-end;
@@ -275,16 +302,17 @@ input[type='range']::-webkit-slider-thumb {
 
 .mark {
   display: inline-flex;
-  width: 4px;
+  width: 5px;
   height: 0.5px;
   margin-bottom: 20px;
   background: #eeeeee;
 }
 
 .rangeContainer {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .orderBtnContainer {
@@ -311,7 +339,12 @@ input[type='range']::-webkit-slider-thumb {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   font-family: 'Cygre', sans-serif;
-  transition: 0.1s;
+  transition: 0.15s;
+}
+
+.orderBtn.activeOrder {
+  background-color: #948aff;
+  border: none;
 }
 
 .orderBtn:active {
@@ -361,7 +394,7 @@ input[type='range']::-webkit-slider-thumb {
   font-size: 10.5px;
   font-weight: 400;
   color: #ffffff;
-  height: 25px;
+  height: 30px;
   border-radius: 5px;
   background: transparent;
   font-family: 'Cygre', sans-serif;

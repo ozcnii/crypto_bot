@@ -1,14 +1,16 @@
-import { BoosterCard } from '@/components/boosterCard'
-import { ConfirmSlider } from '@/components/confirmSlider'
-import { Loader } from '@/components/loader'
-import { RootState } from '@/store'
-import { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
-import css from './confirmBoostModal.module.css'
+import { BoosterCard } from '@/components/boosterCard';
+import { ConfirmSlider } from '@/components/confirmSlider';
+import { Loader } from '@/components/loader';
+import { RootState } from '@/store';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import css from './confirmBoostModal.module.css';
 
 export const ConfirmBoostModal = () => {
-  const { boost, isConfirmed } = useSelector((state: RootState) => state.modals.confirmBoostModal);
-  const { user } = useSelector((state: RootState) => state.user);
+  const { boost, isConfirmed } = useSelector(
+    (state: RootState) => state.modals.confirmBoostModal,
+  );
+  const { error } = useSelector((state: RootState) => state.boosters);
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -45,17 +47,17 @@ export const ConfirmBoostModal = () => {
       </div>
       <BoosterCard item={boost} />
       {!isConfirmed ? (
-        <ConfirmSlider />
+        <ConfirmSlider type={boost.name.toLowerCase()} />
       ) : isLoading ? (
         <Loader />
-      ) : showResult && user.balance >= boost.cost ? (
+      ) : showResult && error === null ? (
         <div className={css.confirmed}>
-          <img src="img/confirmed.png" alt="Confirmed" loading="lazy" />
+          <img src="img/confirmed.png" alt="Confirmed" />
           <h1>Done</h1>
         </div>
       ) : (
         <div className={css.failed}>
-          <img src="img/fail.png" alt="Failed" loading="lazy" />
+          <img src="img/fail.png" alt="Failed" />
           <h1>Fail</h1>
         </div>
       )}

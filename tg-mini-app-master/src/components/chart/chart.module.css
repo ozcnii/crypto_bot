@@ -1,8 +1,14 @@
 .cryptoChart {
-  margin-top: 14px;
   flex: 1;
   width: 100% !important;
   height: 100% !important;
+}
+
+.chartContainer {
+  position: relative;
+  min-height: 200px !important;
+  width: 100%;
+  background-color: #101010; /* Optional background to make it look better while loading */
 }
 
 .scaleLeft,

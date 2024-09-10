@@ -21,6 +21,7 @@ from GoodGuard.tokensFabric import *
 # TOOLS
 from Tools.ContentUtils import serialize_json_user_token
 from Tools.dex import get_current_rate, calculate_pnl
+from Tools.boosters import should_reset_boosters
 from schemas import UserModel, OrderCreateModel
 import asyncio
 from datetime import datetime
@@ -35,6 +36,9 @@ TaskType = Database.TaskType
 Task = Database.Task
 UserTask = Database.UserTask
 Orders = Database.Order
+Boosters = Database.Boosters
+BoosterPrices = Database.BoosterPrices
+BoosterEffects = Database.BoosterEffects
 
 async def update_task_progress(user_id: int, task_type: TaskType, increment_value: int, db: AsyncSession):
     # Найти активное задание для пользователя по типу задания
@@ -498,11 +502,227 @@ def update_clan_balance_on_user_balance_change(target, value, oldvalue, initiato
         asyncio.create_task(_update_clan_balance(target.clan))
 
 async def _update_clan_balance(clan):
-    async with Database.get_session() as session:
+    session_gen = Database.get_session()
+    session = await session_gen.__anext__()  # Получаем первую итерацию генератора (сессию)
+
+    try:
         await clan.update_balance()
         session.add(clan)
         await session.commit()
+    except Exception as e:
+        await session.rollback()
+        raise e
+    finally:
+        # Закрытие сессии
+        await session_gen.aclose()
+
+@event.listens_for(Users, 'after_insert', propagate=True)
+def create_booster_for_new_user(mapper, connection, target):
+    if target.id:
+        asyncio.create_task(_create_booster_for_new_user(target.id))
+
+async def _create_booster_for_new_user(user_id):
+    # Получение сессии через генератор вручную
+    session_gen = Database.get_session()
+    session = await session_gen.__anext__()  # Получаем первую итерацию генератора (сессию)
+    
+    try:
+        boosters = Boosters(
+            user_id=user_id,
+            range_lvl=1,
+            leverage_lvl=1,
+            trades_lvl=1,
+            turbo_range_uses=3,
+            x_leverage_uses=3,
+            last_reset=datetime.now(pytz.timezone('Europe/Moscow'))
+        )
+        session.add(boosters)
+        await session.commit()
+    except Exception as e:
+        await session.rollback()
+        raise e
+    finally:
+        # Закрытие сессии
+        await session_gen.aclose()
+
+@router.get("/api/v.1.0/boosters", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def get_v2_boosters(
+    client_id: int = Query(...),
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session)
+):
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+    
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
         
+        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
+        boosters = result.scalars().first()
+        
+        await should_reset_boosters(boosters.last_reset, session=session, user_id=person.id)
+        
+        result = await session.execute(select(BoosterPrices).filter(BoosterPrices.booster_type == 'range', BoosterPrices.level == boosters.range_lvl + 1))
+        
+        range_next = result.scalars().first()
+        
+        result = await session.execute(select(BoosterPrices).filter(BoosterPrices.booster_type == 'leverage', BoosterPrices.level == boosters.leverage_lvl + 1))
+        
+        leverage_next = result.scalars().first()
+        
+        result = await session.execute(select(BoosterPrices).filter(BoosterPrices.booster_type == 'trades', BoosterPrices.level == boosters.trades_lvl + 1))
+        
+        trades_next = result.scalars().first()
+        
+        
+        return {
+            'range': {
+                'lvl': boosters.range_lvl,
+                'nextPrice': range_next.price
+            },
+            'leverage': {
+                'lvl': boosters.leverage_lvl,
+                'nextPrice': leverage_next.price
+            },
+            'trades': {
+                'lvl': boosters.trades_lvl,
+                'nextPrice': trades_next.price
+            },
+            'freeBoosters': {
+                'turbo_range': boosters.turbo_range_uses,
+                'x_leverage': boosters.x_leverage_uses
+            }
+        }
+
+@router.post("/api/v.1.0/boosters/upgrade", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def upgrade_v2_boosters(
+    client_id: int = Query(...),
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session),
+    booster_type: str = Body(...)
+):
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+        
+        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
+        user_booster = result.scalars().first()
+        
+        if booster_type == "range":
+            current_lvl = user_booster.range_lvl
+            result = await session.execute(select(BoosterPrices).filter(BoosterPrices.booster_type == 'range', BoosterPrices.level == current_lvl + 1))
+            next_price = result.scalars().first()
+            
+            if person.balance >= next_price.price:
+                person.balance -= next_price.price
+                user_booster.range_lvl += 1
+                await session.commit()
+                return JSONResponse(status_code=200, content={"message": f"Уровень {booster_type} улучшен"})
+            else:
+                return JSONResponse(status_code=400, content={"message": "Недостаточно средств"})
+        elif booster_type == "leverage":
+            current_lvl = user_booster.leverage_lvl
+            result = await session.execute(select(BoosterPrices).filter(BoosterPrices.booster_type == 'leverage', BoosterPrices.level == current_lvl + 1))
+            next_price = result.scalars().first()
+            
+            if person.balance >= next_price.price:
+                person.balance -= next_price.price
+                user_booster.leverage_lvl += 1
+                await session.commit()
+                return JSONResponse(status_code=200, content={"message": f"Уровень {booster_type} улучшен"})
+            else:
+                return JSONResponse(status_code=400, content={"message": "Недостаточно средств"})
+            
+        elif booster_type == "trades":
+            current_lvl = user_booster.trades_lvl
+            result = await session.execute(select(BoosterPrices).filter(BoosterPrices.booster_type == 'trades', BoosterPrices.level == current_lvl + 1))
+            next_price = result.scalars().first()
+            
+            if person.balance >= next_price.price:
+                person.balance -= next_price.price
+                user_booster.trades_lvl += 1
+                await session.commit()
+                return JSONResponse(status_code=200, content={"message": f"Уровень {booster_type} улучшен"})
+            else:
+                return JSONResponse(status_code=400, content={"message": "Недостаточно средств"})
+
+@router.get("/api/v.1.0/boosters/effects", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def get_v2_boosters_effects(
+    client_id: int = Query(...),
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session)
+):
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+        
+        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
+        boosters = result.scalars().first()
+        
+        if boosters is None:
+            return JSONResponse(status_code=404, content={"message": "Бустеры не найдено"})
+        
+        result = await session.execute(select(BoosterEffects).filter(BoosterEffects.booster_type == 'range', BoosterEffects.level == boosters.range_lvl))
+        
+        range_effect = result.scalars().first()
+        
+        result = await session.execute(select(BoosterEffects).filter(BoosterEffects.booster_type == 'leverage', BoosterEffects.level == boosters.leverage_lvl))
+        
+        leverage_effect = result.scalars().first()
+        
+        result = await session.execute(select(BoosterEffects).filter(BoosterEffects.booster_type == 'trades', BoosterEffects.level == boosters.trades_lvl))
+        
+        trades_effect = result.scalars().first()
+        
+        return {
+            'leverage': leverage_effect.effect_value,
+            'range': range_effect.effect_value,
+            'trades': trades_effect.effect_value
+        }
+
 @router.delete("/api/v.1.0/users/clan/delete", tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
 async def delete_v2_clan(
@@ -1026,6 +1246,21 @@ async def post_v2_orders_create(
         if len(orders) > 0:
             return JSONResponse(status_code=409, content={"message": "У пользователя уже есть открытый ордер"})
         
+        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
+        boosters = result.scalars().first()
+        
+        if boosters.turbo_range_uses >= 1:
+            await session.execute(update(Boosters).filter(Boosters.user_id == person.id).values({
+                Boosters.turbo_range_uses: boosters.turbo_range_uses - 1
+            }))
+            await session.commit()
+        
+        if boosters.x_leverage_uses >= 1:
+            await session.execute(update(Boosters).filter(Boosters.user_id == person.id).values({
+                Boosters.x_leverage_uses: boosters.x_leverage_uses - 1
+            }))
+            await session.commit()
+        
         entry_rate = get_current_rate(order.contract_pair)
         
         # Создание нового ордера
@@ -1075,7 +1310,7 @@ async def get_v2_orders_list(
             'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN': 'NOTUSDT',
             'EQA-X_yo3fzzbDbJ_0bzFWKqtRuZFIRa1sJsveZJ1YpViO3r': 'TONUSDT',
             '0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b': 'ETHUSDT',
-            '0xa43fe16908251ee70ef74718545e4fe6c5ccec9f': 'PEPEUSDT',
+            'EQAyOzOJYwzrXNdhQkskblthpYmm6iL_XeXEcaDuQmV0vxQQ': 'DOGSUSDT',
             '0x6aa9c4eda3bf8ac038ad5c243133d6d25aa9cc73': 'BTCUSDT',
             'DSUvc5qf5LJHHV5e2tD184ixotSnCnwj7i4jJa4Xsrmt': 'SOLUSDT'
         }
@@ -1132,7 +1367,7 @@ async def get_v2_orders_current(
             'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN': 'NOTUSDT',
             'EQA-X_yo3fzzbDbJ_0bzFWKqtRuZFIRa1sJsveZJ1YpViO3r': 'TONUSDT',
             '0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b': 'ETHUSDT',
-            '0xa43fe16908251ee70ef74718545e4fe6c5ccec9f': 'PEPEUSDT',
+            'EQAyOzOJYwzrXNdhQkskblthpYmm6iL_XeXEcaDuQmV0vxQQ': 'DOGSUSDT',
             '0x6aa9c4eda3bf8ac038ad5c243133d6d25aa9cc73': 'BTCUSDT',
             'DSUvc5qf5LJHHV5e2tD184ixotSnCnwj7i4jJa4Xsrmt': 'SOLUSDT'
         }

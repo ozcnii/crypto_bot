@@ -1,93 +1,152 @@
 import CandleStick from '@/assets/chart/candleStick';
 import Line from '@/assets/chart/line';
 import MainCoin from '@/assets/coins/coin';
-import { Chart } from '@/components/chart';
 import { Loader } from '@/components/loader';
 import { RootState } from '@/store';
+import { getUserBoosters } from '@/store/boostersSlice';
+import { closeModal } from '@/store/modalsSlice';
 import { showNotification } from '@/store/notificationSlice';
 import { createOrder } from '@/store/ordersSlice';
-import { useGetSymbolPair } from '@/utils/hooks';
+import { useGetSymbolPair, useLevelRestrictions } from '@/utils/hooks';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { postEvent } from '@telegram-apps/sdk';
-import { Suspense, useRef, useState } from 'react';
+import { initHapticFeedback } from '@telegram-apps/sdk';
+import React, {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ClosedTrades } from './ClosedTrades/ClosedTrades';
 import { CurrentTrades } from './CurrentTrades/CurrentTrades';
 import css from './tradeCryptoModal.module.css';
 
+const Chart = lazy(() =>
+  import('@/components/chart').then(({ Chart }) => ({ default: Chart })),
+);
+
 const MAX_SIZE = 7;
 
-export const TradeCryptoModal = () => {
+export const TradeCryptoModal: React.FC = () => {
+  const hapticFeedback = initHapticFeedback();
   const dispatch = useDispatch<ThunkDispatch<RootState, any, any>>();
   const { crypto } = useSelector(
     (state: RootState) => state.modals.cryptoTradeModal,
   );
   const { user } = useSelector((state: RootState) => state.user);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { boosters } = useSelector((state: RootState) => state.boosters);
+  const inputRef = useRef<HTMLDivElement>(null);
   const originalScrollPosition = useRef(0);
-  const [mode, setMode] = useState<'candleStick' | 'line'>('line');
-  const cleanedName = crypto.name.replace('Wrapped ', '').replace(' Token', '');
-  const marks = Array.from({ length: MAX_SIZE }, (_, index) => index + 1);
-  const [localSliderValue, setLocalSliderValue] = useState(marks[0]);
-  const [amount, setAmount] = useState(0);
-  const [currentButton, setCurrentButton] = useState('current');
-  const pair = useGetSymbolPair({ contract: crypto.contract_address });
 
+  const [mode, setMode] = useState<'candleStick' | 'line'>('line');
+  const [localSliderValue, setLocalSliderValue] = useState(1);
+  const [currentButton, setCurrentButton] = useState<'current' | 'closed'>(
+    'current',
+  );
+  const [maxAmount, setMaxAmount] = useState<number | null>(null);
+  const [maxLeverage, setMaxLeverage] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     amount: 0,
-    leverage: marks[0],
+    leverage: 1,
     direction: '',
     contract_pair: crypto.contract_address,
   });
 
-  const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      leverage: parseInt(event.target.value, 10),
-    });
-    postEvent('web_app_trigger_haptic_feedback', {
-      type: 'selection_change',
-    });
-  };
+  useEffect(() => {
+    const fetchBoosters = async () => {
+      try {
+        const resultAction = await dispatch(getUserBoosters());
+        if (getUserBoosters.fulfilled.match(resultAction)) {
+          // Вызвать хук и обновить стейт после успешного выполнения экшна
+          const { maxAmount, maxLeverage } = useLevelRestrictions({
+            balance: user?.balance,
+            levels: {
+              range_lvl: resultAction.payload['range']?.lvl,
+              leverage_lvl: resultAction.payload['leverage']?.lvl,
+            },
+            freeBoosters: {
+              turbo_range: boosters['freeBoosters']?.turbo_range,
+              x_leverage: boosters['freeBoosters']?.x_leverage,
+            },
+          });
+          setMaxAmount(maxAmount);
+          setMaxLeverage(maxLeverage);
+        }
+      } catch (err) {
+        console.error('Failed to load boosters: ', err);
+      }
+    };
 
-  const adjustedHeight = ((localSliderValue - 1) / (MAX_SIZE - 1)) * 100;
-
-  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      amount: parseInt(event.target.value, 10),
-    });
-  };
-
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
-    originalScrollPosition.current = window.scrollY;
-
-    inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    window.scrollTo({
-      top: originalScrollPosition.current,
-      behavior: 'smooth',
-    });
-  };
-
-  const handleClick = () => {
-    if (currentButton === 'current') {
-      setCurrentButton('closed');
+    if (Object.keys(boosters).length === 0) {
+      fetchBoosters();
     } else {
-      setCurrentButton('current');
+      const { maxAmount, maxLeverage } = useLevelRestrictions({
+        balance: user?.balance,
+        levels: {
+          range_lvl: boosters['range']?.lvl,
+          leverage_lvl: boosters['leverage']?.lvl,
+        },
+        freeBoosters: {
+          turbo_range: boosters['freeBoosters']?.turbo_range,
+          x_leverage: boosters['freeBoosters']?.x_leverage,
+        },
+      });
+      setMaxAmount(maxAmount);
+      setMaxLeverage(maxLeverage);
     }
-  };
+  }, [dispatch, boosters]);
 
-  const handleChooseDirection = (direction: 'long' | 'short') => {
-    setFormData({
-      ...formData,
+  const cleanedName = useMemo(
+    () => crypto.name.replace('Wrapped ', '').replace(' Token', ''),
+    [crypto.name],
+  );
+  const marks = useMemo(
+    () => Array.from({ length: MAX_SIZE }, (_, index) => index + 1),
+    [],
+  );
+
+  const pair = useGetSymbolPair({ contract: crypto.contract_address });
+
+  const adjustedHeight = useMemo(
+    () => ((localSliderValue - 1) / (MAX_SIZE - 1)) * 100,
+    [localSliderValue],
+  );
+
+  const handleSliderChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newLeverage = Math.min(event.target.valueAsNumber, maxLeverage);
+      setFormData((prevData) => ({
+        ...prevData,
+        leverage: newLeverage,
+      }));
+      setLocalSliderValue(event.target.valueAsNumber);
+      hapticFeedback.selectionChanged();
+    },
+    [maxLeverage],
+  );
+
+  const handleAmountChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newAmount = Math.min(parseInt(event.target.value, 10), maxAmount);
+      setFormData((prevData) => ({
+        ...prevData,
+        amount: newAmount,
+      }));
+    },
+    [maxAmount],
+  );
+
+  const handleChooseDirection = useCallback((direction: 'long' | 'short') => {
+    setFormData((prevData) => ({
+      ...prevData,
       direction,
-    });
-  };
+    }));
+  }, []);
 
-  const handleCreateOrder = async () => {
+  const handleCreateOrder = useCallback(async () => {
     if (formData.amount <= 0) {
       dispatch(
         showNotification({
@@ -99,6 +158,7 @@ export const TradeCryptoModal = () => {
       );
       return;
     }
+
     const response = await dispatch(createOrder(formData));
 
     if (response.meta.requestStatus === 'fulfilled') {
@@ -111,10 +171,10 @@ export const TradeCryptoModal = () => {
         }),
       );
       setFormData({
+        ...formData,
         amount: 0,
         leverage: marks[0],
         direction: 'long',
-        contract_pair: crypto.contract_address,
       });
     } else {
       dispatch(
@@ -126,67 +186,88 @@ export const TradeCryptoModal = () => {
         }),
       );
     }
-  };
+  }, [formData, dispatch]);
+
+  const handleFocus = useCallback(() => {
+    originalScrollPosition.current = window.scrollY;
+    inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    window.scrollTo({
+      top: originalScrollPosition.current,
+      behavior: 'smooth',
+    });
+  }, []);
+
+  const handleClick = useCallback(() => {
+    setCurrentButton((prev) => (prev === 'current' ? 'closed' : 'current'));
+  }, []);
 
   return (
     <div className={css.modal}>
-      <div className={css.modalImgContainer}>
-        <img src="img/modal.svg" alt="modal" className={css.modalImg} />
-      </div>
-      <div className={css.header}>
-        <div className={css.headerTitle}>
-          <img src={crypto.logo} alt={crypto.name} />
-          <div className={css.headerText}>
-            <h1>
-              {crypto.name === 'Wrapped Ether'
-                ? 'Ethereum'
-                : cleanedName === 'BTCB'
-                  ? 'Bitcoin'
-                  : cleanedName}
-            </h1>
-            <p>{crypto.network_slug.split(' ')[0]}</p>
-          </div>
+      <div className={css.headerContainer}>
+        <div className={css.modalImgContainer}>
+          <img src="img/modal.svg" alt="modal" className={css.modalImg} />
         </div>
-        <div className={css.headerCostPrice}>
-          <button type="button" className={css.headerBtn}>
-            <img src="img/arrowDown.svg" alt="arrow" />
-          </button>
-          <div className={css.toggleSwitch}>
-            <div
-              className={`${css.candleStickMode} ${mode === 'candleStick' ? css.active : ''}`}
-              onClick={() => setMode('candleStick')}
-            >
-              <CandleStick
-                fill={mode === 'candleStick' ? '#EEEEEE' : '#101010'}
-              />
-            </div>
-            <div
-              className={`${css.lineMode} ${mode === 'line' ? css.active : ''}`}
-              onClick={() => setMode('line')}
-            >
-              <Line fill={mode === 'line' ? '#EEEEEE' : '#101010'} />
+        <div className={css.header}>
+          <div className={css.headerTitle}>
+            <img src={crypto.logo} alt={crypto.name} />
+            <div className={css.headerText}>
+              <h1>
+                {cleanedName === 'BTCB'
+                  ? 'Bitcoin'
+                  : cleanedName === 'Ether'
+                    ? 'Ethereum'
+                    : cleanedName}
+              </h1>
+              <p>{crypto.network_slug.split(' ')[0]}</p>
             </div>
           </div>
-          <div className={css.cryptoPrice}>
-            <h3>
-              {parseFloat(crypto.price.toFixed(2)).toLocaleString('de-DE')}$
-            </h3>
-            <div className={css.cryptoChange}>
-              <img
-                src={
-                  crypto.percent_change_24h > 0 ? 'img/up.svg' : 'img/down.svg'
-                }
-                alt="arrow"
-                className={css.arrow}
-              />
-              <p
-                className={
-                  crypto.percent_change_24h > 0 ? css.positive : css.negative
-                }
+          <div className={css.headerCostPrice}>
+            <button
+              type="button"
+              className={css.headerBtn}
+              onClick={() => dispatch(closeModal())}
+            >
+              <img src="img/arrowDown.svg" alt="arrow" />
+            </button>
+            <div className={css.toggleSwitch}>
+              <div
+                className={`${css.candleStickMode} ${mode === 'candleStick' ? css.active : ''}`}
+                onClick={() => setMode('candleStick')}
               >
-                {crypto.percent_change_24h > 0 ? '+' : ''}{' '}
-                {crypto.percent_change_24h.toFixed(2).replace('.', ',')}%
-              </p>
+                <CandleStick
+                  fill={mode === 'candleStick' ? '#EEEEEE' : '#101010'}
+                />
+              </div>
+              <div
+                className={`${css.lineMode} ${mode === 'line' ? css.active : ''}`}
+                onClick={() => setMode('line')}
+              >
+                <Line fill={mode === 'line' ? '#EEEEEE' : '#101010'} />
+              </div>
+            </div>
+            <div className={css.cryptoPrice}>
+              <h3>{crypto?.price.toFixed(2).replace('.', ',')}$</h3>
+              <div className={css.cryptoChange}>
+                <img
+                  src={
+                    crypto.percent_change_24h > 0
+                      ? 'img/up.svg'
+                      : 'img/down.svg'
+                  }
+                  alt="arrow"
+                />
+                <p
+                  className={
+                    crypto.percent_change_24h > 0 ? css.positive : css.negative
+                  }
+                >
+                  {crypto.percent_change_24h > 0 ? '+' : ''}
+                  {crypto.percent_change_24h.toFixed(2).replace('.', ',')}%
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -197,45 +278,35 @@ export const TradeCryptoModal = () => {
       <div className={css.buttons}>
         <button
           type="button"
-          className={`${css.longBtn} ${
-            formData.direction === 'long' ? css.activeDirection : ''
-          }`}
+          className={`${css.longBtn} ${formData.direction === 'long' ? css.activeDirection : ''}`}
           onClick={() => handleChooseDirection('long')}
         >
           Long
         </button>
         <button
           type="button"
-          className={`${css.shortBtn} ${
-            formData.direction === 'short' ? css.activeDirection : ''
-          }`}
+          className={`${css.shortBtn} ${formData.direction === 'short' ? css.activeDirection : ''}`}
           onClick={() => handleChooseDirection('short')}
         >
           Short
         </button>
       </div>
       <div className={css.amountContainer}>
-        <div className={css.amount}>
+        <div className={css.amount} ref={inputRef}>
           <input
             type="number"
             inputMode="decimal"
-            placeholder="0.00"
+            placeholder="Amount"
             className={css.input}
             min={0}
-            step={0.01}
-            max={user.balance}
+            max={maxAmount}
             value={formData.amount}
             onChange={handleAmountChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            name="amount"
-            id="amount"
-            autoComplete="off"
-            required
-            ref={inputRef}
           />
           <p>
-            Balance: {user.balance} <MainCoin width={10} height={10} />
+            Max allowed: {maxAmount} <MainCoin width={10} height={10} />
           </p>
         </div>
         <div className={css.rangeWithScale}>
@@ -249,7 +320,7 @@ export const TradeCryptoModal = () => {
               type="range"
               id="range"
               min={marks[0]}
-              max={marks[marks.length - 1]}
+              max={maxLeverage}
               value={formData.leverage}
               onChange={handleSliderChange}
               className={css.rangeInput}
@@ -257,7 +328,7 @@ export const TradeCryptoModal = () => {
             <label
               htmlFor="range"
               className={css.rangeLabel}
-              style={{ left: `${adjustedHeight}%` }}
+              // style={{ left: `${adjustedHeight}%` }}
             >
               {formData.leverage}x
             </label>
@@ -270,10 +341,13 @@ export const TradeCryptoModal = () => {
         </button>
         <button
           type="button"
-          className={css.orderBtn}
+          className={`${css.orderBtn} ${formData.direction !== '' && formData.amount > 0 ? css.activeOrder : ''} `}
           onClick={handleCreateOrder}
+          disabled={formData.direction === '' || formData.amount === 0}
         >
           Place Order
+          {boosters['freeBoosters']?.turbo_range >= 1 ? <span>🚀</span> : null}
+          {boosters['freeBoosters']?.x_leverage >= 1 ? <span>💥</span> : null}
         </button>
       </div>
       <div className={css.tradesContainer}>
@@ -298,3 +372,5 @@ export const TradeCryptoModal = () => {
     </div>
   );
 };
+
+export default TradeCryptoModal;

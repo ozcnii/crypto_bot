@@ -1,5 +1,5 @@
 import { useIntegration } from '@telegram-apps/react-router-integration';
-import { postEvent } from '@telegram-apps/sdk';
+import { initViewport, postEvent, requestViewport } from '@telegram-apps/sdk';
 import {
   bindMiniAppCSSVars,
   bindThemeParamsCSSVars,
@@ -11,7 +11,7 @@ import {
   useViewport,
 } from '@telegram-apps/sdk-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
-import { useEffect, useMemo, useState, type FC } from 'react';
+import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Navigate, Route, Router, Routes } from 'react-router-dom';
 
 import { Notification } from '@/components';
@@ -31,6 +31,47 @@ export const App: FC = () => {
   const dispatch = useDispatch<ThunkDispatch<RootState, any, any>>();
   const [rejected, setRejected] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [viewportHeight, setViewportHeight] = useState(0);
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const initTelegramViewport = async () => {
+      const [viewport] = initViewport();
+      const vp = await viewport;
+
+      // Запрашиваем текущее состояние видимой области
+      const viewportData = await requestViewport();
+      setViewportHeight(viewportData.height);
+
+      // Слушаем изменение высоты
+      vp.on('change:height', (height: number) => {
+        setViewportHeight(height);
+      });
+    };
+
+    initTelegramViewport();
+  }, []);
+
+  // Функция управления прокруткой
+  useEffect(() => {
+    const manageScrolling = () => {
+      const pageContent = pageRef.current;
+      if (pageContent) {
+        const contentHeight = pageContent.scrollHeight;
+
+        // Если содержимое меньше или равно высоте видимой области, отключаем прокрутку
+        if (contentHeight <= viewportHeight) {
+          document.body.style.overflow = 'hidden';
+          pageContent.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = 'auto';
+          pageContent.style.overflow = 'auto';
+        }
+      }
+    };
+
+    manageScrolling();
+  }, [viewportHeight]);
 
   useEffect(() => {
     return bindMiniAppCSSVars(miniApp, themeParams);
@@ -92,6 +133,7 @@ export const App: FC = () => {
     <AppRoot
       appearance={miniApp.isDark ? 'dark' : 'light'}
       platform={['macos', 'ios'].includes(lp.platform) ? 'ios' : 'base'}
+      ref={pageRef}
     >
       <div className="page">
         <Router location={location} navigator={reactNavigator}>
@@ -104,7 +146,7 @@ export const App: FC = () => {
               unmountOnExit
             >
               <Routes location={location}>
-                {lp.platform === 'tdesktop' ? (
+                {lp.platform === '1tdesktop' ? (
                   <Route
                     path="*"
                     element={

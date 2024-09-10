@@ -6,7 +6,7 @@ addresses = {
   'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN': 'ton',
   'EQA-X_yo3fzzbDbJ_0bzFWKqtRuZFIRa1sJsveZJ1YpViO3r': 'ton',
   '0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b': 'ethereum',
-  '0xa43fe16908251ee70ef74718545e4fe6c5ccec9f': 'ethereum',
+  'EQAyOzOJYwzrXNdhQkskblthpYmm6iL_XeXEcaDuQmV0vxQQ': 'ton',
   '0x6aa9c4eda3bf8ac038ad5c243133d6d25aa9cc73': 'bsc',
   'DSUvc5qf5LJHHV5e2tD184ixotSnCnwj7i4jJa4Xsrmt': 'solana'
 }

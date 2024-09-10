@@ -1,10 +1,17 @@
-import { confirmBoost } from '@/store/modalsSlice'
-import { FC, useEffect, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import css from './confirmSlider.module.css'
+import { RootState } from '@/store';
+import { upgradeUserBoosterByType } from '@/store/boostersSlice';
+import { confirmBoost } from '@/store/modalsSlice';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { FC, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import css from './confirmSlider.module.css';
 
-export const ConfirmSlider: FC = () => {
-  const dispatch = useDispatch();
+interface ConfirmSliderProps {
+  type: string;
+}
+
+export const ConfirmSlider: FC<ConfirmSliderProps> = ({ type }) => {
+  const dispatch = useDispatch<ThunkDispatch<RootState, unknown, any>>();
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -17,10 +24,9 @@ export const ConfirmSlider: FC = () => {
 
   const handleMouseMove = (event: MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
-    
+
     const rect = sliderRef.current.getBoundingClientRect();
     let newPos = event.clientX - rect.left - 22.5; // 22.5 - половина ширины ползунка
-    console.log('Mouse move: ', { eventClientX: event.clientX, rectLeft: rect.left, newPos });
 
     if (newPos < 0) newPos = 0;
     if (newPos > rect.width - 45) newPos = rect.width - 45; // 45 - ширина ползунка
@@ -30,10 +36,9 @@ export const ConfirmSlider: FC = () => {
 
   const handleTouchMove = (event: TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
-    
+
     const rect = sliderRef.current.getBoundingClientRect();
     let newPos = event.touches[0].clientX - rect.left - 22.5; // 22.5 - половина ширины ползунка
-    console.log('Touch move: ', { eventClientX: event.touches[0].clientX, rectLeft: rect.left, newPos });
 
     if (newPos < 0) newPos = 0;
     if (newPos > rect.width - 45) newPos = rect.width - 45; // 45 - ширина ползунка
@@ -41,16 +46,20 @@ export const ConfirmSlider: FC = () => {
     currentPosRef.current = newPos; // Обновляем currentPosRef
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = async () => {
     if (!sliderRef.current) return;
 
     const rect = sliderRef.current.getBoundingClientRect();
     const maxPosition = rect.width - 45; // 45 - ширина ползунка
     const finalPosition = currentPosRef.current; // Используем currentPosRef для получения позиции
-    console.log('Drag end: ', { position: finalPosition, maxPosition });
 
     if (finalPosition >= maxPosition) {
       dispatch(confirmBoost(true));
+      await dispatch(
+        upgradeUserBoosterByType({
+          booster_type: type,
+        }),
+      );
     } else {
       dispatch(confirmBoost(false));
     }
@@ -79,6 +88,16 @@ export const ConfirmSlider: FC = () => {
       document.removeEventListener('touchend', handleDragEnd);
     };
   }, [isDragging]);
+
+  if (type === 'trading bot') {
+    return (
+      <div className={css.confirm_slider_container} ref={sliderRef}>
+        <div className={css.slider_text}>
+          Sorry, but that booster does not work yet
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={css.confirm_slider_container} ref={sliderRef}>

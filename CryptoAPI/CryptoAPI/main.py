@@ -25,6 +25,7 @@ from routes import admins_routes
 from routes import bucket_routes
 from routes import good_guard_routes
 from routes import moderation_routes
+from routes import users_routes_v1
 
 import Database
 
@@ -68,6 +69,7 @@ app.include_router(moderation_routes)
 app.include_router(good_guard_routes)
 app.include_router(users_routes)
 app.include_router(bucket_routes)
+app.include_router(users_routes_v1)
 
 @app.exception_handler(ManyRequestException)
 async def custom_exception_handler(request: Request, exc: ManyRequestException):

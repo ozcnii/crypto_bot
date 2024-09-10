@@ -12,7 +12,8 @@ max_requests = 600
 max_time_request_seconds = 60
 
 # SECRETS Keys
-SECRET_KEY = 'HDA-32'
+SECRET_KEY = 'verysecretkeyforjwt'
+ALGORITHM = 'HS256'
 TELEGRAM_API_TOKEN = os.environ.get('TELEGRAM_API_TOKEN')
 BOT_ID = '7210647842'
 BOT_LINK = "https://t.me/aenolabsbot"

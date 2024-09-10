@@ -1,12 +1,12 @@
 import { RootState } from '@/store';
-import { FC, ReactNode, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import css from './modalWindow.module.css';
+import styles from './modalWindow.module.css';
 
 interface ModalWindowProps {
   isOpen: boolean;
   close: () => void;
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 export const ModalWindow: FC<ModalWindowProps> = ({
@@ -21,43 +21,33 @@ export const ModalWindow: FC<ModalWindowProps> = ({
     (state: RootState) => state.modals.cryptoTradeModal,
   );
   const [exiting, setExiting] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setExiting(true);
     setTimeout(() => {
       setExiting(false);
       close();
-    }, 250);
-  };
+    }, 300); // Matches the slideDown animation time
+  }, [close]);
 
   useEffect(() => {
     if (isConfirmed) {
-      setTimeout(() => {
-        handleClose();
-      }, 2500);
+      setTimeout(handleClose, 2500);
     }
-  }, [isConfirmed]);
+  }, [isConfirmed, handleClose]);
 
   useEffect(() => {
     if (isClosing) {
       handleClose();
     }
-  }, [isClosing]);
+  }, [isClosing, handleClose]);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      // Отложенный рендеринг содержимого после завершения анимации
-      setTimeout(() => {
-        setContentVisible(true);
-      }, 250); // Время должно совпадать с длительностью анимации
     } else {
-      setContentVisible(false);
       document.body.style.overflow = 'unset';
     }
-
-    // Clean up the overflow style on unmount
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -65,11 +55,11 @@ export const ModalWindow: FC<ModalWindowProps> = ({
 
   return (
     isOpen && (
-      <div className={css.modalWindowWrapper}>
-        <div className={`${css.modalWindow} ${exiting ? css.exit : ''}`}>
+      <div className={styles.modalWindowWrapper}>
+        <div className={`${styles.modalWindow} ${exiting ? styles.exit : ''}`}>
           {children}
         </div>
-        <div className={css.background} onClick={handleClose}></div>
+        <div className={styles.background} onClick={handleClose}></div>
       </div>
     )
   );

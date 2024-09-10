@@ -1,2 +1,1 @@
-export { Chart } from './chart'
-
+export { default as Chart } from './chart';

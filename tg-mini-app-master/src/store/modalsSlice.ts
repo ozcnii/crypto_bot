@@ -20,7 +20,7 @@ export const modalsSlice = createSlice({
   name: 'modals',
   initialState,
   reducers: {
-    closeModal: (state, dispatch) => {
+    closeModal: (state) => {
       state.modalType = '';
       state.isOpen = false;
       (state.confirmBoostModal = {

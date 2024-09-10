@@ -6,6 +6,11 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 15px;
+  margin-bottom: 15px;
+}
+
+.order:last-child {
+  margin-bottom: 0;
 }
 
 .orderDetails {

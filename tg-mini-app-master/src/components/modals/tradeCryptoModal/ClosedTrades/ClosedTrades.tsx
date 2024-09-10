@@ -2,11 +2,11 @@ import MainCoin from '@/assets/coins/coin';
 import { RootState } from '@/store';
 import { getOrders } from '@/store/ordersSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styles from './styles.module.css';
 
-export const ClosedTrades = () => {
+export const ClosedTrades = memo(() => {
   const dispatch = useDispatch<ThunkDispatch<RootState, any, any>>();
   const { orders, loading } = useSelector((state: RootState) => state.orders);
   const { crypto } = useSelector(
@@ -53,7 +53,11 @@ export const ClosedTrades = () => {
               </div>
               <div className={styles.orderEntryRate}>
                 <p>Entry rate</p>
-                <h1>{order?.entry_rate.toFixed(2)}</h1>
+                <h1>
+                  {order?.entry_rate
+                    ? order?.entry_rate.toFixed(2)
+                    : order?.entry_rate}
+                </h1>
               </div>
             </div>
             <div className={styles.orderStatus}>
@@ -64,4 +68,6 @@ export const ClosedTrades = () => {
       )}
     </div>
   );
-};
+});
+
+ClosedTrades.displayName = 'ClosedTrades';
