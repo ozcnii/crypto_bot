@@ -1,10 +1,10 @@
 import CandleStick from '@/assets/chart/candleStick';
 import Line from '@/assets/chart/line';
 import MainCoin from '@/assets/coins/coin';
+import { ChartTimePopup } from '@/components/chartTimePopup';
 import { Loader } from '@/components/loader';
 import { RootState } from '@/store';
 import { getUserBoosters } from '@/store/boostersSlice';
-import { closeModal } from '@/store/modalsSlice';
 import { showNotification } from '@/store/notificationSlice';
 import { createOrder } from '@/store/ordersSlice';
 import { useGetSymbolPair, useLevelRestrictions } from '@/utils/hooks';
@@ -28,7 +28,7 @@ const Chart = lazy(() =>
   import('@/components/chart').then(({ Chart }) => ({ default: Chart })),
 );
 
-const MAX_SIZE = 7;
+const MAX_SIZE = 8;
 
 export const TradeCryptoModal: React.FC = () => {
   const hapticFeedback = initHapticFeedback();
@@ -40,7 +40,8 @@ export const TradeCryptoModal: React.FC = () => {
   const { boosters } = useSelector((state: RootState) => state.boosters);
   const inputRef = useRef<HTMLDivElement>(null);
   const originalScrollPosition = useRef(0);
-
+  const { chartTime } = useSelector((state: RootState) => state.chart);
+  const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'candleStick' | 'line'>('line');
   const [localSliderValue, setLocalSliderValue] = useState(1);
   const [currentButton, setCurrentButton] = useState<'current' | 'closed'>(
@@ -99,10 +100,6 @@ export const TradeCryptoModal: React.FC = () => {
     }
   }, [dispatch, boosters]);
 
-  const cleanedName = useMemo(
-    () => crypto.name.replace('Wrapped ', '').replace(' Token', ''),
-    [crypto.name],
-  );
   const marks = useMemo(
     () => Array.from({ length: MAX_SIZE }, (_, index) => index + 1),
     [],
@@ -204,6 +201,16 @@ export const TradeCryptoModal: React.FC = () => {
     setCurrentButton((prev) => (prev === 'current' ? 'closed' : 'current'));
   }, []);
 
+  const cryptoNames = {
+    'Wrapped Ether': 'Ethereum',
+    'BTCB Token': 'Bitcoin',
+    'Wrapped SOL': 'Solana',
+  };
+
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className={css.modal}>
       <div className={css.headerContainer}>
@@ -215,23 +222,24 @@ export const TradeCryptoModal: React.FC = () => {
             <img src={crypto.logo} alt={crypto.name} />
             <div className={css.headerText}>
               <h1>
-                {cleanedName === 'BTCB'
-                  ? 'Bitcoin'
-                  : cleanedName === 'Ether'
-                    ? 'Ethereum'
-                    : cleanedName}
+                {cryptoNames[crypto.name]
+                  ? cryptoNames[crypto.name]
+                  : crypto.name}
               </h1>
-              <p>{crypto.network_slug.split(' ')[0]}</p>
+              <p>{crypto.shortName}</p>
             </div>
           </div>
           <div className={css.headerCostPrice}>
-            <button
-              type="button"
-              className={css.headerBtn}
-              onClick={() => dispatch(closeModal())}
-            >
-              <img src="img/arrowDown.svg" alt="arrow" />
-            </button>
+            <div>
+              <button
+                type="button"
+                className={css.headerBtn}
+                onClick={togglePopup}
+              >
+                <img src="img/arrowDown.svg" alt="arrow" />
+              </button>
+              {isOpen && <ChartTimePopup />}
+            </div>
             <div className={css.toggleSwitch}>
               <div
                 className={`${css.candleStickMode} ${mode === 'candleStick' ? css.active : ''}`}

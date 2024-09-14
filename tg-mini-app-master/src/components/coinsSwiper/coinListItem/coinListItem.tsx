@@ -1,4 +1,3 @@
-import { RootState } from '@/store';
 import { openCryptoTradeModal } from '@/store/modalsSlice';
 import { Coin } from '@/utils/types/coin';
 import {
@@ -13,7 +12,7 @@ import {
 } from 'chart.js';
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import css from './coinListItem.module.css';
 
 // Регистраци
@@ -35,8 +34,6 @@ export const CoinListItem: React.FC<CoinListItemProps> = ({
   item,
 }: CoinListItemProps) => {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state: RootState) => state.coin);
-  const cleanedName = item.name.replace('Wrapped ', '').replace(' Token', '');
   const chartData = {
     labels: item.candles.map((candle) => candle.timestamp),
     datasets: [
@@ -68,19 +65,19 @@ export const CoinListItem: React.FC<CoinListItemProps> = ({
     dispatch(openCryptoTradeModal(item));
   };
 
+  const cryptoNames = {
+    'Wrapped Ether': 'Ethereum',
+    'BTCB Token': 'Bitcoin',
+    'Wrapped SOL': 'Solana',
+  };
+
   return (
     <div className={css.cryptoCard} onClick={handleOnClick}>
       <div className={css.cryptoStart}>
         <img src={item.logo} alt={item.name} className={css.cryptoImg} />
         <div className={css.cryptoInfo}>
-          <h2>
-            {item.name === 'Wrapped Ether'
-              ? 'Ethereum'
-              : cleanedName === 'BTCB'
-                ? 'Bitcoin'
-                : cleanedName}
-          </h2>
-          <p>{item.network_slug.split(' ')[0]}</p>
+          <h2>{cryptoNames[item.name] ? cryptoNames[item.name] : item.name}</h2>
+          <p>{item.shortName}</p>
         </div>
       </div>
       <div className={css.cryptoEnd}>

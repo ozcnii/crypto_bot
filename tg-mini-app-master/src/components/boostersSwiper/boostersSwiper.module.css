@@ -1,9 +1,14 @@
 .swiper {
-	height: 100%;
-	width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 .swiperSlide {
-	height: 55px;
-	border-radius: 7.5px;
+  height: 3.438rem;
+  border-radius: 7.5px;
+  margin-bottom: 0.781rem;
+}
+
+.swiperSlide:last-child {
+  margin-bottom: 0;
 }

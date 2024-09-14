@@ -103,10 +103,6 @@ export const Header = () => {
           </p>
           <div className={css.clanStatistics}>
             <p className={css.clanBalance}>
-              {/* <div className={css.clanBalanceIcon}>
-                <img src="img/clanBalance.svg" alt="баланс клана" className={css.clanBalanceLogo} />
-                <img src="img/clanBalanceVector.svg" alt="вектор баланса" className={css.clanBalanceVector} />
-              </div> */}
               <MainCoin height={8} width={8} />
               <span className={css.clanBalanceValue}>
                 {clan.balance != null ? (

@@ -14,36 +14,42 @@ export const items = [
   {
     id: 1,
     network: 'ton',
-    contract_address: 'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN',
-    img: 'img/notcoin.png',
-  },
-  {
-    id: 2,
-    network: 'ton',
+    shortName: 'TON',
     contract_address: 'EQA-X_yo3fzzbDbJ_0bzFWKqtRuZFIRa1sJsveZJ1YpViO3r',
     img: 'img/toncoin.png',
   },
   {
+    id: 2,
+    network: 'bsc',
+    shortName: 'BTC',
+    contract_address: '0x6aa9c4eda3bf8ac038ad5c243133d6d25aa9cc73',
+    img: 'img/btc.png',
+  },
+  {
     id: 3,
     network: 'ethereum',
+    shortName: 'ETH',
     contract_address: '0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b',
     img: 'img/ethereum.png',
   },
   {
     id: 4,
-    network: 'bsc',
-    contract_address: '0x6aa9c4eda3bf8ac038ad5c243133d6d25aa9cc73',
-    img: 'img/btc.png',
+    network: 'ton',
+    shortName: 'NOT',
+    contract_address: 'EQARK5MKz_MK51U5AZjK3hxhLg1SmQG2Z-4Pb7Zapi_xwmrN',
+    img: 'img/notcoin.png',
   },
   {
     id: 5,
     network: 'solana',
+    shortName: 'SOL',
     contract_address: 'DSUvc5qf5LJHHV5e2tD184ixotSnCnwj7i4jJa4Xsrmt',
     img: 'img/solana.png',
   },
   {
     id: 6,
     network: 'ton',
+    shortName: 'DOGS',
     contract_address: 'EQAyOzOJYwzrXNdhQkskblthpYmm6iL_XeXEcaDuQmV0vxQQ',
     img: 'img/dogs.png',
   },
@@ -97,7 +103,8 @@ export const CoinsSwiper = () => {
             const existingCoin = coins.find(
               (coin) =>
                 coin.contract_address === item.contract_address &&
-                coin.network_slug === item.network,
+                coin.network_slug === item.network &&
+                coin.shortName === item.shortName,
             );
             if (!existingCoin) {
               // Иначе делаем запрос к API и сохраняем данные в локальное хранилище
@@ -106,6 +113,7 @@ export const CoinsSwiper = () => {
                   contract_address: item.contract_address,
                   network: item.network,
                   logo: item.img,
+                  shortName: item.shortName,
                 }),
               ).unwrap();
               setWithExpiry(storageKey, coinData, COIN_TTL);
@@ -121,7 +129,6 @@ export const CoinsSwiper = () => {
   return (
     <Swiper
       slidesPerView="auto"
-      spaceBetween={15}
       modules={[FreeMode, Scrollbar]}
       scrollbar={{ draggable: true }}
       freeMode

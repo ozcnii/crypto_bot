@@ -1,4 +1,6 @@
+import { RootState } from '@/store';
 import { FC, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import styles from './chart.module.css';
 
 interface ChartProps {
@@ -13,6 +15,7 @@ const createScales = (count: number, className: string) => {
 };
 
 const Chart: FC<ChartProps> = ({ mode, symbol }) => {
+  const { chartTime } = useSelector((state: RootState) => state.chart);
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,9 +32,9 @@ const Chart: FC<ChartProps> = ({ mode, symbol }) => {
     script.async = true;
     script.innerHTML = `
       {
-        "height": "200",
+        "autosize": "true",
         "symbol": "${symbol}",
-        "interval": "1",
+        "interval": "${chartTime}",
         "timezone": "Etc/UTC",
         "theme": "dark",
         "style": "${mode === 'candleStick' ? '1' : '2'}",
@@ -46,11 +49,11 @@ const Chart: FC<ChartProps> = ({ mode, symbol }) => {
       }`;
 
     container.current?.appendChild(script);
-  }, [mode, symbol]);
+  }, [mode, symbol, chartTime]);
 
   return (
     <div
-      className={`tradingview-widget-container ${styles.chartContainer}`}
+      className={`${styles['tradingview-widget-container']} ${styles.chartContainer}`}
       ref={container}
     >
       <div className="tradingview-widget-container__widget"></div>

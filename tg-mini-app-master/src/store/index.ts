@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import boostersReducer from './boostersSlice';
+import chartReducer from './chartSlice';
 import clansReducer from './clanSlice';
 import coinReducer from './coinSlice';
 import leagueReducer from './leagueSlice';
@@ -22,6 +23,7 @@ export const store = configureStore({
     referral: referralReducer,
     orders: ordersReducer,
     boosters: boostersReducer,
+    chart: chartReducer,
   },
 });
 

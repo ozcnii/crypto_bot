@@ -4,15 +4,15 @@
   align-items: center;
   gap: 13.5px;
   background-color: #101010;
-  width: calc(100vw - 50px);
-  height: 55px;
+  width: calc(100vw - 3.125rem);
+  height: 3.438rem;
   position: fixed;
-  bottom: 45px; /* Отступ от нижнего края */
+  bottom: 2.813rem; /* Отступ от нижнего края */
   left: 50%;
   border-radius: 7.5px;
   transform: translateX(-50%);
   z-index: 10000; /* Убедитесь, что уведомление будет выше других элементов */
-  padding: 8.75px 10px 8.75px 13px;
+  padding: 0.547rem 0.719rem 0.547rem 0.719rem;
   border-radius: 5px; /* Пример скругления углов */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Пример тени */
   transition:

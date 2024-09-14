@@ -15,11 +15,10 @@ export const ConfirmSlider: FC<ConfirmSliderProps> = ({ type }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
-  const currentPosRef = useRef(0); // Добавляем useRef для хранения текущей позиции
+  const currentPosRef = useRef(0); // Текущая позиция ползунка
 
   const handleDragStart = () => {
     setIsDragging(true);
-    console.log('Drag started');
   };
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -89,6 +88,9 @@ export const ConfirmSlider: FC<ConfirmSliderProps> = ({ type }) => {
     };
   }, [isDragging]);
 
+  // Рассчитываем ширину затемненной области
+  const backgroundWidth = position;
+
   if (type === 'trading bot') {
     return (
       <div className={css.confirm_slider_container} ref={sliderRef}>
@@ -101,6 +103,11 @@ export const ConfirmSlider: FC<ConfirmSliderProps> = ({ type }) => {
 
   return (
     <div className={css.confirm_slider_container} ref={sliderRef}>
+      {/* Затемняющий фон за ползунком */}
+      <div
+        className={css.slider_background}
+        style={{ width: `${backgroundWidth}px` }} // Ширина затемненной области
+      />
       <div className={css.slider_text}>Slide to confirm</div>
       <div
         className={css.slider_handle}

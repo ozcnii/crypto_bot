@@ -7,20 +7,24 @@ interface ModalWindowProps {
   isOpen: boolean;
   close: () => void;
   children: React.ReactNode;
+  fullHeight: boolean;
 }
 
 export const ModalWindow: FC<ModalWindowProps> = ({
   isOpen,
   close,
   children,
+  fullHeight: allHeight,
 }) => {
   const { isConfirmed } = useSelector(
     (state: RootState) => state.modals.confirmBoostModal,
   );
-  const { isClosing } = useSelector(
+  const { isClosing, isOpen: openCrypto } = useSelector(
     (state: RootState) => state.modals.cryptoTradeModal,
   );
+  const { modalType } = useSelector((state: RootState) => state.modals);
   const [exiting, setExiting] = useState(false);
+  const [fullHeight, setFullHeight] = useState(false);
 
   const handleClose = useCallback(() => {
     setExiting(true);
@@ -53,10 +57,23 @@ export const ModalWindow: FC<ModalWindowProps> = ({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (openCrypto || allHeight) {
+      setFullHeight(true);
+    }
+
+    return () => {
+      setFullHeight(false);
+    };
+  }, [openCrypto, allHeight]);
+
   return (
     isOpen && (
       <div className={styles.modalWindowWrapper}>
-        <div className={`${styles.modalWindow} ${exiting ? styles.exit : ''}`}>
+        <div
+          className={`${styles.modalWindow} ${exiting ? styles.exit : ''}`}
+          style={{ height: fullHeight === true ? '100%' : '' }}
+        >
           {children}
         </div>
         <div className={styles.background} onClick={handleClose}></div>

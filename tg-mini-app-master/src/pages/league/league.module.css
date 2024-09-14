@@ -35,8 +35,8 @@
 
 .leagueLogo {
   margin-top: 35px;
-  width: 140px;
-  height: 151.25px;
+  width: 8.75rem;
+  height: 9.453rem;
   > img {
     width: 100%;
     height: 100%;
@@ -46,16 +46,16 @@
 .floatingContainer {
   font-family: 'Cygre', sans-serif;
   position: fixed;
-  bottom: 28.5px;
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 50px);
-  padding: 6.75px 10px 6.5px 10px;
+  width: calc(100% - 3.125rem);
+  padding: 0.438rem 0.625rem 0.438rem 0.625rem;
   background: rgb(16, 16, 16, 0.3); /* Фоновый цвет кнопки */
   color: #101010; /* Цвет текста кнопки */
   border: none; /* Удалить границу кнопки */
   border-radius: 5px; /* Закругленные углы */
-  font-size: 18px; /* Размер шрифта */
+  font-size: 1.125rem; /* Размер шрифта */
   font-weight: bold; /* Жирный шрифт */
   cursor: pointer; /* Курсор в виде руки при наведении */
   z-index: 1000; /* Поверх всего контента */

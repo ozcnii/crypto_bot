@@ -6,9 +6,13 @@
 
 .chartContainer {
   position: relative;
-  min-height: 200px !important;
+  min-height: 12.5rem !important;
   width: 100%;
   background-color: #101010; /* Optional background to make it look better while loading */
+}
+
+.tradingview-widget-container {
+  height: 12.5rem !important;
 }
 
 .scaleLeft,

@@ -15,4 +15,5 @@ export interface Coin {
   percent_change_24h: number;
   candles: Candles[];
   contract_address: string;
+  shortName: string;
 }

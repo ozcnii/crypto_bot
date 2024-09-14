@@ -30,7 +30,6 @@ export const items = [
 export const BoostersSwiper = () => {
   return (
     <Swiper
-      spaceBetween={12.5}
       slidesPerView={'auto'}
       direction="vertical"
       modules={[FreeMode]}

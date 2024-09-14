@@ -5,13 +5,13 @@
   color: #eeeeee;
   border-radius: 10px;
   border: 0.4px solid #3f3f3f;
-  padding-inline-start: 10.5px;
-  padding-inline-end: 10.5px;
-  padding-block-start: 14px;
-  padding-block-end: 14px;
-  display: flex;
-  justify-content: space-between;
-  gap: 5px;
+  padding-inline-start: 0.656rem;
+  padding-inline-end: 0.656rem;
+  padding-block-start: 0.875rem;
+  padding-block-end: 0.875rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
   align-items: center;
   cursor: pointer;
   width: 100%;
@@ -23,13 +23,14 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  flex: 1;
 }
 
 .cryptoEnd {
-  flex: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 5px;
   align-items: center;
-  gap: 5.5px;
 }
 
 .cryptoInfo {
@@ -37,25 +38,25 @@
   display: flex;
   flex-direction: column;
   gap: 4.5px;
-  max-width: 72px;
+  max-width: 4.5rem;
 }
 
 .cryptoImg {
-  width: 35px;
-  height: 35px;
+  width: 2.188rem;
+  height: 2.188rem;
 }
 
 .cryptoInfo h2 {
   margin: 0;
   font-weight: bold;
-  font-size: 19.5px;
+  font-size: 1.219rem;
   color: #eeeeee;
-  line-height: 14px;
+  line-height: 0.875rem;
 }
 
 .cryptoInfo p {
   margin: 0;
-  font-size: 11px;
+  font-size: 0.688rem;
   line-height: 7px;
   font-weight: 500;
   color: #eeeeee;
@@ -65,8 +66,8 @@
   flex: 2;
   position: relative;
   width: 100%;
-  height: 40px;
-  max-width: 115px;
+  max-width: 7.5rem;
+  height: 2.5rem;
   background-color: #232229;
   border-radius: 6px;
   > img {
@@ -80,7 +81,7 @@
 }
 
 .chart {
-  position: absolute;
+  /* position: absolute; */
   width: 100% !important;
   height: 100% !important;
   z-index: 1;
@@ -104,13 +105,13 @@
 
 .cryptoPrice h3 {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 0.906rem;
   font-weight: 600;
 }
 
 .cryptoPrice p {
   margin: 0;
-  font-size: 9.5px;
+  font-size: 0.594rem;
   font-weight: 500;
 }
 

@@ -11,16 +11,15 @@
 }
 
 .listWrapper {
-  margin-top: 15px;
+  margin-top: 1.969rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 28.25px;
   flex: 0 0 auto;
 }
 
 .coinsWrapper {
-  margin-top: 10px;
+  margin-top: 1.125rem;
   margin-bottom: 30px;
   /* flex: 1 1 auto; */
   height: calc(100vh - 305px);
@@ -51,20 +50,17 @@
   grid-template-columns: 1fr auto;
   align-items: center;
   position: fixed;
-  width: calc(100% - 50px);
-  bottom: 45px;
+  width: calc(100% - 3.125rem);
+  bottom: 2.913rem;
+  height: 3.75rem;
 }
 
 .footerEnergy {
-  height: 46px;
+  height: 100%;
+  padding-block: 0.281rem;
   display: flex;
   align-items: center;
   gap: 15px;
-}
-
-.energy {
-  width: 45px;
-  height: 62px;
 }
 
 .energyCount {
@@ -74,11 +70,12 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 1.25rem;
+  height: 100%;
 }
 
 .energyCount:first-child {
-  margin-bottom: 50px;
+  margin-bottom: 3.125rem;
 }
 
 .energyLeftText {
@@ -87,7 +84,7 @@
   left: 15%;
   transform: translate(-50%, -50%);
   font-weight: bold;
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 
 .energyRightText {
@@ -95,18 +92,18 @@
   top: 50%;
   left: 60%;
   font-weight: 800;
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 
 .drob {
-  width: 40px;
-  height: 40px;
+  width: 3rem;
+  height: 3rem;
 }
 
 .footerList {
   display: flex;
   align-items: center;
-  height: 55px;
+  height: 100%;
 }
 
 .fellows {
@@ -116,20 +113,19 @@
   justify-content: center;
   gap: 5px;
   background-color: #eeeeee;
-  height: 100%;
-  padding-block: 10px;
-  padding-inline: 10.75px;
-  border-top-left-radius: 9px;
-  border-bottom-left-radius: 9px;
+  height: 4rem;
+  width: 4rem;
+  border-top-left-radius: 0.625rem;
+  border-bottom-left-radius: 0.625rem;
 }
 .fellows img {
-  width: 33.63px;
-  height: 22.5px;
+  width: 2.5rem;
+  height: 1.75rem;
 }
 .fellowsText {
   color: #000000;
   font-weight: 500;
-  font-size: 11px;
+  font-size: 0.75rem;
 }
 
 .build {
@@ -138,13 +134,14 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
+  height: 100%;
   background-color: #eeeeee;
-  padding-block: 10px;
-  padding-inline: 16.75px;
+  height: 4rem;
+  width: 4rem;
 }
 .build img {
-  width: 21.5px;
-  height: 22.5px;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 .buildText {
   color: #000000;
@@ -158,15 +155,16 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
+  height: 100%;
   background-color: #eeeeee;
-  padding-block: 10px;
-  padding-inline: 16.25px;
+  height: 4rem;
+  width: 4rem;
   border-top-right-radius: 9px;
   border-bottom-right-radius: 9px;
 }
 .boost img {
-  width: 22.5px;
-  height: 22.5px;
+  width: 1.75rem;
+  height: 1.75rem;
 }
 .boostText {
   color: #000000;

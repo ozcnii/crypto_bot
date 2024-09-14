@@ -6,7 +6,7 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  padding: 45px 25px 30px 25px;
+  padding: 2.813rem 1.563rem 1.875rem 1.563rem;
   color: #eeeeee;
   min-height: 100vh;
   height: 100%;
@@ -27,11 +27,11 @@
   width: 100%;
   height: 100%;
   > img {
-    width: 60px;
-    height: 60px;
+    width: 3.75rem;
+    height: 3.75rem;
   }
   > p {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: #808088;
     font-weight: 500;
   }
@@ -45,15 +45,15 @@
   width: 100%;
   gap: 7.5px;
   > img {
-    width: 33.63px;
-    height: 22.5px;
+    width: 2.102rem;
+    height: 1.406rem;
   }
   > h1 {
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: bold;
   }
   > p {
-    font-size: 11.5px;
+    font-size: 0.719rem;
     font-weight: 500;
     text-align: center;
   }
@@ -66,7 +66,7 @@
   grid-template-columns: 1fr 3fr;
   width: 100%;
   gap: 10px;
-  height: 40px;
+  height: 2.5rem;
 }
 
 .top {
@@ -94,17 +94,17 @@
       justify-content: center;
       > p {
         color: #948aff;
-        font-size: 19.5px;
+        font-size: 1.219rem;
         font-weight: 500;
       }
       > img {
-        width: 14px;
-        height: 14px;
+        width: 0.875rem;
+        height: 0.875rem;
       }
     }
     > p {
       color: #aaaaaa;
-      font-size: 9px;
+      font-size: 0.563rem;
       font-weight: 500;
     }
   }
@@ -123,12 +123,12 @@
   backdrop-filter: blur(16px);
   padding: 13.5px 14px 13.5px 14px;
   > h1 {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 500;
   }
   > img {
-    width: 9.5px;
-    height: 9px;
+    width: 0.594rem;
+    height: 0.563rem;
   }
 }
 
@@ -140,7 +140,7 @@
   gap: 14.75px;
   width: 100%;
   > h1 {
-    font-size: 19.5px;
+    font-size: 1.219rem;
     font-weight: bold;
   }
 }
@@ -154,8 +154,8 @@
   align-items: center;
   justify-content: center;
   gap: 12.5px;
-  padding-inline: 17.5px;
-  padding-block: 14.5px;
+  padding-inline: 1.094rem;
+  padding-block: 0.906rem;
 }
 
 .defaultFriend {
@@ -164,14 +164,14 @@
   backdrop-filter: blur(16px);
   border-radius: 5px;
   width: 100%;
-  height: 55px;
+  height: 3.438rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline-start: 10.5px;
-  padding-inline-end: 15px;
+  padding-inline-start: 0.656rem;
+  padding-inline-end: 0.938rem;
   > p {
-    font-size: 13.5px;
+    font-size: 0.844rem;
     font-weight: normal;
   }
 }
@@ -182,14 +182,14 @@
   backdrop-filter: blur(16px);
   border-radius: 5px;
   width: 100%;
-  height: 55px;
+  height: 3.438rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline-start: 10.5px;
-  padding-inline-end: 15px;
+  padding-inline-start: 0.656rem;
+  padding-inline-end: 0.938rem;
   > p {
-    font-size: 13.5px;
+    font-size: 0.844rem;
     font-weight: normal;
   }
 }
@@ -199,11 +199,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  width: 35px;
-  height: 35px;
+  width: 2.188rem;
+  height: 2.188rem;
   background-color: rgb(16, 16, 16, 0.3);
   > span {
-    font-size: 19.5px;
+    font-size: 1.219rem;
   }
 }
 
@@ -215,7 +215,7 @@
 
 .cost {
   color: #948aff;
-  font-size: 19.5px;
+  font-size: 1.219rem;
   font-weight: normal;
   > img {
     margin-left: 2.25px;
@@ -232,7 +232,7 @@
   width: 100%;
   height: 100%;
   > h1 {
-    font-size: 19.5px;
+    font-size: 1.219rem;
     font-weight: bold;
   }
 }
@@ -244,12 +244,12 @@
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 79px);
-  padding: 16px 82.25px 14.5px 79.75px;
+  padding: 1rem 5.141rem 0.906rem 5rem;
   background-color: #948aff; /* Фоновый цвет кнопки */
   color: #101010; /* Цвет текста кнопки */
   border: none; /* Удалить границу кнопки */
   border-radius: 5px; /* Закругленные углы */
-  font-size: 18px; /* Размер шрифта */
+  font-size: 1.219rem; /* Размер шрифта */
   font-weight: bold; /* Жирный шрифт */
   cursor: pointer; /* Курсор в виде руки при наведении */
   z-index: 1000; /* Поверх всего контента */

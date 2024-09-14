@@ -1,0 +1,28 @@
+.container {
+  position: absolute;
+  top: 90%; /* Располагаем попап прямо под кнопкой */
+  left: 50%;
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  display: flex;
+  gap: 5px;
+  padding-block: 0.5rem;
+  padding-inline: 0.2rem;
+  transform: translateX(-50%);
+}
+
+.time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.2rem 0.4rem;
+}
+
+.time.active {
+  background-color: #948aff;
+  border-radius: 5px;
+}
