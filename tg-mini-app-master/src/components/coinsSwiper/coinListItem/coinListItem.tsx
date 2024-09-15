@@ -86,7 +86,12 @@ export const CoinListItem: React.FC<CoinListItemProps> = ({
           <Line data={chartData} options={options} className={css.chart} />
         </div>
         <div className={css.cryptoPrice}>
-          <h3>{parseFloat(item.price.toFixed(2)).toLocaleString('de-DE')}$</h3>
+          <h3>
+            {item.shortName === 'DOGS' || item.shortName === 'NOT'
+              ? parseFloat(item.price.toFixed(3)).toLocaleString('de-DE')
+              : parseFloat(item.price.toFixed(2)).toLocaleString('de-DE')}
+            $
+          </h3>
           <div className={css.cryptoChange}>
             <img
               src={item.percent_change_24h > 0 ? 'img/up.svg' : 'img/down.svg'}

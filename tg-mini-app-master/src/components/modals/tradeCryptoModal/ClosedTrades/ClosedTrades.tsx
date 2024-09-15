@@ -61,7 +61,8 @@ export const ClosedTrades = memo(() => {
               </div>
             </div>
             <div className={styles.orderStatus}>
-              <span>P&L: 31%</span>
+              <span>P&L: {order.pnl_percentage?.toFixed(2)}%</span>
+              <span>{order.pnl_value?.toFixed(2)}</span>
             </div>
           </div>
         ))

@@ -65,6 +65,8 @@ class Order(DataBase):
     direction = Column(String)  # "long" or "short"
     leverage = Column(Integer, default=1)  # Leverage (default is 1x, meaning no leverage)
     status = Column(String, default="open")  # "open", "closed", "pending"
+    pnl_value = Column(Float, default=0)
+    pnl_percentage = Column(Float, default=0)
     created_at = Column(TIMESTAMP(timezone=True), default=datetime.now(pytz.timezone('Europe/Moscow')))
     closed_at = Column(TIMESTAMP(timezone=True), nullable=True)
     

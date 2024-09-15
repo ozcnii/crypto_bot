@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Header, Query, Path, BackgroundTasks
-from fastapi import Depends
+from fastapi import Depends, WebSocket
+from fastapi.websockets import WebSocketDisconnect
 from fastapi_simple_rate_limiter import rate_limiter
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
@@ -20,7 +21,7 @@ from GoodGuard.tokensFabric import *
 
 # TOOLS
 from Tools.ContentUtils import serialize_json_user_token
-from Tools.dex import get_current_rate, calculate_pnl
+from Tools.dex import get_current_rate, calculate_pnl, calculate_pnl_percent, calculate_pnl_value
 from Tools.boosters import should_reset_boosters
 from schemas import UserModel, OrderCreateModel
 import asyncio
@@ -152,6 +153,26 @@ async def update_clan_avatar(
         update(Clans).filter(Clans.link == link).values({Clans.logo_url: avatar_key})
     )
     await session.commit()
+    
+async def update_avg_pnl(
+    session: AsyncSession,
+    user_id: int
+):
+    result = await session.execute(
+        select(Orders.pnl_value).filter(Orders.user_id == user_id, Orders.status == 'closed').order_by(Orders.closed_at)
+    )
+    closed_orders = result.scalars().all()
+    
+    # Фильтруем None значения
+    closed_orders = [pnl for pnl in closed_orders if pnl is not None]
+    
+    if not closed_orders:
+        return
+    
+    avg_pnl = sum(closed_orders) / len(closed_orders)
+    await session.execute(
+        update(Users).filter(Users.id == user_id).values({Users.p_n_l: avg_pnl})
+    )
 
 @router.post('/api/v.1.0/oauth/create_user', tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
@@ -1325,7 +1346,9 @@ async def get_v2_orders_list(
                 "amount": order.amount,
                 "entry_rate": order.entry_rate,
                 "leverage": order.leverage,
-                "status": order.status
+                "status": order.status,
+                "pnl_value": order.pnl_value,
+                "pnl_percentage": order.pnl_percentage
             })
             
         return orders_list
@@ -1381,6 +1404,78 @@ async def get_v2_orders_current(
             "leverage": order.leverage,
             "status": order.status
         }
+
+@router.websocket('/api/v.1.0/ws/orders/pnl/{order_id}')
+async def websocket_orders_pnl(
+    websocket: WebSocket,
+    order_id: int,
+    db: AsyncSession = Depends(Database.get_session),
+    api_key: str = Query(...),
+    client_id: int = Query(...)
+):
+    await websocket.accept()
+
+    # Проверка client_id
+    if not check_client_id(client_id):
+        await websocket.send_json({"message": "Не авторизованный клиент"})
+        await websocket.close()
+        return
+
+    try:
+        # Проверка api_key
+        user_token = api_key.split(" ")[-1]  # Извлекаем токен
+    except:
+        await websocket.send_json({"message": "Ошибка в ключе API"})
+        await websocket.close()
+        return
+
+    async with db as session:
+        # Поиск пользователя по токену
+        result = await session.execute(select(Users).filter(Users.token == user_token))
+        person = result.scalars().first()
+
+        if not person:
+            await websocket.send_json({"message": "Пользователь не найден"})
+            await websocket.close()
+            return
+
+        try:
+            # Поиск ордера
+            result = await session.execute(
+                select(Orders).filter(Orders.id == order_id, Orders.user_id == person.id)
+            )
+            order = result.scalars().first()
+
+            if not order:
+                await websocket.send_json({"message": "Нет такого ордера"})
+                await websocket.close()
+                return
+
+            # Основной цикл отправки P&L данных
+            while True:
+                current_rate = get_current_rate(order.contract_pair)
+                
+                if current_rate is None:
+                    await websocket.send_json({"message": "Не удалось получить текущую цену"})
+                    await asyncio.sleep(15)  # Продолжаем попытки
+                    continue
+
+                # Рассчитываем P&L
+                pnl_percent = calculate_pnl_percent(order, current_rate)
+                pnl_value = calculate_pnl_value(order, current_rate)
+
+                # Отправляем данные клиенту
+                await websocket.send_json({
+                    "pnl_percent": pnl_percent,
+                    "pnl_value": pnl_value,
+                    "current_rate": current_rate
+                })
+
+                await asyncio.sleep(15)  # Отправляем данные каждые 15 секунд
+
+        except WebSocketDisconnect:
+            print("Клиент отключился")
+            await websocket.close()
     
 @router.post("/api/v.1.0/orders/close/{order_id}", tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
@@ -1388,7 +1483,8 @@ async def post_v2_orders_close(
     client_id: int,
     Authorization: str = Header(...),
     db: AsyncSession = Depends(Database.get_session),
-    order_id: int = Path(...)
+    order_id: int = Path(...),
+    background_tasks: BackgroundTasks = BackgroundTasks()
 ):
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
@@ -1424,9 +1520,12 @@ async def post_v2_orders_close(
         person.balance += pnl
         session.add(person)
         
-        order.pnl = pnl
-        
+        order.pnl_value = pnl
+        order.pnl_percentage = calculate_pnl_percent(order, exit_rate)
         session.add(order)
         
+        background_tasks.add_task(update_avg_pnl, session, order.user_id)
+        
         await session.commit()
+        
         return JSONResponse(status_code=200, content={"message": "Ордер закрыт", "pnl": pnl})

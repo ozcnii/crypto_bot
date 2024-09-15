@@ -32,12 +32,33 @@ def get_current_rate(contract_address: str) -> float:
     
 	return price_by_quote_asset
 
-def calculate_pnl(order: Order, exit_rate: float):
-  coin_in_usdt = order.amount * coin_to_usdt_rate
-  pnl_in_usdt = (exit_rate - order.entry_rate) if order.direction == "long" else (order.entry_rate - exit_rate) * coin_in_usdt * order.leverage / order.entry_rate
-  pnl_in_coin = pnl_in_usdt / coin_to_usdt_rate
+def calculate_pnl(order, exit_rate: float):
+    coin_in_usdt = order.amount * coin_to_usdt_rate
+    if order.direction == "long":
+        pnl_in_usdt = (exit_rate - order.entry_rate) * coin_in_usdt * order.leverage / order.entry_rate
+    else:
+        pnl_in_usdt = (order.entry_rate - exit_rate) * coin_in_usdt * order.leverage / order.entry_rate
+
+    pnl_in_coin = pnl_in_usdt / coin_to_usdt_rate
+
+    # Проверка на максимальный убыток
+    if pnl_in_coin < -order.amount:
+        pnl_in_coin = -order.amount
+
+    return pnl_in_coin
   
-  if pnl_in_coin < -order.amount:
-    pnl_in_coin = -order.amount
-  
-  return pnl_in_coin
+# Функция для расчета P&L (%) в реальном времени
+def calculate_pnl_percent(order, current_rate: float):
+    if order.direction == "long":
+        pnl_percent = ((current_rate - order.entry_rate) / order.entry_rate) * 100 * order.leverage
+    else:
+        pnl_percent = ((order.entry_rate - current_rate) / order.entry_rate) * 100 * order.leverage
+    return pnl_percent
+
+# Функция для расчета P&L в валюте сделки
+def calculate_pnl_value(order, current_rate: float):
+    if order.direction == "long":
+        pnl_in_usdt = (current_rate - order.entry_rate) * order.amount * order.leverage
+    else:
+        pnl_in_usdt = (order.entry_rate - current_rate) * order.amount * order.leverage
+    return pnl_in_usdt

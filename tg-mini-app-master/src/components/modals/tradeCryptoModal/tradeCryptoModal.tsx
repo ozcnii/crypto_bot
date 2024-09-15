@@ -73,7 +73,7 @@ export const TradeCryptoModal: React.FC = () => {
               x_leverage: boosters['freeBoosters']?.x_leverage,
             },
           });
-          setMaxAmount(maxAmount);
+          setMaxAmount(maxAmount?.toFixed(2));
           setMaxLeverage(maxLeverage);
         }
       } catch (err) {
@@ -95,7 +95,7 @@ export const TradeCryptoModal: React.FC = () => {
           x_leverage: boosters['freeBoosters']?.x_leverage,
         },
       });
-      setMaxAmount(maxAmount);
+      setMaxAmount(maxAmount?.toFixed(2));
       setMaxLeverage(maxLeverage);
     }
   }, [dispatch, boosters]);
@@ -257,7 +257,12 @@ export const TradeCryptoModal: React.FC = () => {
               </div>
             </div>
             <div className={css.cryptoPrice}>
-              <h3>{crypto?.price.toFixed(2).replace('.', ',')}$</h3>
+              <h3>
+                {crypto.shortName === 'DOGS' || crypto.shortName === 'NOT'
+                  ? parseFloat(crypto.price.toFixed(3)).toLocaleString('de-DE')
+                  : parseFloat(crypto.price.toFixed(2)).toLocaleString('de-DE')}
+                $
+              </h3>
               <div className={css.cryptoChange}>
                 <img
                   src={

@@ -10,6 +10,8 @@ export interface Order {
   created_at: string;
   closed_at?: string;
   leverage?: number;
+  pnl_value?: number;
+  pnl_percentage?: number;
 }
 
 export interface OrdersState {
