@@ -330,7 +330,8 @@ async def complete_user_task_v2(
             if person.balance >= user_task.task.target_value:
                 user_task.completed = True
                 person.balance += user_task.task.reward
-
+                person.clan.balance += user_task.task.reward
+                
                 await session.commit()
                 await session.refresh(person)
                 return JSONResponse(status_code=200, content={"message": "Задание завершено", "id": user_task.id})
@@ -338,6 +339,7 @@ async def complete_user_task_v2(
         if user_task.progress >= user_task.task.target_value:
             user_task.completed = True
             person.balance += user_task.task.reward
+            person.clan.balance += user_task.task.reward
                 
             await session.commit()
             await session.refresh(person)
@@ -516,26 +518,6 @@ async def create_v2_clan(
             "id": new_clan.id,
             "message": "Клан успешно создан"
         })
-        
-@event.listens_for(Users.balance, 'set', propagate=True)
-def update_clan_balance_on_user_balance_change(target, value, oldvalue, initiator):
-    if target.clan:
-        asyncio.create_task(_update_clan_balance(target.clan))
-
-async def _update_clan_balance(clan):
-    session_gen = Database.get_session()
-    session = await session_gen.__anext__()  # Получаем первую итерацию генератора (сессию)
-
-    try:
-        await clan.update_balance()
-        session.add(clan)
-        await session.commit()
-    except Exception as e:
-        await session.rollback()
-        raise e
-    finally:
-        # Закрытие сессии
-        await session_gen.aclose()
 
 @event.listens_for(Users, 'after_insert', propagate=True)
 def create_booster_for_new_user(mapper, connection, target):
@@ -1348,7 +1330,8 @@ async def get_v2_orders_list(
                 "leverage": order.leverage,
                 "status": order.status,
                 "pnl_value": order.pnl_value,
-                "pnl_percentage": order.pnl_percentage
+                "pnl_percentage": order.pnl_percentage,
+                "exit_rate": order.exit_rate
             })
             
         return orders_list
@@ -1523,6 +1506,12 @@ async def post_v2_orders_close(
         order.pnl_value = pnl
         order.pnl_percentage = calculate_pnl_percent(order, exit_rate)
         session.add(order)
+        
+        result = await session.execute(select(Clans).filter(Clans.id == person.clan_id))
+        clan = result.scalars().first()
+        
+        if clan:
+            clan.balance += pnl
         
         background_tasks.add_task(update_avg_pnl, session, order.user_id)
         

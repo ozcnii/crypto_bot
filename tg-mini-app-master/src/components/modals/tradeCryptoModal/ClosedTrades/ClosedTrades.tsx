@@ -58,11 +58,31 @@ export const ClosedTrades = memo(() => {
                     ? order?.entry_rate.toFixed(2)
                     : order?.entry_rate}
                 </h1>
+                <p>Exit rate</p>
+                <h1>
+                  {order?.exit_rate
+                    ? order?.exit_rate.toFixed(2)
+                    : order?.exit_rate}
+                </h1>
               </div>
             </div>
             <div className={styles.orderStatus}>
-              <span>P&L: {order.pnl_percentage?.toFixed(2)}%</span>
-              <span>{order.pnl_value?.toFixed(2)}</span>
+              <div>
+                P&L:{' '}
+                <span>
+                  {order?.pnl_percentage !== null
+                    ? `${order?.pnl_percentage > 0 ? '+' : ''} ${order?.pnl_percentage.toFixed(2)}%`
+                    : 'Loading'}
+                </span>
+              </div>
+              <span
+                className={order?.pnl_value > 0 ? styles.green : styles.red}
+              >
+                {order?.pnl_value !== null
+                  ? `${order?.pnl_value > 0 ? '+' : ''} ${order?.pnl_value.toFixed(2)}`
+                  : 'Loading'}
+                <MainCoin width={10} height={10} />
+              </span>
             </div>
           </div>
         ))
