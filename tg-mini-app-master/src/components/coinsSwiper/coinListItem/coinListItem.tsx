@@ -81,9 +81,11 @@ export const CoinListItem: React.FC<CoinListItemProps> = ({
         </div>
       </div>
       <div className={css.cryptoEnd}>
-        <div className={css.cryptoChart}>
-          <img src="img/net.svg" alt="net" className={css.net} />
-          <Line data={chartData} options={options} className={css.chart} />
+        <div className={css.cryptoChartContainer}>
+          <div className={css.cryptoChart}>
+            <img src="img/net.svg" alt="net" className={css.net} />
+            <Line data={chartData} options={options} className={css.chart} />
+          </div>
         </div>
         <div className={css.cryptoPrice}>
           <h3>

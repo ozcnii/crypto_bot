@@ -96,8 +96,9 @@
         color: #948aff;
         font-size: 1.219rem;
         font-weight: 500;
+        line-height: 0.1rem;
       }
-      > img {
+      > svg {
         width: 0.875rem;
         height: 0.875rem;
       }
@@ -202,9 +203,6 @@
   width: 2.188rem;
   height: 2.188rem;
   background-color: rgb(16, 16, 16, 0.3);
-  > span {
-    font-size: 1.219rem;
-  }
 }
 
 .iconWrapper {
@@ -217,8 +215,8 @@
   color: #948aff;
   font-size: 1.219rem;
   font-weight: normal;
-  > img {
-    margin-left: 2.25px;
+  > svg {
+    margin-left: 0.188rem;
   }
 }
 

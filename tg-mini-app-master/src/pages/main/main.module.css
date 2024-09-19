@@ -19,10 +19,10 @@
 }
 
 .coinsWrapper {
-  margin-top: 1.125rem;
+  margin-top: 1rem;
   margin-bottom: 30px;
   /* flex: 1 1 auto; */
-  height: calc(100vh - 305px);
+  height: calc(100vh - 315px);
 }
 
 .listHeading {
