@@ -146,7 +146,9 @@ class Boosters(DataBase):
     trades_lvl = Column(Integer, nullable=False, default=1)
     
     turbo_range_uses = Column(Integer, default=3)
+    turbo_range_active = Column(Boolean, default=False)
     x_leverage_uses = Column(Integer, default=3)
+    x_leverage_active = Column(Boolean, default=False)
     last_reset = Column(TIMESTAMP(timezone=True), default=lambda: datetime.now(pytz.timezone('Europe/Moscow')))
     
     user = relationship("Users", back_populates="boosters")

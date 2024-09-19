@@ -605,10 +605,61 @@ async def get_v2_boosters(
                 'nextPrice': trades_next.price
             },
             'freeBoosters': {
-                'turbo_range': boosters.turbo_range_uses,
-                'x_leverage': boosters.x_leverage_uses
+                'turbo_range': {
+                    'uses': boosters.turbo_range_uses,
+                    'active': boosters.turbo_range_active
+                },
+                'x_leverage': {
+                    'uses': boosters.x_leverage_uses,
+                    'active': boosters.x_leverage_active
+                }
             }
         }
+        
+@router.post("/api/v.1.0/boosters/use/free", tags=["Users Methods"])
+@rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
+async def use_v2_boosters_free(
+    client_id: int = Query(...),
+    Authorization: str = Header(...),
+    db: AsyncSession = Depends(Database.get_session),
+    booster_type: str = Body(...),
+):
+    try:
+        user = Authorization.split(" ")[1]
+    except:
+        return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+
+    
+    if not check_client_id(client_id):
+        return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
+
+    async with db as session:
+        result = await session.execute(select(Users).filter(Users.token == user))
+        person = result.scalars().first()
+        
+        if person is None:
+            return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
+        if person is False:
+            return JSONResponse(status_code=401, content={"message": "Не авторизован"})
+        
+        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
+        boosters = result.scalars().first()
+        
+        if booster_type == 'turbo_range' and boosters.turbo_range_uses != 0:
+            if boosters.turbo_range_active:
+                return JSONResponse(status_code=404, content={"message": "Такого бустера нет или он уже использован"})
+            boosters.turbo_range_active = True
+            boosters.turbo_range_uses -= 1
+        elif booster_type == 'x_leverage' and boosters.x_leverage_uses != 0:
+            if boosters.x_leverage_active:
+                return JSONResponse(status_code=404, content={"message": "Такого бустера нет или он уже использован"})
+            boosters.x_leverage_active = True
+            boosters.x_leverage_uses -= 1
+        else:
+            return JSONResponse(status_code=404, content={"message": "Такого бустера нет или он уже использован"})
+        
+        await session.commit()
+        return JSONResponse(status_code=200, content={"message": "Бустер успешно использован"})
 
 @router.post("/api/v.1.0/boosters/upgrade", tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
@@ -1249,21 +1300,6 @@ async def post_v2_orders_create(
         if len(orders) > 0:
             return JSONResponse(status_code=409, content={"message": "У пользователя уже есть открытый ордер"})
         
-        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
-        boosters = result.scalars().first()
-        
-        if boosters.turbo_range_uses >= 1:
-            await session.execute(update(Boosters).filter(Boosters.user_id == person.id).values({
-                Boosters.turbo_range_uses: boosters.turbo_range_uses - 1
-            }))
-            await session.commit()
-        
-        if boosters.x_leverage_uses >= 1:
-            await session.execute(update(Boosters).filter(Boosters.user_id == person.id).values({
-                Boosters.x_leverage_uses: boosters.x_leverage_uses - 1
-            }))
-            await session.commit()
-        
         entry_rate = get_current_rate(order.contract_pair)
         
         # Создание нового ордера
@@ -1277,6 +1313,19 @@ async def post_v2_orders_create(
             status="open"
         )
 
+        # изменения бустеров пользователя
+        result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
+        boosters = result.scalars().first()
+        
+        if boosters.turbo_range_active == True or boosters.x_leverage_active == True:
+            await session.execute(
+                update(Boosters).filter(Boosters.user_id == person.id).values({
+                    Boosters.turbo_range_active: False, Boosters.x_leverage_active: False
+                })
+            )
+        else:
+            pass
+        
         # Добавление и сохранение ордера в базу данных
         db.add(new_order)
         await db.commit()

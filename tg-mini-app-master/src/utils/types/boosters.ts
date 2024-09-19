@@ -4,8 +4,13 @@ export type Booster = {
 };
 
 export type FreeBooster = {
-  turbo_range: number;
-  x_leverage: number;
+  uses: number;
+  active: boolean;
+};
+
+export type FreeBoosters = {
+  turbo_range: FreeBooster;
+  x_leverage: FreeBooster;
 };
 
 export enum BoosterType {
@@ -15,5 +20,5 @@ export enum BoosterType {
 }
 
 export type Boosters = {
-  [key: string]: Booster | FreeBooster;
+  [key: string]: Booster | FreeBoosters;
 };

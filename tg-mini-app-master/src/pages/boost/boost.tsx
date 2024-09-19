@@ -2,6 +2,7 @@ import { Modal } from '@/components';
 import { BoostersSwiper } from '@/components/boostersSwiper';
 import { RootState } from '@/store';
 import { getUserBoosters } from '@/store/boostersSlice';
+import { openConfirmBoostModal } from '@/store/modalsSlice';
 import { getByJWTUser } from '@/store/userSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
@@ -23,6 +24,21 @@ export const Boost = () => {
     fetchUserData();
     fetchBoosterPricesAndLvl();
   }, [dispatch]);
+
+  const handleOnClick = (booster_type: string) => {
+    dispatch(
+      openConfirmBoostModal({
+        isConfirmed: false,
+        boost: {
+          name: booster_type,
+          img: booster_type === 'turbo_range' ? '🚀' : '💥',
+          lvl: boosters['freeBoosters']?.[booster_type].uses,
+          cost: 'Free',
+        },
+      }),
+    );
+  };
+
   return (
     <div className={css.main}>
       <div className={css.balanceContainer}>
@@ -38,17 +54,23 @@ export const Boost = () => {
       <div className={css.freeDailyBoost}>
         <h1>Free Daily Boost</h1>
         <div className={css.boost}>
-          <div className={css.turboBoost}>
+          <div
+            className={css.turboBoost}
+            onClick={() => handleOnClick('turbo_range')}
+          >
             <div className={css.boostInfo}>
               <h3>Turbo range</h3>
-              <p>{boosters['freeBoosters']?.turbo_range}/3 Available</p>
+              <p>{boosters['freeBoosters']?.turbo_range.uses}/3 Available</p>
             </div>
             <span className={css.turboBoostIcon}>🚀</span>
           </div>
-          <div className={css.x_LeverageBoost}>
+          <div
+            className={css.x_LeverageBoost}
+            onClick={() => handleOnClick('x_leverage')}
+          >
             <div className={css.boostInfo}>
               <h3>X-Leverage</h3>
-              <p>{boosters['freeBoosters']?.x_leverage}/3 Available</p>
+              <p>{boosters['freeBoosters']?.x_leverage.uses}/3 Available</p>
             </div>
             <span className={css.x_LeverageBoostIcon}>💥</span>
           </div>

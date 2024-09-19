@@ -38,6 +38,27 @@ export const upgradeUserBoosterByType = createAsyncThunk(
   },
 );
 
+export const useFreeBoosterByType = createAsyncThunk(
+  'boosters/useFreeBoosterByType',
+  async (
+    { booster_type }: { booster_type: string },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      const response = await axios.post(
+        `/boosters/use/free?client_id=1`,
+        booster_type,
+      );
+      if (response.status === 200) {
+        return await dispatch(getUserBoosters());
+      }
+      return rejectWithValue(response.data);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
 const initialState = {
   boosters: {} as Boosters,
   loading: false,
@@ -72,6 +93,18 @@ export const boostersSlice = createSlice({
         state.error = null;
       })
       .addCase(upgradeUserBoosterByType.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(useFreeBoosterByType.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(useFreeBoosterByType.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(useFreeBoosterByType.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

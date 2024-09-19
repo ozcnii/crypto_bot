@@ -1,5 +1,8 @@
 import { RootState } from '@/store';
-import { upgradeUserBoosterByType } from '@/store/boostersSlice';
+import {
+  upgradeUserBoosterByType,
+  useFreeBoosterByType,
+} from '@/store/boostersSlice';
 import { confirmBoost } from '@/store/modalsSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { FC, useEffect, useRef, useState } from 'react';
@@ -54,11 +57,15 @@ export const ConfirmSlider: FC<ConfirmSliderProps> = ({ type }) => {
 
     if (finalPosition >= maxPosition) {
       dispatch(confirmBoost(true));
-      await dispatch(
-        upgradeUserBoosterByType({
-          booster_type: type,
-        }),
-      );
+      if (type === 'x_leverage' || type === 'turbo_range') {
+        await dispatch(useFreeBoosterByType({ booster_type: type }));
+      } else {
+        await dispatch(
+          upgradeUserBoosterByType({
+            booster_type: type,
+          }),
+        );
+      }
     } else {
       dispatch(confirmBoost(false));
     }

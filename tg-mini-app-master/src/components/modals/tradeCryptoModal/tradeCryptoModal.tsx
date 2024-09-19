@@ -359,8 +359,10 @@ export const TradeCryptoModal: React.FC = () => {
           disabled={formData.direction === '' || formData.amount === 0}
         >
           Place Order
-          {boosters['freeBoosters']?.turbo_range >= 1 ? <span>🚀</span> : null}
-          {boosters['freeBoosters']?.x_leverage >= 1 ? <span>💥</span> : null}
+          {boosters['freeBoosters']?.turbo_range.active ? (
+            <span>🚀</span>
+          ) : null}
+          {boosters['freeBoosters']?.x_leverage.active ? <span>💥</span> : null}
         </button>
       </div>
       <div className={css.tradesContainer}>

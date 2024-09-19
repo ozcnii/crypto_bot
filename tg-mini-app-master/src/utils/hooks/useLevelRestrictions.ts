@@ -22,17 +22,26 @@ export const useLevelRestrictions = ({
     leverage_lvl: number;
   };
   freeBoosters: {
-    x_leverage: number;
-    turbo_range: number;
+    x_leverage: {
+      uses: number;
+      active: boolean;
+    };
+    turbo_range: {
+      uses: number;
+      active: boolean;
+    };
   };
 }) => {
   const { maxAmountPercentage } = LEVEL_RESTRICTIONS[levels.range_lvl];
   const { maxLeverage } = LEVEL_RESTRICTIONS[levels.leverage_lvl];
   return {
     maxAmount:
-      freeBoosters.turbo_range !== 0
+      freeBoosters.turbo_range.uses !== 0 && freeBoosters.turbo_range.active
         ? balance * maxAmountPercentage * 2
         : balance * maxAmountPercentage,
-    maxLeverage: freeBoosters.x_leverage !== 0 ? maxLeverage * 2 : maxLeverage,
+    maxLeverage:
+      freeBoosters.x_leverage.uses !== 0 && freeBoosters.x_leverage.active
+        ? maxLeverage * 2
+        : maxLeverage,
   };
 };
