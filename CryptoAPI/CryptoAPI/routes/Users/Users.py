@@ -1494,7 +1494,7 @@ async def websocket_orders_pnl(
 
                 # Рассчитываем P&L
                 pnl_percent = calculate_pnl_percent(order, current_rate)
-                pnl_value = calculate_pnl_value(order, current_rate)
+                pnl_value = calculate_pnl(order, current_rate)
 
                 # Отправляем данные клиенту
                 await websocket.send_json({

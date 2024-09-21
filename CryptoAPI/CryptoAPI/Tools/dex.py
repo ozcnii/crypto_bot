@@ -33,19 +33,16 @@ def get_current_rate(contract_address: str) -> float:
 	return price_by_quote_asset
 
 def calculate_pnl(order, exit_rate: float):
-    coin_in_usdt = order.amount * coin_to_usdt_rate
     if order.direction == "long":
-        pnl_in_usdt = (exit_rate - order.entry_rate) * coin_in_usdt * order.leverage / order.entry_rate
+        pnl_in_usdt = (exit_rate - order.entry_rate) * order.amount * order.leverage / order.entry_rate
     else:
-        pnl_in_usdt = (order.entry_rate - exit_rate) * coin_in_usdt * order.leverage / order.entry_rate
-
-    pnl_in_coin = pnl_in_usdt / coin_to_usdt_rate
+        pnl_in_usdt = (order.entry_rate - exit_rate) * order.amount * order.leverage / order.entry_rate
 
     # Проверка на максимальный убыток
-    if pnl_in_coin < -order.amount:
-        pnl_in_coin = -order.amount
+    if pnl_in_usdt < -order.amount:
+        pnl_in_usdt = -order.amount
 
-    return pnl_in_coin
+    return pnl_in_usdt
   
 # Функция для расчета P&L (%) в реальном времени
 def calculate_pnl_percent(order, current_rate: float):
