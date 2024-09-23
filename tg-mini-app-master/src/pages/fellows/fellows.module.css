@@ -224,7 +224,7 @@
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   flex-grow: 1;
   gap: 14.75px;
   width: 100%;

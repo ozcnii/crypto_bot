@@ -199,9 +199,9 @@ async def create_v2_user(
                 referrer = referrer_result.scalars().first()
                 if referrer:
                     existing_user.referrer_id = referrer.id
-                    referrer.balance += 100 if not referrer.is_premium else 1000
+                    referrer.balance += 100 if not existing_user.is_premium else 1000
                     session.add(referrer)
-                    need_to_update = True
+                    await session.commit()
 
             if existing_user.username != user.username:
                 update_values[Users.username] = user.username
@@ -1294,7 +1294,7 @@ async def post_v2_orders_create(
         if person.balance < order.amount:
             return JSONResponse(status_code=409, content={"message": "Недостаточно средств"})
         
-        result = await session.execute(select(Orders).filter(Orders.user_id == person.id, Orders.status == "open"))
+        result = await session.execute(select(Orders).filter(Orders.user_id == person.id, Orders.status == "open", Orders.contract_pair == order.contract_pair))
         orders = result.scalars().all()
         
         if len(orders) > 0:
