@@ -1,5 +1,6 @@
 from typing import Any
-
+import asyncpg
+import asyncio
 import uvicorn
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -87,7 +88,7 @@ async def custom_exception_handler(request: Request, exc: ManyRequestException):
 @app.get("/")
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
 async def root(db: AsyncSession = Depends(Database.get_session)):
-    return {"message": "Hello Crypto!"}
+    return {"message": "Hello World"}
 
 if __name__ == "__main__":
     uvicorn.run('main:app', host='0.0.0.0', port=8080, reload=True)

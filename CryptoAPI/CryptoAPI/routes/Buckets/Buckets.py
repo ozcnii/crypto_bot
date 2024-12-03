@@ -146,9 +146,7 @@ async def get_coin_info(
                             "close": q['close'],
                             "volume": q['volume']
                         })
-            
-            # cmc = CoinMarketCapAPI('92075f88-bfdd-46eb-8739-6487205858cb')
-            # coin = cmc.cryptocurrency_info(contract=)
+
             
             return {
                 "name": current_data['data'][0]['base_asset_name'],
@@ -162,55 +160,3 @@ async def get_coin_info(
 
         except requests.RequestException as e:
             raise HTTPException(status_code=500, detail=str(e))
-    
-# @router.post("/api/v.1.0/coin/getOhlcv/{network}/{contract_address}", tags=["Buckets"])
-# @rate_limiter(limit=CryptoAPI.GoodGuard.max_requests, seconds=CryptoAPI.GoodGuard.max_time_request_seconds, exception=ManyRequestException)
-# async def get_ohlcv(
-#     client_id: int,
-#     network: str,
-#     contract_address: str,
-#     user: UserTokenModel,
-#     db: Session = Depends(get_db)
-# ):
-#     person = db.query(Users).filter(Users.token == user.token).first()
-
-#     if person is None:
-#         return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
-#     if person is False:
-#         return JSONResponse(status_code=401, content={"message": "Не авторизован"})
-    
-#     if not check_client_id(client_id):
-#         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
-    
-#     try:
-#         # Получение текущей информации о криптовалюте
-#         current_url = f"https://pro-api.coinmarketcap.com/v4/dex/pairs/ohlcv/historical?network_slug={network}&contract_address={contract_address}"
-#         headers = {"X-CMC_PRO_API_KEY": "92075f88-bfdd-46eb-8739-6487205858cb"}  # Замените на ваш API-ключ
-#         response = requests.get(current_url, headers=headers)
-#         response.raise_for_status()
-#         current_data = response.json()
-
-#         # Поиск данных о криптовалюте
-#         if "data" not in current_data:
-#             raise HTTPException(status_code=404, detail="Data not found")
-
-#         historical_data = current_data["data"]
-#         candles = []
-#         for entry in historical_data:
-#             for quote in entry['quotes']:
-#                 for q in quote['quote']:
-#                     candles.append({
-#                         "timestamp": datetime.fromisoformat(quote['time_open'].replace('Z', '+00:00')).strftime('%Y-%m-%d %H:%M:%S'),
-#                         "open": q['open'],
-#                         "high": q['high'],
-#                         "low": q['low'],
-#                         "close": q['close'],
-#                         "volume": q['volume']
-#                     })
-        
-#         return {
-#             "candles": candles
-#         }
-
-#     except requests.RequestException as e:
-#         raise HTTPException(status_code=500, detail=str(e))

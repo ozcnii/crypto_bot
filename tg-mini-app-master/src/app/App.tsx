@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef, useState, type FC } from 'react';
 import { Navigate, Route, Router, Routes } from 'react-router-dom';
 
 import { Notification } from '@/components';
+import { Stories } from '@/components/stories/stories';
 import { routes } from '@/navigation/routes.tsx';
 import { ErrorPage, LoaderPage } from '@/pages';
 import { RootState } from '@/store';
@@ -136,6 +137,7 @@ export const App: FC = () => {
       ref={pageRef}
     >
       <div className="page">
+        <Stories />
         <Router location={location} navigator={reactNavigator}>
           <TransitionGroup>
             <CSSTransition

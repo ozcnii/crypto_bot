@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Header, Query, Path, BackgroundTasks
+from fastapi import APIRouter, Body, Header, Query, Path, BackgroundTasks, HTTPException
 from fastapi import Depends, WebSocket
 from fastapi.websockets import WebSocketDisconnect
 from fastapi_simple_rate_limiter import rate_limiter
@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import update, event
 from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.exc import SQLAlchemyError
 import os
 
 # GOODGUARD
@@ -174,14 +175,15 @@ async def update_avg_pnl(
         update(Users).filter(Users.id == user_id).values({Users.p_n_l: avg_pnl})
     )
 
+
 @router.post('/api/v.1.0/oauth/create_user', tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
 async def create_v2_user(
-    client_id: int = Query(...),
-    user: UserModel = Body(...),
-    referral_code: str = Query(None),
-    background_tasks: BackgroundTasks = BackgroundTasks(),
-    db: AsyncSession = Depends(Database.get_session)
+        client_id: int = Query(...),
+        user: UserModel = Body(...),
+        referral_code: str = Query(None),
+        background_tasks: BackgroundTasks = BackgroundTasks(),
+        db: AsyncSession = Depends(Database.get_session)
 ):
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизован"})
@@ -216,9 +218,11 @@ async def create_v2_user(
                 await session.commit()
 
             # Запуск фоновой задачи для обновления аватара, лиги и заданий
-            background_tasks.add_task(update_avatar_and_league, session, existing_user.id, user.file_path, existing_user.league_id, True)
-            background_tasks.add_task(update_tasks_and_invite_friends, session, existing_user.id, referrer if referral_code else None)
-            
+            background_tasks.add_task(update_avatar_and_league, session, existing_user.id, user.file_path,
+                                      existing_user.league_id, True)
+            background_tasks.add_task(update_tasks_and_invite_friends, session, existing_user.id,
+                                      referrer if referral_code else None)
+
             return existing_user
         else:
             new_user = Users(
@@ -242,9 +246,10 @@ async def create_v2_user(
                     await session.commit()
 
             # Запуск фоновой задачи для обновления аватара, лиги и заданий
-            background_tasks.add_task(update_avatar_and_league, session, new_user.id, user.file_path, new_user.league_id, False)
+            background_tasks.add_task(update_avatar_and_league, session, new_user.id, user.file_path,
+                                      new_user.league_id, False)
             background_tasks.add_task(update_tasks_and_invite_friends, session, new_user.id, referrer)
-            
+
             return new_user
 
 @router.get("/api/v.1.0/tasks", tags=["Users Methods"])
@@ -297,7 +302,7 @@ async def complete_user_task_v2(
     client_id: int,
     task_id: int,
     Authorization: str = Header(...),
-    db: Session = Depends(Database.get_session)
+    db: AsyncSession = Depends(Database.get_session)
 ):
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
@@ -352,7 +357,7 @@ async def complete_user_task_v2(
 async def get_v2_current_user_fellows(
     client_id: int,
     Authorization: str = Header(...),
-    db: Session = Depends(Database.get_session)
+    db: AsyncSession = Depends(Database.get_session)
 ):
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
@@ -390,7 +395,7 @@ async def get_v2_current_user_fellows(
 async def get_v2_current_user(
     client_id: int,
     Authorization: str = Header(...),
-    db: Session = Depends(Database.get_session)
+    db: AsyncSession = Depends(Database.get_session)
 ):
     if not check_client_id(client_id):
         return JSONResponse(status_code=401, content={"message": "Не авторизованный клиент"})
@@ -401,8 +406,12 @@ async def get_v2_current_user(
         return JSONResponse(status_code=401, content={"message": "Не авторизован"})
 
     async with db as session:
-        result = await session.execute(select(Users).filter(Users.token == user))
-        person = result.scalars().first()
+        try:
+            result = await session.execute(select(Users).filter(Users.token == user))
+            person = result.scalars().first()
+        except SQLAlchemyError as e:
+            print(f"Database error: {e}")
+            raise HTTPException(status_code=500, detail="Database connection error")
 
         if person is None:
             return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
@@ -1261,14 +1270,15 @@ async def get_v2_league_info_by_name_clans(
             })
             
         return clans_list
-    
+
+
 @router.post("/api/v.1.0/orders/create", tags=["Users Methods"])
 @rate_limiter(limit=GoodGuard.max_requests, seconds=GoodGuard.max_time_request_seconds, exception=ManyRequestException)
 async def post_v2_orders_create(
-    client_id: int,
-    Authorization: str = Header(...),
-    db: AsyncSession = Depends(Database.get_session),
-    order: OrderCreateModel = Body(...)
+        client_id: int,
+        Authorization: str = Header(...),
+        db: AsyncSession = Depends(Database.get_session),
+        order: OrderCreateModel = Body(...)
 ):
     # Проверка client_id
     if not check_client_id(client_id):
@@ -1284,24 +1294,26 @@ async def post_v2_orders_create(
     async with db as session:
         result = await session.execute(select(Users).filter(Users.token == token))
         person = result.scalars().first()
-        
+
         if person is None:
             return JSONResponse(status_code=404, content={"message": "Пользователь не найден"})
-        
+
         if person is False:
             return JSONResponse(status_code=401, content={"message": "Не авторизован"})
-        
+
         if person.balance < order.amount:
             return JSONResponse(status_code=409, content={"message": "Недостаточно средств"})
-        
-        result = await session.execute(select(Orders).filter(Orders.user_id == person.id, Orders.status == "open", Orders.contract_pair == order.contract_pair))
+
+        result = await session.execute(select(Orders).filter(Orders.user_id == person.id, Orders.status == "open",
+                                                             Orders.contract_pair == order.contract_pair))
         orders = result.scalars().all()
-        
+
+        # Проверка на количество открытых ордеров
         if len(orders) > 0:
-            return JSONResponse(status_code=409, content={"message": "У пользователя уже есть открытый ордер"})
-        
+            return JSONResponse(status_code=409, content={"message": "У пользователя уже есть открытый ордер"})
+
         entry_rate = get_current_rate(order.contract_pair)
-        
+
         # Создание нового ордера
         new_order = Orders(
             user_id=person.id,
@@ -1316,7 +1328,7 @@ async def post_v2_orders_create(
         # изменения бустеров пользователя
         result = await session.execute(select(Boosters).filter(Boosters.user_id == person.id))
         boosters = result.scalars().first()
-        
+
         if boosters.turbo_range_active == True or boosters.x_leverage_active == True:
             await session.execute(
                 update(Boosters).filter(Boosters.user_id == person.id).values({
@@ -1325,7 +1337,7 @@ async def post_v2_orders_create(
             )
         else:
             pass
-        
+
         # Добавление и сохранение ордера в базу данных
         db.add(new_order)
         await db.commit()

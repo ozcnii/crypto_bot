@@ -1,5 +1,6 @@
 import contextlib
 from typing import AsyncIterator, Optional
+from sqlalchemy.pool import NullPool
 
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,

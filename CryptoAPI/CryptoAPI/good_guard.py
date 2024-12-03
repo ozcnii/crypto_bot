@@ -14,10 +14,10 @@ max_time_request_seconds = 60
 # SECRETS Keys
 SECRET_KEY = 'verysecretkeyforjwt'
 ALGORITHM = 'HS256'
-TELEGRAM_API_TOKEN = os.environ.get('TELEGRAM_API_TOKEN')
+TELEGRAM_API_TOKEN = "6438571775:AAGkiDR-83pqe-p3xsxXzZ5KP6I1nN4QOUU"
 BOT_ID = '7210647842'
 BOT_LINK = "https://t.me/aenolabsbot"
-COINMARKETCAP_API_KEY = os.environ.get('COINMARKETCAP_API_KEY')
+COINMARKETCAP_API_KEY = "e6d7a3b7-2b3a-4a9a-9f3a-8c7b9a6c5b3a"
 
 # other
 default_avatar = '9d5340dd1a8dc12373cef4f4da140a202df4c2f9865a31b7de42c689d0f68c3d.jpg'
@@ -38,4 +38,4 @@ auth_email_password = "hda-32"
 
 # DATABASE
 
-DATABASE_URL = f'postgresql+asyncpg://{os.environ.get("POSTGRES_USER")}:{os.environ.get("POSTGRES_PASSWORD")}@postgresql:5432/{os.environ.get("POSTGRES_DB")}'
+DATABASE_URL = "postgresql+asyncpg://postgres:password@postgresql:5432/cryptodatabase"

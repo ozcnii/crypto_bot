@@ -1,0 +1,38 @@
+.container {
+  position: relative; /* Создаём контекст для абсолютного позиционирования */
+  width: 100%;
+  height: 100vh; /* Высота контейнера равна высоте экрана */
+  overflow: hidden; /* Чтобы ничего не выходило за пределы */
+}
+
+.nextButton {
+  position: absolute;
+  bottom: 25px; /* Отступ от нижнего края */
+  left: 50%; /* Позиционируем по центру относительно ширины */
+  transform: translateX(-50%);
+  padding-block: 15px; /* Размеры кнопки */
+  width: 85%;
+  background-color: #eeeeee; /* Цвет фона кнопки */
+  color: #000000; /* Цвет текста кнопки */
+  border: none; /* Убираем рамку */
+  border-radius: 13px; /* Закругляем углы */
+  cursor: pointer; /* Курсор при наведении */
+  z-index: 10; /* Убедитесь, что кнопка отображается поверх других элементов */
+  font-family: 'Cygre', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding-inline: 25px;
+}
+
+img {
+  position: relative;
+  z-index: 1;
+}
