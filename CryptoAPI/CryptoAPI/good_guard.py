@@ -1,41 +1,41 @@
 import os
 
 # S3 Bucket
-endpoint_url_bucket = 'https://app.aenolabs.com'
-region_bucket = 'eu-central-1'
+endpoint_url_bucket = os.environ.get('MINIO_ENDPOINT')
+region_bucket = os.environ.get('MINIO_REGION')
 access_key_bucket = os.environ.get('MINIO_ROOT_USER')
 secret_access_key_bucket = os.environ.get('MINIO_ROOT_PASSWORD')
-bucket_name = 'aenolabsfiles'
+bucket_name = os.environ.get('BUCKET_NAME')
 
 # SECRETS & VARS DATA
-max_requests = 600
-max_time_request_seconds = 60
+max_requests = os.environ.get('MAX_REQUESTS')
+max_time_request_seconds = os.environ.get('MAX_TIME_REQUEST_SECONDS')
 
 # SECRETS Keys
-SECRET_KEY = 'verysecretkeyforjwt'
-ALGORITHM = 'HS256'
-TELEGRAM_API_TOKEN = "6438571775:AAGkiDR-83pqe-p3xsxXzZ5KP6I1nN4QOUU"
-BOT_ID = '7210647842'
-BOT_LINK = "https://t.me/aenolabsbot"
-COINMARKETCAP_API_KEY = "e6d7a3b7-2b3a-4a9a-9f3a-8c7b9a6c5b3a"
+SECRET_KEY = os.environ.get('SECRET_KEY')
+ALGORITHM = os.environ.get('ALGORITHM')
+TELEGRAM_API_TOKEN = os.environ.get('TELEGRAM_API_TOKEN')
+BOT_ID = os.environ.get('BOT_ID')
+BOT_LINK = os.environ.get('BOT_LINK')
+COINMARKETCAP_API_KEY = os.environ.get('COINMARKETCAP_API_KEY')
 
 # other
-default_avatar = '9d5340dd1a8dc12373cef4f4da140a202df4c2f9865a31b7de42c689d0f68c3d.jpg'
+default_avatar = os.environ.get('DEFAULT_AVATAR')
 coin_to_usdt_rate = 0.01
 
 # ID secrets
-client_id = ["1", "2"]
+client_id = os.environ.get('CLIENT_ID').split(',')
 
 # APIs Keys
-VIRUSTOTAL_API_KEY = ""
+VIRUSTOTAL_API_KEY = os.environ.get('VIRUSTOTAL_API_KEY')
 
 # EMAILs DATA
-smtp_server = "smtp.example.ru"
-imap_server = "imap.example.ru"
+smtp_server = os.environ.get('SMTP_SERVER')
+imap_server = os.environ.get('IMAP_SERVER')
 
-auth_email = "auth@example.ru"
-auth_email_password = "hda-32"
+auth_email = os.environ.get('AUTH_EMAIL')
+auth_email_password = os.environ.get('AUTH_EMAIL_PASSWORD')
 
 # DATABASE
 
-DATABASE_URL = "postgresql+asyncpg://postgres:password@postgresql:5432/cryptodatabase"
+DATABASE_URL = os.environ.get('DATABASE_URL')
