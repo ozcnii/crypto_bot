@@ -8,8 +8,8 @@ secret_access_key_bucket = os.environ.get('MINIO_ROOT_PASSWORD')
 bucket_name = os.environ.get('BUCKET_NAME')
 
 # SECRETS & VARS DATA
-max_requests = os.environ.get('MAX_REQUESTS')
-max_time_request_seconds = os.environ.get('MAX_TIME_REQUEST_SECONDS')
+max_requests = 600
+max_time_request_seconds = 60
 
 # SECRETS Keys
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -24,7 +24,7 @@ default_avatar = os.environ.get('DEFAULT_AVATAR')
 coin_to_usdt_rate = 0.01
 
 # ID secrets
-client_id = os.environ.get('CLIENT_ID').split(',')
+client_id = ["1", "2"]
 
 # APIs Keys
 VIRUSTOTAL_API_KEY = os.environ.get('VIRUSTOTAL_API_KEY')
