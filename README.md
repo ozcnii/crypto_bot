@@ -42,6 +42,15 @@ git push origin dev_nickname
 https://github.com/Andrets/crypto_bot.git
 ```
 
+- install [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)
+- run
+
+```
+cloudflared tunnel --url http://localhost:3000
+```
+
+- copy tunnel link to .env WEBAPP_URL
+
 - enter that command to command line
 
 ```
