@@ -200,3 +200,8 @@ def update_orders(id):
             "error":"Такого ордера не существует"
         })
         
+@bp.after_request
+def allow_anyone(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+        

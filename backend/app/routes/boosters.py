@@ -136,3 +136,8 @@ def boosters_deactivate(types, chat_id):
             return jsonify({'success': False, "error":"Бустер не активен"})
     else:
         return jsonify({'success': False, "error":"Такого пользователя не существует"})
+    
+@bp.after_request
+def allow_anyone(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response

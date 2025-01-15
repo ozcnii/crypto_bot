@@ -41,3 +41,8 @@ def stories_search(ids):
 @bp.route('/stories/getnow', methods=['GET'])
 def stories_get():
     return None
+
+@bp.after_request
+def allow_anyone(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response

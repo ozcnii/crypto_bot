@@ -107,3 +107,8 @@ def users_getreflink(chat_id):
         response = {"success":False, "error": str(error)}
         
     return jsonify(response)
+
+@bp.after_request
+def allow_anyone(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response

@@ -166,3 +166,8 @@ def clansGet(peer):
         return jsonify(clan.get_dict())
     else:
         responseError("Такого клана не существует")
+        
+@bp.after_request
+def allow_anyone(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
