@@ -165,7 +165,7 @@ def clansGet(peer):
     if clan:
         return jsonify(clan.get_dict())
     else:
-        responseError("Такого клана не существует")
+        return jsonify(responseError("Такого клана не существует"))
         
 @bp.after_request
 def allow_everyone(response):

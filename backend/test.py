@@ -70,8 +70,8 @@ if __name__ == "__main__":
                 },
                 data=json.dumps({
                     "peer":0,
-                    "admin":2,
-                    "users":[2],
+                    "admin":528254266,
+                    "users":[528254266],
                     "league":"bronze",
                     "name":"test",
                 })
@@ -173,8 +173,8 @@ if __name__ == "__main__":
     #Кланы
     # print(clan_get_test())
     # print(clan_getOne_test())
-    # print(clans_post_test())
+    print(clans_post_test())
     # print(clans_put_test())
     # print(clans_del_test())
     # print(clans_add_test())
-    print(clans_delete_test())
+    # print(clans_delete_test())
