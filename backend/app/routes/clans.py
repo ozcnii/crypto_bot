@@ -108,7 +108,7 @@ def clans():
 @bp.route('/clans/addmember/<int:peer>/<int:chat_id>', methods=['GET'])
 def clansAddMember(peer, chat_id):
     clan: Clans = Clans.query.filter_by(peer=peer).first()
-    if not clan: clan: Clans = Clans.query.filter_by(id=data.id).first()
+    #if not clan: clan: Clans = Clans.query.filter_by(id=data.id).first()
     user: Users = Users.query.filter_by(chat_id=chat_id).first()
     
     if user:
@@ -134,7 +134,7 @@ def clansAddMember(peer, chat_id):
 @bp.route('/clans/delmember/<int:peer>/<int:chat_id>', methods=['GET'])
 def clansDelMember(peer, chat_id):
     clan: Clans = Clans.query.filter_by(peer=peer).first()
-    if not clan: clan: Clans = Clans.query.filter_by(id=data.id).first()
+    #if not clan: clan: Clans = Clans.query.filter_by(id=data.id).first()
     user: Users = Users.query.filter_by(chat_id=chat_id).first()
     
     if user:
@@ -160,8 +160,8 @@ def clansDelMember(peer, chat_id):
 @bp.route('/clans/get/<int:peer>', methods=['GET'])
 def clansGet(peer):
     clan: Clans = Clans.query.filter_by(peer=peer).first()
-    if not clan: clan: Clans = Clans.query.filter_by(id=data.id).first()
-    
+    #if not clan: clan: Clans = Clans.query.filter_by(id=clan.id).first()
+        
     if clan:
         return jsonify(clan.get_dict())
     else:
