@@ -69,7 +69,7 @@ if __name__ == "__main__":
                     'Content-Type': 'application/json'
                 },
                 data=json.dumps({
-                    "peer":0,
+                    "peer":1,
                     "admin":528254266,
                     "users":[528254266],
                     "league":"bronze",
