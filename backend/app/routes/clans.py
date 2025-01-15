@@ -27,7 +27,7 @@ def clans():
     #Получение списка всех кланов
     if request.method == "GET":
         clans: Clans = Clans.query.all()
-        return jsonify(clans)
+        return jsonify(clans.get_dict())
     
     #Создание клана
     if request.method == "POST":
