@@ -113,7 +113,9 @@ export const App: FC = () => {
       try {
         const response = await dispatch(getByJWTUser());
         if (getByJWTUser.rejected.match(response)) {
-          setRejected(true);
+          // TODO mocked
+          setRejected(false);
+          // setRejected(true);
         }
       } catch (error) {
         console.error(error);
@@ -148,7 +150,7 @@ export const App: FC = () => {
               unmountOnExit
             >
               <Routes location={location}>
-                {lp.platform === '1tdesktop' ? (
+                {lp.platform === 'tdesktop' ? (
                   <Route
                     path="*"
                     element={

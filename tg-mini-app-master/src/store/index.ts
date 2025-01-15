@@ -10,6 +10,7 @@ import ordersReducer from './ordersSlice';
 import referralReducer from './referralSlice';
 import tasksReducer from './tasksSlice';
 import userReducer from './userSlice';
+import storiesReducer from './storiesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     orders: ordersReducer,
     boosters: boostersReducer,
     chart: chartReducer,
+    stories: storiesReducer,
   },
 });
 

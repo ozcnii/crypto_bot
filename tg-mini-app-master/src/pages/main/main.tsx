@@ -6,15 +6,16 @@ import { Header } from '@/pages/main/header/header.tsx';
 import { RootState } from '@/store';
 import { getUserClan } from '@/store/clanSlice';
 import { getClanLeagueById } from '@/store/leagueSlice';
+import { closeStories, openStories } from '@/store/storiesSlice';
 import { getByJWTUser } from '@/store/userSlice';
-import { ThunkDispatch } from '@reduxjs/toolkit';
+import { Action, ThunkDispatch } from '@reduxjs/toolkit';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import css from './main.module.css';
 
 export const Main = () => {
-  const dispatch = useDispatch<ThunkDispatch<unknown, unknown, unknown>>();
+  const dispatch = useDispatch<ThunkDispatch<unknown, unknown, Action<any>>>();
   const location = useLocation();
   const [wrapperHeight, setWrapperHeight] = useState('auto');
   const headerRef = useRef<HTMLDivElement>(null);
@@ -53,7 +54,8 @@ export const Main = () => {
 
   useEffect(() => {
     if (status === LoadingStatus.rejected) {
-      navigate('/error');
+      // TODO mocked
+      // navigate('/error');
     }
   }, [status, navigate]);
 
@@ -63,7 +65,11 @@ export const Main = () => {
         <Header />
         <div className={css.listWrapper}>
           <h2 className={css.listHeading}>Coins</h2>
-          <button className={css.plusButton} type="button">
+          <button
+            className={css.plusButton}
+            type="button"
+            onClick={() => dispatch(openStories())}
+          >
             +
           </button>
         </div>

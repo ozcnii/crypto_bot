@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import css from './header.module.css';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 export const Header = () => {
   const dispatch = useDispatch<ThunkDispatch<RootState, null, any>>();
   const { user } = useSelector((state: RootState) => state.user);
+  const initData = useInitData();
   const { clan, status, error, loading } = useSelector(
     (state: RootState) => state.clans,
   );
@@ -42,7 +44,7 @@ export const Header = () => {
       <div className={css.info}>
         <Link to={`/league`}>
           <img
-            src={getIconPath(user?.avatar_url)}
+            src={initData?.user?.photoUrl}
             alt="аватар"
             className={css.avatar}
           />
