@@ -36,10 +36,13 @@ def stories_search(ids):
             response = {"success":False, "error": str(error)}
             
         #Обработка статус кода
-        if response['success']:
-            return jsonify(response)
+        if 'success' in response:
+            if response['success']:
+                return jsonify(response)
+            else:
+                return jsonify(response),500
         else:
-            return jsonify(response), 500
+            return jsonify(response)
     
 #Получение актуальных историй
 @bp.route('/stories/getnow', methods=['GET'])

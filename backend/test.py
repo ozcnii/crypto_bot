@@ -41,7 +41,7 @@ if __name__ == "__main__":
             requests.get(f"{DevelopmentConfig.HOST}/stories/1").json()
     def userSearch_get_test():
         return\
-            requests.get(f"{DevelopmentConfig.HOST}/users/2").json()
+            requests.get(f"{DevelopmentConfig.HOST}/users/528254266").json()
     def user_getreflink_test():
         return\
             requests.get(f"{DevelopmentConfig.HOST}/users/0/getreflink").json()
@@ -157,9 +157,9 @@ if __name__ == "__main__":
             ).json()
             
     #Регистрация пользователя
-    print(user_post_test())
+    # print(user_post_test())
     # print(user_put_test())
-    # print(userSearch_get_test())
+    print(userSearch_get_test())
     
     #Ордеры
     # print(user_orders_test())

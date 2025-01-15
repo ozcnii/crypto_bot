@@ -26,8 +26,13 @@ def responseError(error):
 def clans(): 
     #Получение списка всех кланов
     if request.method == "GET":
-        clans: Clans = Clans.query.all()
-        return jsonify(clans.get_dict())
+        response = []
+        all_clans = Clans.query.all()
+        for clan in all_clans:
+            response.append(
+                clan.get_dict()
+            )
+        return jsonify(response)
     
     #Создание клана
     if request.method == "POST":

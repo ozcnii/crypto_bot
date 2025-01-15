@@ -41,10 +41,13 @@ def users():
             print_exc()
         
         #Обработка статус кода
-        if response['success']:
-            return jsonify(response)
+        if 'success' in response:
+            if response['success']:
+                return jsonify(response)
+            else:
+                return jsonify(response),500
         else:
-            return jsonify(response), 500
+            return jsonify(response)
             
     #Удаление пользователей
     if request.method == "DELETE":
@@ -64,10 +67,13 @@ def users():
             response = {"success":False, "error": str(error)}
             
         #Обработка статус кода
-        if response['success']:
-            return jsonify(response)
+        if 'success' in response:
+            if response['success']:
+                return jsonify(response)
+            else:
+                return jsonify(response),500
         else:
-            return jsonify(response), 500
+            return jsonify(response)
     
 #Получение списка всех пользователей
 @bp.route('/users/<int:chat_id>', methods=['GET', 'PUT']) #GET -> Все пользователи в JSON {[...{}]}
@@ -85,10 +91,13 @@ def users_search(chat_id):
             response = {"success":False, "error": str(error)}
             
         #Обработка статус кода
-        if response['success']:
-            return jsonify(response)
+        if 'success' in response:
+            if response['success']:
+                return jsonify(response)
+            else:
+                return jsonify(response),500
         else:
-            return jsonify(response), 500
+            return jsonify(response)
 
     if request.method == "PUT":
         try:
@@ -105,10 +114,13 @@ def users_search(chat_id):
             response = {"success":False, "error": str(error)}
             
         #Обработка статус кода
-        if response['success']:
-            return jsonify(response)
+        if 'success' in response:
+            if response['success']:
+                return jsonify(response)
+            else:
+                return jsonify(response),500
         else:
-            return jsonify(response), 500
+            return jsonify(response)
         
 @bp.route('/users/<int:chat_id>/getreflink', methods=['GET']) #GET -> Все пользователи в JSON {[...{}]}
 def users_getreflink(chat_id):
