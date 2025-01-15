@@ -39,8 +39,12 @@ def users():
         except Exception as error:
             response = {"success":False, "error": str(error)}
             print_exc()
-            
-        return jsonify(response)
+        
+        #Обработка статус кода
+        if response['success']:
+            return jsonify(response)
+        else:
+            return jsonify(response), 500
             
     #Удаление пользователей
     if request.method == "DELETE":
@@ -59,7 +63,11 @@ def users():
         except Exception as error:
             response = {"success":False, "error": str(error)}
             
-        return jsonify(response)
+        #Обработка статус кода
+        if response['success']:
+            return jsonify(response)
+        else:
+            return jsonify(response), 500
     
 #Получение списка всех пользователей
 @bp.route('/users/<int:chat_id>', methods=['GET', 'PUT']) #GET -> Все пользователи в JSON {[...{}]}
@@ -76,7 +84,11 @@ def users_search(chat_id):
         except Exception as error:
             response = {"success":False, "error": str(error)}
             
-        return jsonify(response)
+        #Обработка статус кода
+        if response['success']:
+            return jsonify(response)
+        else:
+            return jsonify(response), 500
 
     if request.method == "PUT":
         try:
@@ -92,7 +104,12 @@ def users_search(chat_id):
         except Exception as error:
             response = {"success":False, "error": str(error)}
             
-        return jsonify(response)
+        #Обработка статус кода
+        if response['success']:
+            return jsonify(response)
+        else:
+            return jsonify(response), 500
+        
 @bp.route('/users/<int:chat_id>/getreflink', methods=['GET']) #GET -> Все пользователи в JSON {[...{}]}
 def users_getreflink(chat_id):
     response = None
@@ -106,7 +123,10 @@ def users_getreflink(chat_id):
     except Exception as error:
         response = {"success":False, "error": str(error)}
         
-    return jsonify(response)
+    if response['success']:
+        return jsonify(response)
+    else:
+        return jsonify(response), 500
 
 @bp.after_request
 def allow_everyone(response):

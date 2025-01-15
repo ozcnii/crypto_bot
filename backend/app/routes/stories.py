@@ -35,7 +35,11 @@ def stories_search(ids):
         except Exception as error:
             response = {"success":False, "error": str(error)}
             
-        return jsonify(response)
+        #Обработка статус кода
+        if response['success']:
+            return jsonify(response)
+        else:
+            return jsonify(response), 500
     
 #Получение актуальных историй
 @bp.route('/stories/getnow', methods=['GET'])

@@ -53,7 +53,7 @@ if __name__ == "__main__":
                     'Content-Type': 'application/json'
                 },
                 data=json.dumps({
-                    "chat_id":3,
+                    "chat_id":0,
                     "username":"admin1",
                     "balance":1000,
                     "league":"bronze",
@@ -157,7 +157,7 @@ if __name__ == "__main__":
             ).json()
             
     #Регистрация пользователя
-    # print(user_post_test())
+    print(user_post_test())
     # print(user_put_test())
     # print(userSearch_get_test())
     
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     #Кланы
     # print(clan_get_test())
     # print(clan_getOne_test())
-    print(clans_post_test())
+    # print(clans_post_test())
     # print(clans_put_test())
     # print(clans_del_test())
     # print(clans_add_test())

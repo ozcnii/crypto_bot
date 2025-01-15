@@ -54,11 +54,11 @@ def clans():
                     db.session.commit()
                     return jsonify(responseSuccess())
                 else:
-                  return jsonify(responseError("Такой клан уже существует"))  
+                  return jsonify(responseError("Такой клан уже существует")),500
             else:
-                return jsonify(responseError("Клан пользователя уже создан"))
+                return jsonify(responseError("Клан пользователя уже создан")),500
         else:
-            return jsonify(responseError("Пользователя не существует"))
+            return jsonify(responseError("Пользователя не существует")),500
         
     #Обновление данных о клане
     if request.method == "PUT":
@@ -76,7 +76,7 @@ def clans():
             db.session.commit()
             return jsonify(responseSuccess())
         else:
-            return jsonify(responseError("Такого клана не существует"))
+            return jsonify(responseError("Такого клана не существует")),500
         
     #Удаление клана
     if request.method == "DELETE":
@@ -100,9 +100,9 @@ def clans():
                 db.session.commit()
                 return jsonify(responseSuccess())
             else:
-                return jsonify(responseError("Такого пользоватля не существует"))
+                return jsonify(responseError("Такого пользоватля не существует")),500
         else:
-            return jsonify(responseError("Такого клана не существует"))
+            return jsonify(responseError("Такого клана не существует")),500
         
 #Добавление участника в клан
 @bp.route('/clans/addmember/<int:peer>/<int:chat_id>', methods=['GET'])
@@ -122,13 +122,13 @@ def clansAddMember(peer, chat_id):
                     db.session.commit()
                     return jsonify(responseSuccess())
                 else:
-                    return jsonify(responseError("Пользователь уже добавлен в этот канал"))
+                    return jsonify(responseError("Пользователь уже добавлен в этот канал")),500
             else:
-                return jsonify(responseError("Такого клана не существует"))
+                return jsonify(responseError("Такого клана не существует")),500
         else:
-            return jsonify(responseError("Пользователь уже в клане")) 
+            return jsonify(responseError("Пользователь уже в клане")),500
     else:
-        return jsonify(responseError("Такого пользователя не существует"))
+        return jsonify(responseError("Такого пользователя не существует")),500
     
 #Удаление участника из клана
 @bp.route('/clans/delmember/<int:peer>/<int:chat_id>', methods=['GET'])
@@ -148,13 +148,13 @@ def clansDelMember(peer, chat_id):
                     db.session.commit()
                     return jsonify(responseSuccess())
                 else:
-                    return jsonify(responseError("Пользователя нет в этом клане"))      
+                    return jsonify(responseError("Пользователя нет в этом клане")),500     
             else:
-                return jsonify(responseError("Такого клана не существует")) 
+                return jsonify(responseError("Такого клана не существует")),500
         else:
-            return jsonify(responseError("Пользователь не состоит в клане"))    
+            return jsonify(responseError("Пользователь не состоит в клане")),500   
     else:
-        return jsonify(responseError("Такого пользователя не существует"))
+        return jsonify(responseError("Такого пользователя не существует")),500
 
 #Получение конкретного клана
 @bp.route('/clans/get/<int:peer>', methods=['GET'])
@@ -165,7 +165,7 @@ def clansGet(peer):
     if clan:
         return jsonify(clan.get_dict())
     else:
-        return jsonify(responseError("Такого клана не существует"))
+        return jsonify(responseError("Такого клана не существует")),500
         
 @bp.after_request
 def allow_everyone(response):

@@ -46,12 +46,12 @@ def open_orders(chat_id):
                 return jsonify({
                     "success":False,
                     "error":"TP Должен быть выше текущего значения цены"
-                })                   
+                }),500       
             elif data['tp'] >= order.priceinput and order.position == 'short':
                 return jsonify({
                     "success":False,
                     "error":"TP Должен быть ниже текущего значения цены"
-                })  
+                }),500
             else:
                 order.tp = data['tp']
         if 'sl' in data:
@@ -59,12 +59,12 @@ def open_orders(chat_id):
                 return jsonify({
                     "success":False,
                     "error":"SL Должен быть ниже текущего значения цены"
-                })                   
+                }),500                   
             elif data['sl'] <= order.priceinput and order.position == 'short':
                 return jsonify({
                     "success":False,
                     "error":"sl Должен быть выше текущего значения цены"
-                })  
+                }),500 
             else:
                 order.sl = data['sl'] 
         
@@ -74,7 +74,7 @@ def open_orders(chat_id):
         order.active = True
         order.pnl = 0.0
         
-        if user.balance_features - order.amount < 0: return jsonify({"success":False, "error":"Недостаточно средств"})
+        if user.balance_features - order.amount < 0: return jsonify({"success":False, "error":"Недостаточно средств"}),500
         else:user.balance_features = user.balance_features - order.amount
         
         if not user.trades:
@@ -88,7 +88,7 @@ def open_orders(chat_id):
         return jsonify({'success': True, 'order_id':order.id})
     
     else:
-        return jsonify({'success': False, 'error':"Некорректный запрос"})
+        return jsonify({'success': False, 'error':"Некорректный запрос"}),500
         # Цена ликвидации = (цена входа × размер позиции + маржа) ÷ (размер позиции × (1 – ставка поддерживающей маржи))
         
 #Обновить ордер
@@ -108,12 +108,12 @@ def update_orders(id):
                         return jsonify({
                             "success":False,
                             "error":"TP Должен быть выше текущего значения цены"
-                        })                   
+                        }),500        
                     elif data['tp'] >= data['coinprice'] and order.position == 'short':
                         return jsonify({
                             "success":False,
                             "error":"TP Должен быть ниже текущего значения цены"
-                        })  
+                        }),500  
                     else:
                         order.tp = data['tp']
                 if 'sl' in data:
@@ -121,12 +121,12 @@ def update_orders(id):
                         return jsonify({
                             "success":False,
                             "error":"SL Должен быть ниже текущего значения цены"
-                        })                   
+                        }),500                   
                     elif data['sl'] <= data['coinprice'] and order.position == 'short':
                         return jsonify({
                             "success":False,
                             "error":"SL Должен быть выше текущего значения цены"
-                        })  
+                        }),500  
                     else:
                         order.sl = data['sl']          
             
@@ -185,20 +185,20 @@ def update_orders(id):
                 return jsonify({
                     "success":False,
                     "error":"Ордер закрыт"
-                })                     
+                }), 500                 
             
         else:
             return jsonify({
                 "success":False,
                 "error":"Текущая цена не указана"
-            })            
+            }), 500      
         
         
     else:
         return jsonify({
             "success":False,
             "error":"Такого ордера не существует"
-        })
+        }), 500
         
 @bp.after_request
 def allow_everyone(response):

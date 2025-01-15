@@ -28,7 +28,7 @@ def boosters():
         ))
         
         db.session.commit()
-        return jsonify({'success': False, "error":"Бустеры не инициализированы"})
+        return jsonify({'success': False, "error":"Бустеры не инициализированы"}),500
     else:
         return jsonify({'success': True})
     
@@ -38,7 +38,7 @@ def boosters_get_all():
     boosters: Boosters = Boosters.query.all()
     
     if boosters == []:
-        return jsonify({'success': False, "error":"Бустеры не инициализированы"})
+        return jsonify({'success': False, "error":"Бустеры не инициализированы"}),500
     else:
         return jsonify(boosters.get_dict())
     
@@ -61,11 +61,11 @@ def boosters_upgrade(types, chat_id):
                 db.session.commit()
                 return jsonify({'success': True, "balance":new_level})
             else:
-                return jsonify({'success': False, "error":"Недостаточно средств"})
+                return jsonify({'success': False, "error":"Недостаточно средств"}),500
         else:
-            return jsonify({'success': False, "error":"Бустеры не инициализированы"})
+            return jsonify({'success': False, "error":"Бустеры не инициализированы"}),500
     else:
-        return jsonify({'success': False, "error":"Такого пользователя не существует"})
+        return jsonify({'success': False, "error":"Такого пользователя не существует"}),500
     
 #Активация ежедневного бустера
 @bp.route('/boosters/activate/<types>/<int:chat_id>', methods=['GET'])
@@ -104,11 +104,11 @@ def boosters_activate(types, chat_id):
                     db.session.commit()
                     return jsonify({'success': True})
                 else:
-                    return jsonify({'success': False, "error":"Прошло меньше 24 часов", "timeout":86400-check.seconds})
+                    return jsonify({'success': False, "error":"Прошло меньше 24 часов", "timeout":86400-check.seconds}),500
         else:    
-            return jsonify({'success': False, "error":"Бустер активен"})
+            return jsonify({'success': False, "error":"Бустер активен"}),500
     else:
-        return jsonify({'success': False, "error":"Такого пользователя не существует"})
+        return jsonify({'success': False, "error":"Такого пользователя не существует"}),500
     
 #Деактивация ежедневного бустера
 @bp.route('/boosters/deactivate/<types>/<int:chat_id>', methods=['GET'])
@@ -124,7 +124,7 @@ def boosters_deactivate(types, chat_id):
     if user:
         if user.boosters[b_index[types]] == 1:
             if not xboosters:
-                return jsonify({'success': False, "error":"Бустер ненайден"})
+                return jsonify({'success': False, "error":"Бустер ненайден"}),500
             else:
                 new_boosters = user.boosters.copy()
                 new_boosters[b_index[types]] = 0
@@ -133,9 +133,9 @@ def boosters_deactivate(types, chat_id):
                 db.session.commit()
                 return jsonify({'success': True})
         else:    
-            return jsonify({'success': False, "error":"Бустер не активен"})
+            return jsonify({'success': False, "error":"Бустер не активен"}),500
     else:
-        return jsonify({'success': False, "error":"Такого пользователя не существует"})
+        return jsonify({'success': False, "error":"Такого пользователя не существует"}),500
     
 @bp.after_request
 def allow_everyone(response):
