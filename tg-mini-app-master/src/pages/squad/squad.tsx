@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import css from './squad.module.css';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 export const Squad = () => {
   const dispatch = useDispatch<ThunkDispatch<RootState, null, any>>();
@@ -30,6 +31,7 @@ export const Squad = () => {
   const [currentUser, setCurrentUser] = useState({} as ClanListUsers);
   const navigate = useNavigate();
   const { id } = useParams();
+  const initData = useInitData();
 
   useEffect(() => {
     const fetchClanData = async () => {
@@ -42,14 +44,13 @@ export const Squad = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
-    const fetchUserClan = async () => {
-      await dispatch(getUserClan());
-    };
     const fetchUserData = async () => {
-      await dispatch(getByJWTUser());
+      const userResponse = await dispatch(
+        getByJWTUser(initData?.user?.id || 0),
+      );
+      await dispatch(getUserClan((userResponse.payload as any).clan));
     };
     fetchUserData();
-    fetchUserClan();
   }, []);
 
   useEffect(() => {
@@ -74,6 +75,7 @@ export const Squad = () => {
     await dispatch(leaveUserClan());
     navigate('/');
   };
+
   const usersList = [
     {
       id: 1,
@@ -170,23 +172,23 @@ export const Squad = () => {
             <button
               type="button"
               className={
-                user.id === clanById.owner_id
+                user.chat_id === clanById.admin
                   ? css.delete
-                  : user.clan_id === clanById.id
+                  : user.clan === clanById.id
                     ? css.leave
                     : css.join
               }
               onClick={
-                clanById.owner_id === user.id
+                clanById.admin === user.chat_id
                   ? () => deleteClan()
-                  : user.clan_id === clanById.id
+                  : user.clan === clanById.id
                     ? () => leaveClan()
                     : () => joinClan()
               }
             >
-              {clanById.owner_id === user.id
+              {clanById.admin === user.chat_id
                 ? 'Delete'
-                : user.clan_id === clanById.id
+                : user.clan === clanById.id
                   ? 'Leave'
                   : 'Join'}
             </button>

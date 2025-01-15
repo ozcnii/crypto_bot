@@ -5,9 +5,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const getByJWTUser = createAsyncThunk(
   'user/getByJWTUser',
-  async (_, { rejectWithValue }) => {
+  async (userId: number, { rejectWithValue }) => {
     try {
-      const response = await getUserByJWTRequest();
+      const response = await getUserByJWTRequest(userId);
       if (response.status === 200) {
         return response.data;
       }
@@ -19,21 +19,7 @@ export const getByJWTUser = createAsyncThunk(
 );
 
 const initialState: AllUsers = {
-  // TODO mocked
-  user: {
-    balance: 1000.0,
-    balance_features: 1000.0,
-    boosters: [0, 0, 0, 0, 0],
-    chat_id: 528254266,
-    clan: null,
-    historycheck: null,
-    league: 'bronze',
-    pnl: null,
-    referals: null,
-    tasks: null,
-    trades: null,
-    username: 'qqnvos',
-  } as User,
+  user: {} as User,
   status: LoadingStatus.none,
   error: LoadingStatus.none,
 };

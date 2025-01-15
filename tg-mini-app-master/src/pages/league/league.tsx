@@ -12,6 +12,7 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import css from './league.module.css';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 const capitalizeFirstLetter = (string: string) => {
   return string?.charAt(0)?.toUpperCase() + string?.slice(1);
@@ -34,9 +35,11 @@ export const League = () => {
   const [animationDirection, setAnimationDirection] = useState('');
   const [currentUser, setCurrentUser] = useState(user);
 
+  const initData = useInitData();
+
   useEffect(() => {
     const fetchUserData = async () => {
-      const userData = await dispatch(getByJWTUser());
+      const userData = await dispatch(getByJWTUser(initData?.user?.id || 0));
       if (getByJWTUser.fulfilled.match(userData)) {
         await dispatch(getUserLeagueById(userData.payload.league_id));
         setProgress((userData.payload.balance / 100000) * 100);

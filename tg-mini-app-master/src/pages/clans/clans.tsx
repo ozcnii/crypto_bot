@@ -59,7 +59,7 @@ export const Clans = () => {
           </div>
         )}
       </div>
-      {clan.owner_id !== user.id && (
+      {clan.admin !== user.chat_id && (
         <button
           type="button"
           className={css.floatingButton}

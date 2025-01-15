@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import css from './fellows.module.css';
 import { InvitedFriendsSwiper } from './invitedFriendsSwiper/invitedFriendsSwiper';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 export const items = [
   {
@@ -36,9 +37,11 @@ export const Fellows = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const { referrals } = useSelector((state: RootState) => state.referral);
 
+  const initData = useInitData();
+
   useEffect(() => {
     const fetchUser = async () => {
-      await dispatch(getByJWTUser());
+      await dispatch(getByJWTUser(initData?.user?.id || 0));
     };
     const fetchFellows = async () => {
       await dispatch(getUserReferrals());

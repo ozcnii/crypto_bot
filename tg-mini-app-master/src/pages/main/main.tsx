@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import css from './main.module.css';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 export const Main = () => {
   const dispatch = useDispatch<ThunkDispatch<unknown, unknown, Action<any>>>();
@@ -23,6 +24,7 @@ export const Main = () => {
   const { user, status } = useSelector((state: RootState) => state.user);
   const { loading } = useSelector((state: RootState) => state.coin);
   const navigate = useNavigate();
+  const initData = useInitData();
 
   useEffect(() => {
     const updateHeight = () => {
@@ -40,22 +42,23 @@ export const Main = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      await dispatch(getByJWTUser());
-    };
-    const fetchUserClanData = async () => {
-      const response = await dispatch(getUserClan());
+      const userResponse = await dispatch(
+        getByJWTUser(initData?.user?.id || 0),
+      );
+
+      const response = await dispatch(
+        getUserClan((userResponse.payload as any).clan),
+      );
       if (getUserClan.fulfilled.match(response)) {
         await dispatch(getClanLeagueById(response.payload.league_id));
       }
     };
     fetchUserData();
-    fetchUserClanData();
   }, [dispatch]);
 
   useEffect(() => {
     if (status === LoadingStatus.rejected) {
-      // TODO mocked
-      // navigate('/error');
+      navigate('/error');
     }
   }, [status, navigate]);
 

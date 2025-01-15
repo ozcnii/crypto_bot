@@ -8,15 +8,18 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import css from './boost.module.css';
+import { useInitData } from '@telegram-apps/sdk-react';
 
 export const Boost = () => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { user } = useSelector((state: RootState) => state.user);
   const { boosters } = useSelector((state: RootState) => state.boosters);
 
+  const initData = useInitData();
+
   useEffect(() => {
     const fetchUserData = async () => {
-      await dispatch(getByJWTUser());
+      await dispatch(getByJWTUser(initData?.user?.id || 0));
     };
     const fetchBoosterPricesAndLvl = async () => {
       await dispatch(getUserBoosters());

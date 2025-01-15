@@ -5,6 +5,7 @@ import {
   bindThemeParamsCSSVars,
   bindViewportCSSVars,
   initNavigator,
+  useInitData,
   useLaunchParams,
   useMiniApp,
   useThemeParams,
@@ -108,14 +109,14 @@ export const App: FC = () => {
     }
   }, []);
 
+  const initData = useInitData();
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await dispatch(getByJWTUser());
+        const response = await dispatch(getByJWTUser(initData?.user?.id || 0));
         if (getByJWTUser.rejected.match(response)) {
-          // TODO mocked
-          setRejected(false);
-          // setRejected(true);
+          setRejected(true);
         }
       } catch (error) {
         console.error(error);
@@ -139,6 +140,7 @@ export const App: FC = () => {
       ref={pageRef}
     >
       <div className="page">
+        {/* {location.pathname} */}
         <Stories />
         <Router location={location} navigator={reactNavigator}>
           <TransitionGroup>
