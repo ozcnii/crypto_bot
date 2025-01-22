@@ -1,8 +1,95 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "description": "Документация к backend Aenolabs",
-      "version": "0.0.4",
-      "title": "Aenolabs Docs"
+  "openapi": "3.0.0",
+  "info": {
+    "description": "Документация к backend Aenolabs",
+    "version": "0.0.4",
+    "title": "Aenolabs Docs"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/user"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  "components": {
+    "schemas": {
+      "user": {
+        "properties": {
+          "balance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "balance_features": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "boosters": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 5,
+            "maxItems": 5
+          },
+          "chat_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "clan": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "historycheck": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "league": {
+            "type": "string"
+          },
+          "pnl": {
+            "type": "number",
+            "format":"float"
+          },
+          "referals": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "trades": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "username":{
+            "type":"string"
+          }
+        }
+      }
+    }
+  }
 }
