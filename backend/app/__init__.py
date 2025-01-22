@@ -16,6 +16,7 @@ from app.routes.stories import bp as storiesRoute
 from app.routes.orders import bp as ordersRoute
 from app.routes.boosters import bp as boostersRoute
 from app.routes.clans import bp as clansRoute
+from app.routes.apiswagger import SWAGGERUI_BLUEPRINT, SWAGGER_URL
 
 #routes
 app.register_blueprint(userRoute)
@@ -23,3 +24,4 @@ app.register_blueprint(storiesRoute)
 app.register_blueprint(ordersRoute)
 app.register_blueprint(boostersRoute)
 app.register_blueprint(clansRoute)
+app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)

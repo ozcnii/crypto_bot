@@ -1,0 +1,8 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "Документация к backend Aenolabs",
+      "version": "0.0.4",
+      "title": "Aenolabs Docs"
+    }
+}
