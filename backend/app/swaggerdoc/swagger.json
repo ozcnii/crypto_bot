@@ -25,6 +25,41 @@
         }
       },
       "post":{
+        "requestBody":{
+          "required":true,
+          "content":{
+            "application/json":{
+              "schema":{
+                "type":"object",
+                "properties":{
+                  "chat_id":{
+                    "type":"integer",
+                    "format":"int32"
+                  },
+                  "username":{
+                    "type":"string"
+                  },
+                  "balance":{
+                    "type":"integer",
+                    "format":"int32"
+                  },     
+                  "league":{
+                    "type":"string"
+                  },
+                  "boosters":{
+                    "type":"array",
+                    "items":{
+                      "type":"integer",
+                      "format":"int32"
+                    },
+                    "maxItems":5,
+                    "minItems":5
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
