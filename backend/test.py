@@ -157,7 +157,7 @@ if __name__ == "__main__":
             ).json()
             
     #Регистрация пользователя
-    # print(user_post_test())
+    print(user_post_test())
     # print(user_put_test())
     print(userSearch_get_test())
     
