@@ -59,7 +59,7 @@ def boosters_upgrade(types, chat_id):
                 new_level[booster_index+2]+=1
                 user.boosters = new_level
                 db.session.commit()
-                return jsonify({'success': True, "balance":new_level})
+                return jsonify({'success': True})
             else:
                 return jsonify({'success': False, "error":"Недостаточно средств"}),500
         else:
