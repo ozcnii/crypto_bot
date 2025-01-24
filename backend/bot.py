@@ -14,8 +14,11 @@ def listen(message: types.Message):
     kb.add(types.InlineKeyboardButton('Перейти', web_app=types.WebAppInfo('https://cepbep4-airvapebot-b471.twc1.net')))
     
     #Отправка сообщения
-    bot.send_message(chat_id=message.chat.id, text='Добро пожаловать!', 
-                    reply_markup=kb)
+    bot.send_message(
+        chat_id=message.chat.id,
+        text='Добро пожаловать!', 
+        #reply_markup=kb
+    )
 
     #Регистрация пользователя
     requests.post(
@@ -24,7 +27,8 @@ def listen(message: types.Message):
         
         #Заголовки
         headers={
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": f'Bearer {DevelopmentConfig.TELEGRAM_BOT_AUTH_TOKEN}'
         },
         
         #Контент

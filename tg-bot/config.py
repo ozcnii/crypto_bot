@@ -10,6 +10,7 @@ class DevelopmentConfig(Config):
     BOTLINK = getenv('BOT_LINK')
     TOKEN=getenv('TELEGRAM_API_TOKEN')
     WEBAPP_URL = getenv('WEBAPP_URL')
+    TELEGRAM_BOT_AUTH_TOKEN = getenv('TELEGRAM_BOT_AUTH_TOKEN')
 
 class TestingConfig(Config):
     TESTING = True

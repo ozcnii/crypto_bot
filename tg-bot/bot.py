@@ -23,7 +23,8 @@ def listen(message: types.Message):
         
         #Заголовки
         headers={
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": f'Bearer {DevelopmentConfig.TELEGRAM_BOT_AUTH_TOKEN}'
         },
         
         #Контент

@@ -13,6 +13,8 @@ class Clans(db.Model):
     users = db.Column(db.JSON, nullable=False)
     league = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False)
+    balance = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
+    photo = db.Column(db.String(256))
 
     def __repr__(self):
         return f'<Clans {self.id}>'    
@@ -130,6 +132,7 @@ class Users(db.Model):
     tasks = db.Column(db.JSON)
     referals = db.Column(db.JSON)
     historycheck = db.Column(db.JSON)
+    token = db.Column(db.String(256))
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -148,4 +151,5 @@ class Users(db.Model):
             "tasks" : self.tasks,
             "referals" : self.referals,
             "historycheck" : self.historycheck,
+            "token" : self.token,
         }

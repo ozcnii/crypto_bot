@@ -1,8 +1,6 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request
 from app.models import Boosters, Users, Xboosters
-from app import db
-import json
-from config import DevelopmentConfig
+from app import db, getToken, checkAuth, responseError
 import datetime as dt
 
 bp = Blueprint('boosters', __name__)
@@ -28,7 +26,7 @@ def boosters():
         ))
         
         db.session.commit()
-        return jsonify({'success': False, "error":"Бустеры не инициализированы"}),500
+        return jsonify(responseError("Бустеры не инициализированы")),500
     else:
         return jsonify({'success': True})
     
@@ -38,15 +36,24 @@ def boosters_get_all():
     boosters: Boosters = Boosters.query.all()
     
     if boosters == []:
-        return jsonify({'success': False, "error":"Бустеры не инициализированы"}),500
+        return jsonify(responseError("Бустеры не инициализированы")), 500
     else:
         return jsonify(boosters.get_dict())
     
 #Повышение уровня бустера
-@bp.route('/boosters/upgrade/<types>/<int:chat_id>', methods=['GET'])
-def boosters_upgrade(types, chat_id): 
+@bp.route('/boosters/upgrade/<types>', methods=['GET'])
+def boosters_upgrade(types): 
+    #Проверка токена
+    if "Authorization" not in request.headers:
+        return jsonify({'error': "Отказано в доступе"}), 503
+    
+    #Проверка доступа
+    if not checkAuth(request, db.session.query(Users).all()):
+        return jsonify({'error': "Не авторизован"}), 401
+    
+    #Обработка данных
     boosters: Boosters = Boosters.query.all()[0]
-    user: Users = Users.query.filter_by(chat_id=chat_id).first()
+    user: Users = Users.query.filter(Users.token == getToken(request)).first()
     booster_index = boosters.types.index(types)
     
     if user:
@@ -61,81 +68,88 @@ def boosters_upgrade(types, chat_id):
                 db.session.commit()
                 return jsonify({'success': True})
             else:
-                return jsonify({'success': False, "error":"Недостаточно средств"}),500
+                return jsonify(responseError("Недостаточно средств")),500
         else:
-            return jsonify({'success': False, "error":"Бустеры не инициализированы"}),500
+            return jsonify(responseError("Бустеры не инициализированы")),500
     else:
-        return jsonify({'success': False, "error":"Такого пользователя не существует"}),500
+        return jsonify(responseError("Такого пользователя не существует")),500
     
 #Активация ежедневного бустера
-@bp.route('/boosters/activate/<types>/<int:chat_id>', methods=['GET'])
-def boosters_activate(types, chat_id):
-    xboosters: Xboosters = Xboosters.query.filter_by(user=chat_id).first()
-    user: Users = Users.query.filter_by(chat_id=chat_id).first()
+@bp.route('/boosters/activate/<types>', methods=['GET'])
+def boosters_activate(types):
+    #Проверка токена
+    if "Authorization" not in request.headers:
+        return jsonify({'error': "Отказано в доступе"}), 503
     
-    b_index = {
-        "xrange":0,
-        "xleverage":1
-    }
+    #Проверка доступа
+    if not checkAuth(request, db.session.query(Users).all()):
+        return jsonify({'error': "Не авторизован"}), 401
     
-    if user:
-        if user.boosters[b_index[types]] == 0:
-            if not xboosters:
+    #Обработка данных
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    xboosters: Xboosters = Xboosters.query.filter_by(user=user.chat_id).first()
+    b_index = {"xrange":0,"xleverage":1}
+    
+    if user.boosters[b_index[types]] == 0:
+        if not xboosters:
+            new_boosters = user.boosters.copy()
+            new_boosters[b_index[types]] = 1
+            user.boosters = new_boosters
+            db.session.add(
+                Xboosters(
+                    type=types,
+                    dateactivate=dt.datetime.now(),
+                    active=True,
+                    user=chat_id
+                )
+            )
+            db.session.commit()
+            return jsonify({'success': True})
+        else:
+            check = dt.datetime.now() - dt.datetime.strptime(xboosters.dateactivate, '%Y-%m-%d %H:%M:%S.%f')
+            if check.days != 0:
+                xboosters.active = True
                 new_boosters = user.boosters.copy()
                 new_boosters[b_index[types]] = 1
                 user.boosters = new_boosters
-                db.session.add(
-                    Xboosters(
-                        type=types,
-                        dateactivate=dt.datetime.now(),
-                        active=True,
-                        user=chat_id
-                    )
-                )
                 db.session.commit()
                 return jsonify({'success': True})
             else:
-                check = dt.datetime.now() - dt.datetime.strptime(xboosters.dateactivate, '%Y-%m-%d %H:%M:%S.%f')
-                if check.days != 0:
-                    xboosters.active = True
-                    new_boosters = user.boosters.copy()
-                    new_boosters[b_index[types]] = 1
-                    user.boosters = new_boosters
-                    db.session.commit()
-                    return jsonify({'success': True})
-                else:
-                    return jsonify({'success': False, "error":"Прошло меньше 24 часов", "timeout":86400-check.seconds}),500
-        else:    
-            return jsonify({'success': False, "error":"Бустер активен"}),500
-    else:
-        return jsonify({'success': False, "error":"Такого пользователя не существует"}),500
+                return jsonify(responseError(f"Прошло меньше 24 часов timeout: {86400-check.seconds}")),500
+    else:    
+        return jsonify(responseError("Бустер активен")),500
     
 #Деактивация ежедневного бустера
-@bp.route('/boosters/deactivate/<types>/<int:chat_id>', methods=['GET'])
-def boosters_deactivate(types, chat_id):
-    xboosters: Xboosters = Xboosters.query.filter_by(user=chat_id).first()
-    user: Users = Users.query.filter_by(chat_id=chat_id).first()
+@bp.route('/boosters/deactivate/<types>', methods=['GET'])
+def boosters_deactivate(types):
+    #Проверка токена
+    if "Authorization" not in request.headers:
+        return jsonify({'error': "Отказано в доступе"}), 503
+    
+    #Проверка доступа
+    if not checkAuth(request, db.session.query(Users).all()):
+        return jsonify({'error': "Не авторизован"}), 401
+    
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    xboosters: Xboosters = Xboosters.query.filter_by(user=user.chat_id).first()
     
     b_index = {
         "xrange":0,
         "xleverage":1
     }
     
-    if user:
-        if user.boosters[b_index[types]] == 1:
-            if not xboosters:
-                return jsonify({'success': False, "error":"Бустер ненайден"}),500
-            else:
-                new_boosters = user.boosters.copy()
-                new_boosters[b_index[types]] = 0
-                user.boosters = new_boosters
-                xboosters.active = False
-                db.session.commit()
-                return jsonify({'success': True})
-        else:    
-            return jsonify({'success': False, "error":"Бустер не активен"}),500
-    else:
-        return jsonify({'success': False, "error":"Такого пользователя не существует"}),500
+    if user.boosters[b_index[types]] == 1:
+        if not xboosters:
+            return jsonify(responseError("Бустер не найден")),500
+        else:
+            new_boosters = user.boosters.copy()
+            new_boosters[b_index[types]] = 0
+            user.boosters = new_boosters
+            xboosters.active = False
+            db.session.commit()
+            return jsonify({'success': True})
+    else:    
+        return jsonify(responseError("Бустер не активен")),500
     
 @bp.after_request
 def allow_everyone(response):

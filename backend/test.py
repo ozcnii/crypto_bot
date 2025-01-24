@@ -59,7 +59,7 @@ if __name__ == "__main__":
                     "league":"bronze",
                     "boosters":[0,0,0,0,0],
                 })
-            ).json()
+            ).text
             
     def clans_post_test():
         return\
@@ -157,9 +157,10 @@ if __name__ == "__main__":
             ).json()
             
     #Регистрация пользователя
-    print(user_post_test())
+    #print(user_post_test())
     # print(user_put_test())
-    print(userSearch_get_test())
+    #print(userSearch_get_test())
+    print(user_get_test())
     
     #Ордеры
     # print(user_orders_test())
