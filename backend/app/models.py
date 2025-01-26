@@ -27,6 +27,8 @@ class Clans(db.Model):
             "users":self.users,
             "league":self.league,
             "name":self.name,
+            "photo":self.photo,
+            "balance":self.balance,
         }
 
 class Stories(db.Model):
@@ -82,6 +84,23 @@ class Xboosters(db.Model):
             "user":self.user
         }
         
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    type = db.Column(db.String(64), nullable=False)
+    award = db.Column(db.Integer, nullable=False)
+    quest = db.Column(db.String(64), nullable=False)
+
+    def __repr__(self):
+        return f'<Task {self.id}>'    
+    
+    def get_dict(self):
+        return{
+            "id": self.id,
+            "type": self.type,
+            "award": self.award,
+            "quest": self.quest,
+        }
+        
 class Orders(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     symbol = db.Column(db.String(64))
@@ -133,6 +152,8 @@ class Users(db.Model):
     referals = db.Column(db.JSON)
     historycheck = db.Column(db.JSON)
     token = db.Column(db.String(256))
+    sum_ref = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
+    premium = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -152,4 +173,6 @@ class Users(db.Model):
             "referals" : self.referals,
             "historycheck" : self.historycheck,
             "token" : self.token,
+            "sum_ref" : self.sum_ref,
+            "premium" : self.premium,
         }

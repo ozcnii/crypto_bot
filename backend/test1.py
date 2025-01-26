@@ -90,7 +90,13 @@ if __name__ == "__main__":
                 "link":"https://t.me/sever_products",
             })
         )
+        print(r.json()) 
+    
+    def league_get(token):
+        headers = {'Authorization': f'Bearer {token}'}
+        r=requests.get(f"{DevelopmentConfig.HOST}/league", headers=headers)
         print(r.json())  
+         
     # <==== Тесты =====> #
     
     #Информация о пользователе
@@ -101,7 +107,7 @@ if __name__ == "__main__":
     token = oauth(id, username)
     
     #Тесты по ветке /users
-    users_get(token)
+    #users_get(token)
     #users_post(id, username)
     #users_delete(token)
     #users_put(token)
@@ -115,4 +121,7 @@ if __name__ == "__main__":
     #Тесты по ветке /clans
     #clans_get(token)
     #clans_post(token)
+    
+    #Тесты по ветке /league
+    #league_get(token)
     

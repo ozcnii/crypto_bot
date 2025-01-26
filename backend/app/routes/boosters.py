@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.models import Boosters, Users, Xboosters
-from app import db, getToken, checkAuth, responseError
+from app import db, getToken, checkAuth, responseError, auth_required
 import datetime as dt
 
 bp = Blueprint('boosters', __name__)
@@ -42,14 +42,8 @@ def boosters_get_all():
     
 #Повышение уровня бустера
 @bp.route('/boosters/upgrade/<types>', methods=['GET'])
+@auth_required
 def boosters_upgrade(types): 
-    #Проверка токена
-    if "Authorization" not in request.headers:
-        return jsonify({'error': "Отказано в доступе"}), 503
-    
-    #Проверка доступа
-    if not checkAuth(request, db.session.query(Users).all()):
-        return jsonify({'error': "Не авторизован"}), 401
     
     #Обработка данных
     boosters: Boosters = Boosters.query.all()[0]
@@ -76,14 +70,8 @@ def boosters_upgrade(types):
     
 #Активация ежедневного бустера
 @bp.route('/boosters/activate/<types>', methods=['GET'])
+@auth_required
 def boosters_activate(types):
-    #Проверка токена
-    if "Authorization" not in request.headers:
-        return jsonify({'error': "Отказано в доступе"}), 503
-    
-    #Проверка доступа
-    if not checkAuth(request, db.session.query(Users).all()):
-        return jsonify({'error': "Не авторизован"}), 401
     
     #Обработка данных
     user: Users = Users.query.filter(Users.token==getToken(request)).first()
@@ -121,14 +109,8 @@ def boosters_activate(types):
     
 #Деактивация ежедневного бустера
 @bp.route('/boosters/deactivate/<types>', methods=['GET'])
+@auth_required
 def boosters_deactivate(types):
-    #Проверка токена
-    if "Authorization" not in request.headers:
-        return jsonify({'error': "Отказано в доступе"}), 503
-    
-    #Проверка доступа
-    if not checkAuth(request, db.session.query(Users).all()):
-        return jsonify({'error': "Не авторизован"}), 401
     
     user: Users = Users.query.filter(Users.token==getToken(request)).first()
     xboosters: Xboosters = Xboosters.query.filter_by(user=user.chat_id).first()

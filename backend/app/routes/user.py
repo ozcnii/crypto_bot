@@ -68,6 +68,62 @@ def users_getreflink():
     user: Users = Users.query.filter(Users.token==getToken(request)).first()
     return jsonify(responseSuccess(reflink=f'{DevelopmentConfig.BOTLINK}?start={user.chat_id}'))
 
+#Добавление реферала
+@bp.route('/users/addref', methods=['POST'])
+@auth_required
+def users_addref():
+    #Обработка данных
+    data = json.loads(request.data.decode('utf-8'))
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    
+    l_ref = user.referals.copy()
+    l_ref.append(data['ref_id'])
+    user.referals=l_ref
+    
+    if data['premimum']:
+        user.balance_features = user.balance_features + 100
+        user.balance_features = user.balance_features + 100
+    else:
+        user.balance_features = user.balance_features + 1000
+        user.balance_features = user.balance_features + 1000
+        
+    #Сохранить
+    db.session.commit()
+
+#Добавление получение списка рефералов
+@bp.route('/users/getref', methods=['GET'])
+@auth_required
+def users_getref():
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    response = []
+    
+    for user_ref_id in user.referals:
+        user_ref: Users = Users.query.filter(Users.chat_id==user_ref_id).first()
+        if user_ref.premium == 1:
+            response.append((user_ref.balance, 1000, user_ref.username))
+        else:
+            response.append((user_ref.balance, 100, user_ref.username)) 
+                       
+    return jsonify(responseSuccess(ref_list=response))
+        
+
+#Кнопка TOPLEADER 300
+@bp.route('/users/topleader', methods=['GET'])
+@auth_required
+def users_topleader():
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    all_users = Users.query.all()
+    sort_top_list_users = sorted([(len(x.referals), x.sum_ref) for x in all_users], key=lambda x: x[0])
+    my_place = sort_top_list_users.index((len(user.referals), user.sum_ref))
+    
+    if len(sort_top_list_users) > 300:
+        sort_top_list_users = sort_top_list_users[0:300]
+        
+    return jsonify(responseSuccess(
+        my_place_number=my_place,
+        top_300_leader=sort_top_list_users
+    ))
+    
 @bp.after_request
 def allow_everyone(response):
     response.headers['Access-Control-Allow-Origin'] = '*'

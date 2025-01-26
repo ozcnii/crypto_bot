@@ -16,6 +16,17 @@ bp = Blueprint('clans', __name__)
 def clans(): 
     #Получение списка всех кланов
     if request.method == "GET":
+        
+        #Обновление баланса кланов
+        for clan in Clans.query.all():
+            balance = 0
+            for user_id in clan.users:
+                user = Users.query.filter(Users.chat_id==user_id)
+                if user:
+                    balance+=user.balance
+            clan.balance = balance
+            
+        db.session.commit()
         return jsonify([x.get_dict() for x in Clans.query.all()])
     
     #Создание клана
@@ -142,6 +153,16 @@ def clansGet():
     clan: Clans = Clans.query.filter(Clans.peer==user.clan).first()
         
     if clan:
+        
+        #Обновление баланса клана
+        balance = 0
+        for user_id in clan:
+            user = Users.query.filter(Users.chat_id==user_id)
+            if user:
+                balance += user.balance
+        clan.balance = balance
+        db.session.commit()
+                
         return jsonify(clan.get_dict())
     else:
         return jsonify(responseError("Пользователь не состоит в клане")),500
