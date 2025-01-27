@@ -11,6 +11,11 @@
         "tags": [
           "users"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -30,6 +35,11 @@
       "post":{
         "tags": [
           "users"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "requestBody":{
           "required":true,
@@ -89,6 +99,11 @@
         "tags": [
           "users"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "requestBody":{
           "required":true,
           "content":{
@@ -123,40 +138,15 @@
             }
           }
         }
-      }
-    },
-    "/users/{chat_id}":{
-      "get":{
-        "tags": [
-          "users"
-        ],
-        "parameters": [
-          {
-            "name": "chat_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/user"
-                }
-              }
-            }
-          }
-        }
       },
       "put": {
         "tags": [
           "users"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "requestBody": {
           "required": true,
@@ -169,16 +159,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "chat_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -198,20 +178,15 @@
         }
       }
     },
-    "/users/{chat_id}/getreflink": {
+    "/users/getreflink": {
       "get": {
         "tags": [
           "users"
         ],
-        "parameters": [
-          {
-            "name": "chat_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "responses": {
           "200": {
@@ -232,10 +207,80 @@
         }
       }
     },
-    "/orders": {
+    "/users/addref": {
+      "post":{
+        "tags": [
+          "users"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "requestBody":{
+          "required":true,
+          "content":{
+            "application/json":{
+              "schema":{
+                "type":"object",
+                "properties":{
+                  "chat_id":{
+                    "type":"integer",
+                    "format":"int32"
+                  },
+                  "username":{
+                    "type":"string"
+                  },
+                  "balance":{
+                    "type":"integer",
+                    "format":"int32"
+                  },     
+                  "league":{
+                    "type":"string"
+                  },
+                  "boosters":{
+                    "type":"array",
+                    "items":{
+                      "type":"integer",
+                      "format":"int32"
+                    },
+                    "maxItems":5,
+                    "minItems":5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/getref": {
       "get": {
         "tags": [
-          "orders"
+          "users"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "responses": {
           "200": {
@@ -254,10 +299,69 @@
         }
       }
     },
-    "/orders/open/{chat_id}": {
+    "/users/topleader": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/user"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/order"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/open": {
       "post": {
         "tags": [
           "orders"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "requestBody": {
           "required": true,
@@ -289,16 +393,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -326,6 +420,11 @@
       "post": {
         "tags": [
           "orders"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "requestBody": {
           "required": true,
@@ -429,22 +528,19 @@
         }
       }
     },
-    "/boosters/upgrade/{type}/{chat_id}": {
+    "/boosters/upgrade/{type}": {
       "get": {
         "tags": [
           "boosters"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "parameters": [
           {
             "name": "type",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "chat_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -471,22 +567,19 @@
         }
       }
     },
-    "/boosters/activate/{type}/{chat_id}": {
+    "/boosters/activate/{type}": {
       "get": {
         "tags": [
           "x-boosters"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "parameters": [
           {
             "name": "type",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "chat_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -513,22 +606,19 @@
         }
       }
     },
-    "/boosters/deactivate/{type}/{chat_id}": {
+    "/boosters/deactivate/{type}": {
       "get": {
         "tags": [
           "x-boosters"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "parameters": [
           {
             "name": "type",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "chat_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -560,6 +650,11 @@
         "tags": [
           "clans"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -578,61 +673,10 @@
         "tags": [
           "clans"
         ],
-        "requestBody": {
-          "required": true,
-          "content":{
-            "application/json":{
-              "schema":{
-                "type":"object",
-                "properties":{
-                  "peer":{
-                    "type":"integer",
-                    "format": "int32",
-                    "required": true
-                  },
-                  "admin":{
-                    "type":"integer",
-                    "format": "int32",
-                    "required": true
-                  },
-                  "users":{
-                    "type": "array",
-                    "items": {
-                      "type": "integer"
-                    }
-                  },
-                  "league":{
-                    "type": "string"
-                  },
-                  "name":{
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "default": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "clans"
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "requestBody": {
           "required": true,
@@ -690,6 +734,11 @@
         "tags": [
           "clans"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "requestBody":{
           "required":true,
           "content":{
@@ -730,22 +779,19 @@
         }
       }
     },
-    "/clans/addmember/{peer}/{chat_id}": {
+    "/clans/addmember/{peer}": {
       "get": {
         "tags": [
           "clans"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "parameters": [
           {
             "name": "peer",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "chat_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -772,22 +818,19 @@
         }
       }
     },
-    "/clans/delmember/{peer}/{chat_id}": {
+    "/clans/delmember/{peer}": {
       "get": {
         "tags": [
           "clans"
         ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
         "parameters": [
           {
             "name": "peer",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "chat_id",
             "in": "path",
             "required": true,
             "schema": {
@@ -814,20 +857,15 @@
         }
       }
     },
-    "/clans/get/{peer}": {
+    "/clans/me": {
       "get": {
         "tags": [
           "clans"
         ],
-        "parameters": [
-          {
-            "name": "peer",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "responses": {
           "200": {
@@ -848,6 +886,11 @@
       "get": {
         "tags": [
           "stories"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "responses": {
           "200": {
@@ -870,6 +913,11 @@
       "get": {
         "tags": [
           "stories"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
         ],
         "parameters": [
           {
@@ -895,9 +943,254 @@
           }
         }
       }
+    },
+    "/league": {
+      "get": {
+        "tags": [
+          "league"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/league"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/league/{league}": {
+      "get": {
+        "tags": [
+          "league"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/league"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/league/clan": {
+      "get": {
+        "tags": [
+          "league"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/league"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/league/clan/{league}": {
+      "get": {
+        "tags": [
+          "league"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "parameters": [
+          {
+            "name": "league",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/league"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/tasks"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{id}/completa": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+           {
+              "bearerAuth": []
+           }
+        ],
+        "requestBody": {
+          "required": true,
+          "content":{
+            "application/json":{
+              "schema":{
+                "type":"object",
+                "properties":{
+                  "id":{
+                    "type":"integer",
+                    "format": "int32",
+                    "required": true,
+                    "default": 0
+                  },
+                  "username":{
+                    "type":"string",
+                    "required": true,
+                    "default": "test"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "user": {
         "properties": {
@@ -958,6 +1251,13 @@
           },
           "username":{
             "type":"string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "sum_ref":{
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -1089,6 +1389,13 @@
           },
           "name": {
             "type": "string"
+          },
+          "balance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "photo": {
+            "type": "string"
           }
         }
       },
@@ -1105,6 +1412,24 @@
             "type": "string"
           },
           "adddata": {
+            "type": "string"
+          }
+        }
+      },
+      "tasks": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "award": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quest": {
             "type": "string"
           }
         }
