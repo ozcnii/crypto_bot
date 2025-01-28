@@ -154,6 +154,7 @@ class Users(db.Model):
     token = db.Column(db.String(256))
     sum_ref = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
     premium = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
+    photo = db.Column(db.String(256))
     
     def __repr__(self):
         return f'<User {self.username}>'

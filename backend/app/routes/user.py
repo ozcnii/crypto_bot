@@ -2,6 +2,10 @@ from flask import Blueprint, jsonify, request
 from app.models import Users
 from app import db, getTokenUser, getToken, responseError, responseSuccess, DevelopmentConfig, auth_required
 import json
+from telebot import TeleBot
+from PIL import Image
+import hashlib
+import io
 
 bp = Blueprint('users', __name__)
 
@@ -19,13 +23,19 @@ def users():
         #Обработка данных
         data = json.loads(request.data.decode('utf-8'))
         user = Users(**data)
+        bot = TeleBot(DevelopmentConfig.TOKEN)
         
         #Проверка на существование пользователя
         if not Users.query.filter_by(chat_id=user.chat_id).first() and not Users.query.filter_by(username=user.username).first():
             
             #Добавление пользователя
+            file = bot.download_file(bot.get_file(bot.get_user_profile_photos(user.chat_id).photos[0][0].file_id).file_path)
+            file_path = f'app/static/{hashlib.sha256(str(user.username).encode()).hexdigest()}.jpg'
+            Image.open(io.BytesIO(file)).save(file_path)
+            photo = file_path.replace('app/','')            
             user.balance_features=user.balance
             user.token = getTokenUser(user.chat_id, user.username)
+            user.photo = photo
             db.session.add(user)
             db.session.commit()
             return jsonify(responseSuccess())
@@ -61,7 +71,7 @@ def users():
         db.session.commit()
         return jsonify(responseSuccess())
         
-@bp.route('/users/getreflink', methods=['GET']) #GET -> Все пользователи в JSON {[...{}]}
+@bp.route('/users/getreflink', methods=['GET'])
 @auth_required
 def users_getreflink():
     #Полезная нагрузка
@@ -121,9 +131,9 @@ def users_getref():
     for user_ref_id in user.referals:
         user_ref: Users = Users.query.filter(Users.chat_id==user_ref_id).first()
         if user_ref.premium == 1:
-            response.append((user_ref.balance, 1000, user_ref.username))
+            response.append((user_ref.balance, 1000, user_ref.username, user.photo))
         else:
-            response.append((user_ref.balance, 100, user_ref.username)) 
+            response.append((user_ref.balance, 100, user_ref.username, user.photo)) 
                        
     return jsonify(responseSuccess(ref_list=response))
         
@@ -134,8 +144,8 @@ def users_getref():
 def users_topleader():
     user: Users = Users.query.filter(Users.token==getToken(request)).first()
     all_users = Users.query.all()
-    sort_top_list_users = sorted([(len(x.referals) if x.referals!=None else 0 , x.sum_ref) for x in all_users], key=lambda x: x[0], reverse=True)
-    my_place = sort_top_list_users.index((len(user.referals) if user.referals!=None else 0, user.sum_ref)) + 1
+    sort_top_list_users = sorted([(len(x.referals) if x.referals!=None else 0 , x.sum_ref, x.photo) for x in all_users], key=lambda x: x[0], reverse=True)
+    my_place = sort_top_list_users.index((len(user.referals) if user.referals!=None else 0, user.sum_ref, user.photo)) + 1
     
     if len(sort_top_list_users) > 300:
         sort_top_list_users = sort_top_list_users[0:300]

@@ -5,6 +5,7 @@ from config import Config
 import jwt
 from config import DevelopmentConfig
 from functools import wraps
+import datetime
 
 def auth_required(func):
     @wraps(func)
@@ -58,6 +59,24 @@ def responseSuccess(**data):
 def responseError(error):
     d = {}; d.update(success=False, error=error)
     return d
+
+def check_week_date(date_order: str) -> bool:
+    #Проверка значения
+    if date_order == '' or date_order is None:
+        return False
+    
+    dateOrder = datetime.datetime.strptime(date_order, '%Y-%m-%d %H:%M:%S.%f')
+    date = dateOrder - datetime.datetime.now()
+    return False if date.days < -7 else True
+
+def check_day_date(date_order: str) -> bool:
+    #Проверка значения
+    if date_order == '' or date_order is None:
+        return False
+    
+    dateOrder = datetime.datetime.strptime(date_order, '%Y-%m-%d %H:%M:%S.%f')
+    date = dateOrder - datetime.datetime.now()
+    return False if date.days < 0 else True
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'test'

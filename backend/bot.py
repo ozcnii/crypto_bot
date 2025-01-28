@@ -12,7 +12,7 @@ def listen(message: types.Message):
     #Кнопка перейти
     kb = types.InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton('Перейти', web_app=types.WebAppInfo('https://cepbep4-airvapebot-b471.twc1.net')))
-        
+    
     #Отправка сообщения
     bot.send_message(
         chat_id=message.chat.id,

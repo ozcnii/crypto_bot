@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.models import Orders, Users
-from app import db, getToken, responseError, auth_required
+from app import db, getToken, responseError, auth_required, check_week_date
 import json
 import datetime as dt
 
@@ -14,7 +14,24 @@ def orders():
     user: Users = Users.query.filter(Users.token==getToken(request)).first()
     all_orders = Orders.query.filter(Orders.user==user.chat_id).all()
     return jsonify([x.get_dict() for x in all_orders]) 
+
+#Недельный pnl
+@bp.route('/orders/getweekpnl', methods=['GET'])
+@auth_required
+def order_pnl_week():
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
     
+    try:
+        all_pnl = [x.pnl for x in Orders.query.filter(Orders.user==user.chat_id).all() if check_week_date(x.dateoutput)]
+        pnl = round(sum(all_pnl)/len(all_pnl), 2)
+        user.pnl = pnl
+        
+        db.session.commit()
+    except ZeroDivisionError:
+        return jsonify(responseError("Нулевой pnl")), 500
+    
+    return jsonify({"pnl": pnl})
+ 
 #Создать ордер
 @bp.route('/orders/open', methods=['POST'])
 @auth_required

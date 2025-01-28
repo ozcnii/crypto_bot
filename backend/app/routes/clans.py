@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from app.models import Users, Clans
-from app import db, responseError, responseSuccess, Struct, getToken, auth_required
+from app.models import Users, Clans, Orders
+from app import db, responseError, responseSuccess, Struct, getToken, auth_required, check_day_date
 import json
 from config import DevelopmentConfig
 from telebot import TeleBot
@@ -168,7 +168,56 @@ def clansGet():
         return jsonify(clan.get_dict())
     else:
         return jsonify(responseError("Пользователь не состоит в клане")),500
+
+@bp.route('/clans/dayleader', methods=['GET'])
+@auth_required
+def clansGetDayLeader():
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    clan: Clans = Clans.query.filter(Clans.peer==user.clan).first()
+    list_leader = []
+    
+    if clan:
+        users_clan: list[Users] = Users.query.filter(Users.clan==clan.peer).all()
+        day_orders = Orders.query.filter(Orders.user==users_clan)
+        me_data = None
+        for us_clan in users_clan:
+            pnl_list = [x.pnl for x in Orders.query.filter(Orders.user==us_clan.chat_id).all() if check_day_date(x.dateoutput)]
+            try:
+                pnl = sum(pnl_list)/len(pnl_list)
+            except ZeroDivisionError:
+                pnl = 0
+            list_leader.append((pnl, us_clan.balance, us_clan.username, us_clan.photo))
+            if user.username == us_clan.username:
+                me_data = (pnl, us_clan.balance, us_clan.username, us_clan.photo)
+                
+        sort_list_leader = sorted(list_leader, key=lambda x: x[0])
+        my_place = sort_list_leader.index(me_data) + 1
+        return jsonify(responseSuccess(
+            list_day_leader=sort_list_leader,
+            my_place=my_place
+        ))
+    else:
+        return jsonify(responseError("У пользователя нет клана")), 500
+
+
+@bp.route('/clans/alltimeleader', methods=['GET'])
+@auth_required
+def clansGetAllTimeLeader():
+    user: Users = Users.query.filter(Users.token==getToken(request)).first()
+    clan: Clans = Clans.query.filter(Clans.peer==user.clan).first()
+    
+    if clan:
+        users_clan: list[Users] = Users.query.filter(Users.clan==clan.peer).all()
+        sort_list_alltime_leader = sorted([(x.balance, x.username, x.photo) for x in users_clan], key=lambda x: x[0])
+        my_place = sort_list_alltime_leader.index(((user.balance, user.username, user.photo))) + 1
         
+        return jsonify(responseSuccess(
+            list_alltime_leader=sort_list_alltime_leader,
+            my_place=my_place
+        ))
+    else:
+        return jsonify(responseError("У пользователя нет клана")), 500
+
 @bp.after_request
 def allow_everyone(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
