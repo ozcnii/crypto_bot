@@ -290,7 +290,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    
+                    "$ref": "#/components/schemas/user"
                   }
                 }
               }
@@ -315,17 +315,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "my_place_number": {
-                      "type": "integer"
-                    },
-                    "top_300_leader": {
-                      "type": "array",
-                      "items": {
-
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/user"
                   }
                 }
               }
@@ -353,35 +345,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/order"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "orders/getweekpnl": {
-      "get": {
-        "tags": [
-          "orders"
-        ],
-        "security": [
-           {
-              "bearerAuth": []
-           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "pnl": {
-                      "type": "integer"
-                    }
                   }
                 }
               }
@@ -919,76 +882,6 @@
         }
       }
     },
-    "/clans/dayleader": {
-      "get": {
-        "tags": [
-          "clans"
-        ],
-        "security": [
-           {
-              "bearerAuth": []
-           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "my_place": {
-                      "type": "integer"
-                    },
-                    "list_day_leader": {
-                      "type": "array",
-                      "items": {
-
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/clans/alltimeleader": {
-      "get": {
-        "tags": [
-          "clans"
-        ],
-        "security": [
-           {
-              "bearerAuth": []
-           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "my_place": {
-                      "type": "integer"
-                    },
-                    "list_alltime_leader": {
-                      "type": "array",
-                      "items": {
-
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/stories": {
       "get": {
         "tags": [
@@ -1068,23 +961,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "me_place_number": {
-                      "type": "integer"
-                    },
-                    "list_league": {
-                      "type": "array",
-                      "items": {
-
-                      }
-                    },
-                    "count_this_league_player": {
-                      "type": "integer"
-                    },
-                    "count_all_player": {
-                      "type": "integer"
-                    }
-                  }
+                  "$ref": "#/components/schemas/league"
                 }
               }
             }
@@ -1119,11 +996,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "list_league_player": {
-                      "type": "array"
-                    }
-                  }
+                  "$ref": "#/components/schemas/league"
                 }
               }
             }
@@ -1148,23 +1021,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "me_clan_place": {
-                      "type": "integer"
-                    },
-                    "list_clan_this_league": {
-                      "type": "array",
-                      "items": {
-
-                      }
-                    },
-                    "all_clan_player": {
-                      "type": "integer"
-                    },
-                    "all_clan_this_league_count": {
-                      "type": "integer"
-                    }
-                  }
+                  "$ref": "#/components/schemas/league"
                 }
               }
             }
@@ -1199,11 +1056,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "all_clan_this_league": {
-                      "type": "array"
-                    }
-                  }
+                  "$ref": "#/components/schemas/league"
                 }
               }
             }
