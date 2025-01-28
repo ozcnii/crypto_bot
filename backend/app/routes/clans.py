@@ -21,7 +21,7 @@ def clans():
         for clan in Clans.query.all():
             balance = 0
             for user_id in clan.users:
-                user = Users.query.filter(Users.chat_id==user_id)
+                user = Users.query.filter(Users.chat_id==user_id).first()
                 if user:
                     balance+=user.balance
             clan.balance = balance
@@ -90,6 +90,8 @@ def clans():
                 #Удаление клана
                 db.session.remove(clan)
                 db.session.commit()
+                
+                return jsonify(responseSuccess())
             else:
                 return jsonify(responseError("Отказано в доступе")), 503
         else:
@@ -97,7 +99,7 @@ def clans():
                     
         
 #Добавление участника в клан
-@bp.route('/clans/addmember/<int:peer>', methods=['GET'])
+@bp.route('/clans/addmember/<peer>', methods=['GET'])
 @auth_required
 def clansAddMember(peer):    
     #Обработка данных
@@ -121,7 +123,7 @@ def clansAddMember(peer):
         return jsonify(responseError("Пользователь уже в клане")),500
     
 #Удаление участника из клана
-@bp.route('/clans/delmember/<int:peer>', methods=['GET'])
+@bp.route('/clans/delmember/<peer>', methods=['GET'])
 @auth_required
 def clansDelMember(peer):
     #Обработка данных
@@ -156,8 +158,8 @@ def clansGet():
         
         #Обновление баланса клана
         balance = 0
-        for user_id in clan:
-            user = Users.query.filter(Users.chat_id==user_id)
+        for user_id in clan.users:
+            user = Users.query.filter(Users.chat_id==user_id).first()
             if user:
                 balance += user.balance
         clan.balance = balance

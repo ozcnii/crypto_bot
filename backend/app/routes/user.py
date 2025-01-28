@@ -74,21 +74,42 @@ def users_getreflink():
 def users_addref():
     #Обработка данных
     data = json.loads(request.data.decode('utf-8'))
-    user: Users = Users.query.filter(Users.token==getToken(request)).first()
     
-    l_ref = user.referals.copy()
-    l_ref.append(data['ref_id'])
-    user.referals=l_ref
+    if 'ref_id' not in data and "admin_chat_id" not in data:
+        return responseError("Неверные данные"), 500
     
-    if data['premimum']:
+    try:
+        int(data["admin_chat_id"])
+    except:
+        return responseError("Неверные данные"), 500
+        
+    
+    user: Users = Users.query.filter(Users.chat_id==int(data["admin_chat_id"])).first()
+    
+    if user.referals != [] and user.referals!=None:
+        if data['ref_id'] in user.referals:
+            return responseError("Такой пользователь уже приглашён"), 500
+    
+    if user.referals!=[] and user.referals!=None:
+        l_ref = user.referals.copy()
+        l_ref.append(data['ref_id'])
+        user.referals=l_ref
+    else:
+        user.referals=[data['ref_id']]
+    
+    if data['premium']:
         user.balance_features = user.balance_features + 100
-        user.balance_features = user.balance_features + 100
+        user.balance = user.balance + 100
+        user.sum_ref = user.sum_ref + 100
     else:
         user.balance_features = user.balance_features + 1000
-        user.balance_features = user.balance_features + 1000
+        user.balance = user.balance + 1000
+        user.sum_ref = user.sum_ref + 1000
         
     #Сохранить
     db.session.commit()
+    
+    return jsonify(responseSuccess())
 
 #Добавление получение списка рефералов
 @bp.route('/users/getref', methods=['GET'])
@@ -113,8 +134,8 @@ def users_getref():
 def users_topleader():
     user: Users = Users.query.filter(Users.token==getToken(request)).first()
     all_users = Users.query.all()
-    sort_top_list_users = sorted([(len(x.referals), x.sum_ref) for x in all_users], key=lambda x: x[0])
-    my_place = sort_top_list_users.index((len(user.referals), user.sum_ref))
+    sort_top_list_users = sorted([(len(x.referals) if x.referals!=None else 0 , x.sum_ref) for x in all_users], key=lambda x: x[0], reverse=True)
+    my_place = sort_top_list_users.index((len(user.referals) if user.referals!=None else 0, user.sum_ref)) + 1
     
     if len(sort_top_list_users) > 300:
         sort_top_list_users = sort_top_list_users[0:300]

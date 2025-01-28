@@ -75,6 +75,7 @@ from app.routes.boosters import bp as boostersRoute
 from app.routes.clans import bp as clansRoute
 from app.routes.access import bp as accessRoute
 from app.routes.league import bp as leagueRoute
+from app.routes.task import bp as taskRoute
 from app.routes.apiswagger import SWAGGERUI_BLUEPRINT, SWAGGER_URL
 
 #routes
@@ -85,4 +86,5 @@ app.register_blueprint(boostersRoute)
 app.register_blueprint(clansRoute)
 app.register_blueprint(accessRoute)
 app.register_blueprint(leagueRoute)
+app.register_blueprint(taskRoute)
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)

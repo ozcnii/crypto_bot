@@ -51,6 +51,16 @@ if __name__ == "__main__":
         r=requests.get(f"{DevelopmentConfig.HOST}/users/getreflink", headers=headers)
         print(r.json())
         
+    def users_get_getref(token):
+        headers = {'Authorization': f'Bearer {token}'}
+        r=requests.get(f"{DevelopmentConfig.HOST}/users/getref", headers=headers)
+        print(r.json())
+        
+    def users_get_topleader(token):
+        headers = {'Authorization': f'Bearer {token}'}
+        r=requests.get(f"{DevelopmentConfig.HOST}/users/topleader", headers=headers)
+        print(r.json())
+        
     def orders_get(token):
         headers = {'Authorization': f'Bearer {token}'}
         r=requests.get(f"{DevelopmentConfig.HOST}/orders", headers=headers)
@@ -81,6 +91,21 @@ if __name__ == "__main__":
     def clans_get(token):
         headers = {'Authorization': f'Bearer {token}'}
         r=requests.get(f"{DevelopmentConfig.HOST}/clans", headers=headers)
+        print(r.json()) 
+         
+    def clans_get_addmember(token, peer):
+        headers = {'Authorization': f'Bearer {token}'}
+        r=requests.get(f"{DevelopmentConfig.HOST}/clans/addmember/{peer}", headers=headers)
+        print(r.json())  
+        
+    def clans_get_delmember(token, peer):
+        headers = {'Authorization': f'Bearer {token}'}
+        r=requests.get(f"{DevelopmentConfig.HOST}/clans/delmember/{peer}", headers=headers)
+        print(r.json())  
+        
+    def clans_get_me(token):
+        headers = {'Authorization': f'Bearer {token}'}
+        r=requests.get(f"{DevelopmentConfig.HOST}/clans/me", headers=headers)
         print(r.json())  
         
     def clans_post(token):
@@ -103,8 +128,12 @@ if __name__ == "__main__":
     id = 965240931
     username = 'severrrwork'
     
+    id_sec = 924765620
+    username_sec = "Severrrcompany"
+    
     #Авторизация
     token = oauth(id, username)
+    token_sec = oauth(id_sec, username_sec)
     
     #Тесты по ветке /users
     #users_get(token)
@@ -112,6 +141,8 @@ if __name__ == "__main__":
     #users_delete(token)
     #users_put(token)
     #users_get_getreflink(token)
+    #users_get_getref(token)
+    #users_get_topleader(token)
     
     #Тесты по ветке /orders
     #orders_get(token)
@@ -120,7 +151,10 @@ if __name__ == "__main__":
     
     #Тесты по ветке /clans
     #clans_get(token)
+    #clans_get_me(token)
     #clans_post(token)
+    #clans_get_addmember(token_sec, -1001734381345)
+    #clans_get_delmember(token_sec, -1001734381345)
     
     #Тесты по ветке /league
     #league_get(token)

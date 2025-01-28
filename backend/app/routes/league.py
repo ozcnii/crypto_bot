@@ -94,7 +94,7 @@ def league_clan():
             list_clan_this_league=sort_list_clan_this_league
         ))
     else:
-        return jsonify(responseError("Пользователь не в клане, но данные обновлены"))
+        return jsonify(responseError("Пользователь не в клане, но данные обновлены")), 500
 
 #Лиги кланов
 @bp.route('/league/clan/<league>', methods=['GET'])
