@@ -43,7 +43,13 @@ https://github.com/Andrets/crypto_bot.git
 ```
 
 - install [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)
-- run
+- run this on macOS/linux or using Git Bash
+
+```
+./start-dev.sh
+```
+
+- or this
 
 ```
 cloudflared tunnel --url http://localhost:3000
@@ -54,7 +60,7 @@ cloudflared tunnel --url http://localhost:3000
 - enter that command to command line
 
 ```
-docker compose -f docker-compose.dev.yaml -p crypto up -d --build
+docker compose -f docker-compose.dev.yaml up -d --build
 ```
 
 - urls
