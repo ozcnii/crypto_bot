@@ -54,8 +54,11 @@ dotenv_path=".env"
 webapp_url_key="WEBAPP_URL"
 
 # Перезаписываем значение WEBAPP_URL
-echo "$webapp_url_key=$tunnel_url" > "$dotenv_path"
-
+if grep -q "^$webapp_url_key=" "$dotenv_path"; then
+    sed -i "s|^$webapp_url_key=.*|$webapp_url_key=$tunnel_url|" "$dotenv_path"
+else
+    echo "$webapp_url_key=$tunnel_url" >> "$dotenv_path"
+fi
 echo "URL туннеля записан в $dotenv_path как $webapp_url_key"
 
 # Шаг 3: Запустить docker-compose
