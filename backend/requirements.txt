@@ -22,3 +22,5 @@ WTForms==3.2.1
 zipp==3.21.0
 pyTelegramBotAPI==4.26.0
 flask-swagger-ui==4.11.1
+pyjwt==2.10.1
+pillow==11.1.0
